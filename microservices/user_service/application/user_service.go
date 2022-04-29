@@ -27,3 +27,9 @@ func (service *UserService) Register(user *domain.User) (string, error) {
 	success, err := service.store.Insert(user)
 	return success, err
 }
+
+func (service *UserService) Search(username string, name string) ([]*domain.User, error) {
+	success, err := service.store.Search(username, name)
+	return success, err
+}
+

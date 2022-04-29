@@ -44,6 +44,11 @@ func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
 	return store.filter(filter)
 }
 
+func (store *UserMongoDBStore) Search(username string, name string) ([]*domain.User, error) {
+	filter := bson.M{ "$or": []bson.M{ bson.M{"username": username}, bson.M{"firstname":name} } } 
+	return store.filter(filter)
+}
+
 func (store *UserMongoDBStore) Insert(user *domain.User) (string, error) {
 	userInDatabase, err := store.Get(user.Id)
 	user.Id = primitive.NewObjectID()

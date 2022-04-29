@@ -24,6 +24,11 @@ service UserService{
                         body: "user"
                 };
         }
+        rpc Search(SearchRequest) returns(SearchResponse) {
+                option (google.api.http) = {
+                        get: "/user"
+                };
+        }
 }
 
 message GetRequest {
@@ -48,6 +53,16 @@ message RegisterRequest {
 message RegisterResponse {
         string success = 1;
 }
+
+message SearchRequest {
+        string username = 1;
+        string name = 2;
+}
+
+message SearchResponse {
+        repeated User users = 1;
+}
+
 
 
 message User {

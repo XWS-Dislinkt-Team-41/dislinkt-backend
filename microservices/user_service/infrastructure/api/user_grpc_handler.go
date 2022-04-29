@@ -50,6 +50,23 @@ func (handler *UserHandler) GetAll(ctx context.Context, request *pb.GetAllReques
 	return response, nil
 }
 
+func (handler *UserHandler) Search(ctx context.Context, request *pb.SearchRequest) (*pb.SearchResponse, error) {
+	name := request.Name
+	username := request.Username
+	users, err := handler.service.Search(username, name)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.SearchResponse{
+		Users: []*pb.User{},
+	}
+	for _, user := range users {
+		current := mapUser(user)
+		response.Users = append(response.Users, current)
+	}
+	return response, nil
+}
+
 func (handler *UserHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	user := mapNewUser(request.User)
 	successs, err := handler.service.Register(user)

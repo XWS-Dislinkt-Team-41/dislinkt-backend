@@ -11,4 +11,5 @@ type UserStore interface {
 	GetAll() ([]*User, error)
 	Insert(user *User) (string, error)
 	DeleteAll()
+	Search(username string, name string) ([]*User, error)
 }
