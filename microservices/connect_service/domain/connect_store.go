@@ -1,4 +1,6 @@
 package domain
 
-type connectionStore struct {
+type ConnectionStore interface {
+	Connect(user, userConnect string) error
+	UnConnect() error
 }

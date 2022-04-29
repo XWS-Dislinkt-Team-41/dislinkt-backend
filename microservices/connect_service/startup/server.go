@@ -3,8 +3,8 @@ package startup
 import (
 	"log"
 
-	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/tree/develop/microservices/connect_service/infrastructure/persistence"
-	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/tree/develop/microservices/connect_service/startup/config"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/infrastructure/persistence"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/startup/config"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 )
 
@@ -30,11 +30,11 @@ func (server *Server) Start() {
 }
 
 func (server *Server) initNeo4jClient() neo4j.Driver {
-	client, err := persistence.GetClient(server.config.ConnectDBHost, server.config.ConnectDBUser, server.config.ConnectDBPass, server.config.ConnectDBPort)
+	driver, err := persistence.GetDriver(server.config.ConnectDBHost, server.config.ConnectDBUser, server.config.ConnectDBPass, server.config.ConnectDBPort)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return client
+	return driver
 }
 
 // func (server *Server) initconnectionStore(client *mongo.Client) domain.connectionStore {

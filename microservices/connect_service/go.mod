@@ -1,8 +1,8 @@
-module github.com/XWS-Dislinkt-Team-41/dislinkt-backend/tree/develop/microservices/connect_service
+module github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service
 
 go 1.18
 
-replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/tree/develop/microservices/common => ../common
+replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common => ../common
 
 require github.com/neo4j/neo4j-go-driver v1.8.3
 
