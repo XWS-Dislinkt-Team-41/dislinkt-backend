@@ -1,15 +1,12 @@
 package startup
 
 import (
-	"context"
 	"fmt"
-	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
-	"github.com/tamararankovic/microservices_demo/api_gateway/infrastructure/api"
-	cfg "github.com/tamararankovic/microservices_demo/api_gateway/startup/config"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 	"log"
 	"net/http"
+
+	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 type Server struct {

@@ -25,3 +25,34 @@ services:
 networks:
   network:
     driver: bridge
+
+ post_db:
+    image : mongo
+    container_name: post_db
+    environment:
+    - PUID=1000
+    - PGID=1000
+    ports:
+    - 27017:27017
+    networks:
+      - backend
+    restart: unless-stopped
+
+post_service:
+    image: post_service
+    build:
+      context: ./microservices/post_service
+      dockerfile: Dockerfile
+    restart: on-failure
+    environment:
+      POST_DB_HOST: ${POST_DB_HOST}
+      POST_DB_PORT: ${POST_DB_PORT}
+      POST_SERVICE_PORT: ${POST_SERVICE_PORT}
+    depends_on:
+      - post_db
+    networks:
+      - network
+    # expose: 
+    #   - '8002'
+    # ports: 
+    #   - '8002:8002'
