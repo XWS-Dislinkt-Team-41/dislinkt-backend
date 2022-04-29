@@ -1,7 +1,7 @@
 package services
 
 import (
-	user "usergithub.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
+	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"

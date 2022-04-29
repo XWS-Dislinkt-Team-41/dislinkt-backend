@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"context"
-	"errors"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -25,6 +24,16 @@ func NewUserMongoDBStore(client *mongo.Client) domain.UserStore {
 	}
 }
 
+func (store *UserMongoDBStore) GetByEmail(email string) (*domain.User, error) {
+	filter := bson.M{"email": email}
+	return store.filterOne(filter)
+}
+
+func (store *UserMongoDBStore) GetByUsername(username string) (*domain.User, error) {
+	filter := bson.M{"username": username}
+	return store.filterOne(filter)
+}
+
 func (store *UserMongoDBStore) Get(id primitive.ObjectID) (*domain.User, error) {
 	filter := bson.M{"_id": id}
 	return store.filterOne(filter)
@@ -35,14 +44,26 @@ func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
 	return store.filter(filter)
 }
 
-func (store *UserMongoDBStore) Insert(user *domain.User) error {
+func (store *UserMongoDBStore) Insert(user *domain.User) (string, error) {
+	userInDatabase, err := store.Get(user.Id)
 	user.Id = primitive.NewObjectID()
+	if userInDatabase != nil {
+		return "id exists", nil
+	}
+	userInDatabase, err = store.GetByEmail(user.Email)
+	if userInDatabase != nil {
+		return "email exists", nil
+	}
+	userInDatabase, err = store.GetByUsername(user.Username)
+	if userInDatabase != nil {
+		return "username exists", nil
+	}
 	result, err := store.users.InsertOne(context.TODO(), user)
 	if err != nil {
-		return err
+		return "error while inserting", err
 	}
 	user.Id = result.InsertedID.(primitive.ObjectID)
-	return nil
+	return "success", nil
 }
 
 func (store *UserMongoDBStore) DeleteAll() {

@@ -40,7 +40,7 @@ func (server *Server) Start() {
 }
 
 func (server *Server) initMongoClient() *mongo.Client {
-	client, err := persistence.GetClient(server.config.UseringDBHost, server.config.UseringDBPort)
+	client, err := persistence.GetClient(server.config.UserDBHost, server.config.UserDBPort)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,7 +51,7 @@ func (server *Server) initUserStore(client *mongo.Client) domain.UserStore {
 	store := persistence.NewUserMongoDBStore(client)
 	store.DeleteAll()
 	for _, user := range users {
-		err := store.Insert(user)
+		_ ,err := store.Insert(user)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -73,7 +73,7 @@ func (server *Server) startGrpcServer(userHandler *api.UserHandler) {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	grpcServer := grpc.NewServer()
-	user.RegisterUseringServiceServer(grpcServer, userHandler)
+	user.RegisterUserServiceServer(grpcServer, userHandler)
 	if err := grpcServer.Serve(listener); err != nil {
 		log.Fatalf("failed to serve: %s", err)
 	}
