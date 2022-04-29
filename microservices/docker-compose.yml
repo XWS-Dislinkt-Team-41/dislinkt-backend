@@ -12,6 +12,31 @@ services:
       - ${GATEWAY_PORT}:${GATEWAY_PORT}
     environment:
       GATEWAY_PORT: ${GATEWAY_PORT}
+      USER_SERVICE_HOST: ${USER_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+    networks:
+      - network
+
+  user_service:
+    image: user_service
+    container_name: user_service
+    build:
+      context: .
+      dockerfile: ./user_service/Dockerfile
+    restart: on-failure
+    environment:
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+    depends_on:
+      - user_db
+    networks:
+      - network 
+
+  user_db:
+    image: mongo
+    container_name: user_db
+    restart: on-failure
     networks:
       - network
 
