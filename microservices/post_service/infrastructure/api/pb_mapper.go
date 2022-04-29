@@ -1,7 +1,7 @@
 package api
 
 import (
-	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service"
+	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
 )
 

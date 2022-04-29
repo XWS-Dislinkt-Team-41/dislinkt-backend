@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/startup"
-	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/startup/config"
+	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/startup/config"
 )
 
 func main() {

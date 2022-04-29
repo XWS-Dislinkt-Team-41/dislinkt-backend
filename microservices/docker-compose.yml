@@ -1,6 +1,21 @@
 version: "3.8"
 
 services:
+  post_service:
+    image: post_service
+    build:
+      context: .
+      dockerfile: ./post_service/Dockerfile
+    restart: on-failure
+    environment:
+      POST_DB_HOST: ${POST_DB_HOST}
+      POST_DB_PORT: ${POST_DB_PORT}
+      POST_SERVICE_PORT: ${POST_SERVICE_PORT}
+    depends_on:
+      - post_db
+    networks:
+      - network
+
   api_gateway:
     image: api_gateway
     container_name: api_gateway
@@ -12,8 +27,25 @@ services:
       - ${GATEWAY_PORT}:${GATEWAY_PORT}
     environment:
       GATEWAY_PORT: ${GATEWAY_PORT}
+      USER_SERVICE_HOST: ${POST_SERVICE_HOST}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+      POST_SERVICE_HOST: ${POST_SERVICE_HOST}
+      POST_SERVICE_PORT: ${POST_SERVICE_PORT}
+
     networks:
       - network
+
+  post_db:
+    image: mongo
+    container_name: post_db
+    environment:
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - 27017:27017
+    networks:
+      - network
+    restart: unless-stopped
 
   nats:
     image: nats
@@ -25,34 +57,3 @@ services:
 networks:
   network:
     driver: bridge
-
- post_db:
-    image : mongo
-    container_name: post_db
-    environment:
-    - PUID=1000
-    - PGID=1000
-    ports:
-    - 27017:27017
-    networks:
-      - backend
-    restart: unless-stopped
-
-post_service:
-    image: post_service
-    build:
-      context: ./microservices/post_service
-      dockerfile: Dockerfile
-    restart: on-failure
-    environment:
-      POST_DB_HOST: ${POST_DB_HOST}
-      POST_DB_PORT: ${POST_DB_PORT}
-      POST_SERVICE_PORT: ${POST_SERVICE_PORT}
-    depends_on:
-      - post_db
-    networks:
-      - network
-    # expose: 
-    #   - '8002'
-    # ports: 
-    #   - '8002:8002'

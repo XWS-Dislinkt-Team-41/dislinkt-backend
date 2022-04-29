@@ -9,12 +9,12 @@ import "google/api/annotations.proto";
 service PostService{
         rpc Get(GetRequest) returns(GetResponse) {
         	option (google.api.http) = {
-			get: "/post/product/{id}"
+			get: "/post/{id}"
 		};
         }
         rpc GetAll(GetAllRequest) returns(GetAllResponse) {
         	option (google.api.http) = {
-			get: "/post/product"
+			get: "/post"
 		};
         }
 }
@@ -31,7 +31,7 @@ message GetAllRequest {
 }
 
 message GetAllResponse {
-        repeated Posts posts = 1;
+        repeated Post posts = 1;
 }
 
 message Post {

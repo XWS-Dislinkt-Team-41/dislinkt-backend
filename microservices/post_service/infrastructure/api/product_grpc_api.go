@@ -7,7 +7,6 @@ import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/application"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-
 type PostHandler struct {
 	pb.UnimplementedPostServiceServer
 	service *application.PostService
