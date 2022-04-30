@@ -2,17 +2,17 @@ package application
 
 import "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/domain"
 
-type ConnectionService struct {
-	store domain.ConnectionStore
+type ConnectService struct {
+	store domain.ConnectStore
 }
 
-func NewConnectionService(store domain.ConnectionStore) *ConnectionService {
-	return &ConnectionService{
+func NewConnectService(store domain.ConnectStore) *ConnectService {
+	return &ConnectService{
 		store: store,
 	}
 }
 
-func (service *ConnectionService) Connect(user, userConnect string) error {
+func (service *ConnectService) Connect(user, userConnect string) error {
 	err := service.store.Connect(user, userConnect)
 	if err != nil {
 		return err
@@ -20,10 +20,18 @@ func (service *ConnectionService) Connect(user, userConnect string) error {
 	return nil
 }
 
-func (service *ConnectionService) UnConnect() error {
-	err := service.store.UnConnect()
+func (service *ConnectService) UnConnect(user, userConnect string) error {
+	err := service.store.UnConnect(user, userConnect)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (service *ConnectService) GetUserConnections(user string) ([]string, error) {
+	connections, err := service.store.GetUserConnections(user)
+	if err != nil {
+		return nil, err
+	}
+	return connections, err
 }

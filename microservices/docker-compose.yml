@@ -1,6 +1,24 @@
 version: "3.8"
 
 services:
+  connect_service:
+    image: connect_service
+    container_name: connect_service
+    build:
+      context: .
+      dockerfile: ./connect_service/Dockerfile
+    restart: on-failure
+    environment:
+      CONNECT_DB_HOST: ${CONNECT_DB_HOST}
+      CONNECT_DB_PORT: ${CONNECT_DB_PORT}
+      CONNECT_DB_USER: ${CONNECT_DB_USER}
+      CONNECT_DB_PASS: ${CONNECT_DB_PASS}
+      CONNECT_SERVICE_PORT: ${CONNECT_SERVICE_PORT}
+    depends_on:
+      - connect_db
+    networks:
+      - network
+
   api_gateway:
     image: api_gateway
     container_name: api_gateway
@@ -12,6 +30,15 @@ services:
       - ${GATEWAY_PORT}:${GATEWAY_PORT}
     environment:
       GATEWAY_PORT: ${GATEWAY_PORT}
+      CONNECT_DB_HOST: ${CONNECT_DB_HOST}
+      CONNECT_DB_PORT: ${CONNECT_DB_PORT} 
+    networks:
+      - network
+
+  connect_db:
+    image: neo4j
+    container_name: connect_db
+    restart: on-failure
     networks:
       - network
 

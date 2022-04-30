@@ -1,11 +1,18 @@
 package startup
 
 import (
+	"fmt"
 	"log"
+	"net"
 
+	connections "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/application"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/domain"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/infrastructure/api"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/infrastructure/persistence"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/startup/config"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"google.golang.org/grpc"
 )
 
 type Server struct {
@@ -19,14 +26,15 @@ func NewServer(config *config.Config) *Server {
 }
 
 func (server *Server) Start() {
-	// neo4jClient := server.initNeo4jClient()
-	// connectionStore := server.initconnectionStore(mongoClient)
+	neo4jClient := server.initNeo4jClient()
 
-	// connectionService := server.initconnectionService(connectionStore)
+	connectStore := server.initConnectStore(neo4jClient)
 
-	// connectionHandler := server.initconnectionHandler(connectionService)
+	connectService := server.initConnectService(connectStore)
 
-	// server.startGrpcServer(connectionHandler)
+	connectHandler := server.initConnectHandler(connectService)
+
+	server.startGrpcServer(connectHandler)
 }
 
 func (server *Server) initNeo4jClient() neo4j.Driver {
@@ -37,34 +45,27 @@ func (server *Server) initNeo4jClient() neo4j.Driver {
 	return driver
 }
 
-// func (server *Server) initconnectionStore(client *mongo.Client) domain.connectionStore {
-// 	store := persistence.NewconnectionMongoDBStore(client)
-// 	store.DeleteAll()
-// 	for _, connection := range connections {
-// 		err := store.Insert(connection)
-// 		if err != nil {
-// 			log.Fatal(err)
-// 		}
-// 	}
-// 	return store
-// }
+func (server *Server) initConnectStore(driver neo4j.Driver) domain.ConnectStore {
+	store := persistence.NewConnectNeo4jDBStore(driver)
+	return store
+}
 
-// func (server *Server) initconnectionService(store domain.connectionStore) *application.connectionService {
-// 	return application.NewconnectionService(store)
-// }
+func (server *Server) initConnectService(store domain.ConnectStore) *application.ConnectService {
+	return application.NewConnectService(store)
+}
 
-// func (server *Server) initconnectionHandler(service *application.connectionService) *api.connectionHandler {
-// 	return api.NewconnectionHandler(service)
-// }
+func (server *Server) initConnectHandler(service *application.ConnectService) *api.ConnectHandler {
+	return api.NewConnectHandler(service)
+}
 
-// func (server *Server) startGrpcServer(connectionHandler *api.connectionHandler) {
-// 	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
-// 	if err != nil {
-// 		log.Fatalf("failed to listen: %v", err)
-// 	}
-// 	grpcServer := grpc.NewServer()
-// 	catalogue.RegisterCatalogueServiceServer(grpcServer, connectionHandler)
-// 	if err := grpcServer.Serve(listener); err != nil {
-// 		log.Fatalf("failed to serve: %s", err)
-// 	}
-// }
+func (server *Server) startGrpcServer(connectHandler *api.ConnectHandler) {
+	listener, err := net.Listen("tcp", fmt.Sprintf(":%s", server.config.Port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	grpcServer := grpc.NewServer()
+	connections.RegisterConnectServiceServer(grpcServer, connectHandler)
+	if err := grpcServer.Serve(listener); err != nil {
+		log.Fatalf("failed to serve: %s", err)
+	}
+}

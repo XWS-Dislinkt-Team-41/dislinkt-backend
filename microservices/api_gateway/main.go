@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/tamararankovic/microservices_demo/api_gateway/startup"
-	"github.com/tamararankovic/microservices_demo/api_gateway/startup/config"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup"
+	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
 )
 
 func main() {
-	config := config.NewConfig()
+	config := cfg.NewConfig()
 	server := startup.NewServer(config)
 	server.Start()
 }

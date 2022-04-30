@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/connections";
+
+package connections;
+
+import "google/api/annotations.proto";
+
+service ConnectService{
+        rpc Connect(ConnectRequest) returns(EmptyResponse) {
+        	option (google.api.http) = {
+			post: "/connect"
+		};
+        }
+        rpc UnConnect(UnConnectRequest) returns(EmptyResponse) {
+        	option (google.api.http) = {
+			delete: "/connect"
+		};
+        }
+        rpc GetUserConnections(GetUserConnectionsRequest) returns(GetUserConnectionsResponse) {
+        	option (google.api.http) = {
+			get: "/connect/{id}"
+		};
+        }
+}
+
+message ConnectRequest {
+        string user = 1;
+        string userConnect = 2;
+}
+
+message UnConnectRequest {
+        string user = 1;
+        string userConnect = 2;
+}
+
+message EmptyResponse {
+}
+
+message GetUserConnectionsRequest {
+        string id = 1;
+}
+
+message GetUserConnectionsResponse {
+        repeated string connections = 1;
+}
