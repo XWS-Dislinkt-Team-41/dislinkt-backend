@@ -25,7 +25,7 @@ type UserServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
-	Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error)
+	SearchPublic(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*SearchPublicResponse, error)
 }
 
 type userServiceClient struct {
@@ -63,9 +63,9 @@ func (c *userServiceClient) Register(ctx context.Context, in *RegisterRequest, o
 	return out, nil
 }
 
-func (c *userServiceClient) Search(ctx context.Context, in *SearchRequest, opts ...grpc.CallOption) (*SearchResponse, error) {
-	out := new(SearchResponse)
-	err := c.cc.Invoke(ctx, "/user.UserService/Search", in, out, opts...)
+func (c *userServiceClient) SearchPublic(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*SearchPublicResponse, error) {
+	out := new(SearchPublicResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/SearchPublic", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ type UserServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
-	Search(context.Context, *SearchRequest) (*SearchResponse, error)
+	SearchPublic(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -96,8 +96,8 @@ func (UnimplementedUserServiceServer) GetAll(context.Context, *GetAllRequest) (*
 func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
-func (UnimplementedUserServiceServer) Search(context.Context, *SearchRequest) (*SearchResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+func (UnimplementedUserServiceServer) SearchPublic(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchPublic not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -166,20 +166,20 @@ func _UserService_Register_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UserService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SearchRequest)
+func _UserService_SearchPublic_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchPublicRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).Search(ctx, in)
+		return srv.(UserServiceServer).SearchPublic(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/user.UserService/Search",
+		FullMethod: "/user.UserService/SearchPublic",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).Search(ctx, req.(*SearchRequest))
+		return srv.(UserServiceServer).SearchPublic(ctx, req.(*SearchPublicRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -204,8 +204,8 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_Register_Handler,
 		},
 		{
-			MethodName: "Search",
-			Handler:    _UserService_Search_Handler,
+			MethodName: "SearchPublic",
+			Handler:    _UserService_SearchPublic_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -24,7 +24,7 @@ service UserService{
                         body: "user"
                 };
         }
-        rpc Search(SearchRequest) returns(SearchResponse) {
+        rpc SearchPublic(SearchPublicRequest) returns(SearchPublicResponse) {
                 option (google.api.http) = {
                         get: "/user"
                 };
@@ -54,12 +54,12 @@ message RegisterResponse {
         string success = 1;
 }
 
-message SearchRequest {
+message SearchPublicRequest {
         string username = 1;
         string name = 2;
 }
 
-message SearchResponse {
+message SearchPublicResponse {
         repeated User users = 1;
 }
 
@@ -83,4 +83,5 @@ message User {
         string skills = 11;
         string interests = 12;
         string password = 13;
+        bool isPrivate = 14;
 }

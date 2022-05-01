@@ -44,8 +44,8 @@ func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
 	return store.filter(filter)
 }
 
-func (store *UserMongoDBStore) Search(username string, name string) ([]*domain.User, error) {
-	filter := bson.M{ "$or": []bson.M{ bson.M{"username": username}, bson.M{"firstname":name} } } 
+func (store *UserMongoDBStore) SearchPublic(username string, name string) ([]*domain.User, error) {
+	filter := bson.M{"isPrivate":false, "$or": []bson.M{ bson.M{"username": username}, bson.M{"firstname":name} } } 
 	return store.filter(filter)
 }
 

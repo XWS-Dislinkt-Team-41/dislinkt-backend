@@ -36,4 +36,5 @@ type User struct {
 	Skills       string             `bson:"skills"`
 	Interests    string             `bson:"interests"`
 	Password     string             `bson:"password"`
+	IsPrivate      bool				`bson:"isPrivate"`
 }

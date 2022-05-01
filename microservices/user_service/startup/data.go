@@ -21,6 +21,7 @@ var users = []*domain.User{
 		Skills:       "Programiranje",
 		Interests:    "Biciklizam",
 		Password:     "123",
+		IsPrivate:    false,
 	},
 	{
 		Id:           getObjectId("623b0cc3a34d25d8567f9f83"),
@@ -36,6 +37,7 @@ var users = []*domain.User{
 		Skills:       "Programiranje",
 		Interests:    "Gejminh",
 		Password:     "123",
+		IsPrivate:    true,
 	},
 }
 

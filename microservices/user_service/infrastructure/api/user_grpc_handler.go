@@ -50,14 +50,14 @@ func (handler *UserHandler) GetAll(ctx context.Context, request *pb.GetAllReques
 	return response, nil
 }
 
-func (handler *UserHandler) Search(ctx context.Context, request *pb.SearchRequest) (*pb.SearchResponse, error) {
+func (handler *UserHandler) SearchPublic(ctx context.Context, request *pb.SearchPublicRequest) (*pb.SearchPublicResponse, error) {
 	name := request.Name
 	username := request.Username
-	users, err := handler.service.Search(username, name)
+	users, err := handler.service.SearchPublic(username, name)
 	if err != nil {
 		return nil, err
 	}
-	response := &pb.SearchResponse{
+	response := &pb.SearchPublicResponse{
 		Users: []*pb.User{},
 	}
 	for _, user := range users {

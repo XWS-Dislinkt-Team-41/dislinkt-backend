@@ -16,4 +16,5 @@ type User struct {
 	Skills       string
 	Interests    string
 	Password     string
+	IsPrivate    bool
 }

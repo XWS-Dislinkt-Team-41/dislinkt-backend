@@ -24,6 +24,7 @@ func mapUser(user *domain.User) *pb.User {
 		Skills:       user.Skills,
 		Interests:    user.Interests,
 		Password:     user.Password,
+		IsPrivate:    user.IsPrivate,
 	}
 	return userPb
 }
@@ -45,6 +46,7 @@ func mapNewUser(userPb *pb.User) *domain.User {
 			Skills:       userPb.Skills,
 			Interests:    userPb.Interests,
 			Password:     userPb.Password,
+			IsPrivate:    userPb.IsPrivate,
 		}
 		return user
 	} else {
@@ -62,6 +64,7 @@ func mapNewUser(userPb *pb.User) *domain.User {
 			Skills:       userPb.Skills,
 			Interests:    userPb.Interests,
 			Password:     userPb.Password,
+			IsPrivate:    userPb.IsPrivate,
 		}
 		return user
 	}
