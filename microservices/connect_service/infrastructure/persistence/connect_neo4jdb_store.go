@@ -12,15 +12,15 @@ const (
 )
 
 type ConnectNeo4jDBStore struct {
-	driver neo4j.Driver
+	driver *neo4j.Driver
 }
 
-func NewConnectNeo4jDBStore(driver neo4j.Driver) domain.ConnectStore {
+func NewConnectNeo4jDBStore(driver *neo4j.Driver) domain.ConnectStore {
 	return &ConnectNeo4jDBStore{driver: driver}
 }
 
 func (store *ConnectNeo4jDBStore) Connect(user, userConnect string) error {
-	session, err := store.driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return err
 	}
@@ -39,7 +39,7 @@ func (store *ConnectNeo4jDBStore) Connect(user, userConnect string) error {
 }
 
 func (store *ConnectNeo4jDBStore) UnConnect(user, userConnect string) error {
-	session, err := store.driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (store *ConnectNeo4jDBStore) UnConnect(user, userConnect string) error {
 }
 
 func (store *ConnectNeo4jDBStore) GetUserConnections(user string) ([]string, error) {
-	session, err := store.driver.NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return nil, err
 	}

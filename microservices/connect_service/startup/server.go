@@ -37,7 +37,7 @@ func (server *Server) Start() {
 	server.startGrpcServer(connectHandler)
 }
 
-func (server *Server) initNeo4jClient() neo4j.Driver {
+func (server *Server) initNeo4jClient() *neo4j.Driver {
 	driver, err := persistence.GetDriver(server.config.ConnectDBHost, server.config.ConnectDBUser, server.config.ConnectDBPass, server.config.ConnectDBPort)
 	if err != nil {
 		log.Fatal(err)
@@ -45,8 +45,16 @@ func (server *Server) initNeo4jClient() neo4j.Driver {
 	return driver
 }
 
-func (server *Server) initConnectStore(driver neo4j.Driver) domain.ConnectStore {
+func (server *Server) initConnectStore(driver *neo4j.Driver) domain.ConnectStore {
 	store := persistence.NewConnectNeo4jDBStore(driver)
+	err := store.Connect("1", "2")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = store.Connect("1", "3")
+	if err != nil {
+		log.Fatal(err)
+	}
 	return store
 }
 

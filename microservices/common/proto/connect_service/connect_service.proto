@@ -10,11 +10,13 @@ service ConnectService{
         rpc Connect(ConnectRequest) returns(EmptyResponse) {
         	option (google.api.http) = {
 			post: "/connect"
+                        body: "*"
 		};
         }
         rpc UnConnect(UnConnectRequest) returns(EmptyResponse) {
         	option (google.api.http) = {
-			delete: "/connect"
+			put: "/connect"
+                        body: "*"
 		};
         }
         rpc GetUserConnections(GetUserConnectionsRequest) returns(GetUserConnectionsResponse) {

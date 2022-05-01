@@ -38,7 +38,14 @@ services:
   connect_db:
     image: neo4j
     container_name: connect_db
+    environment:
+      NEO4J_AUTH: ${CONNECT_DB_USER}/${CONNECT_DB_PASS}
+      # NEO4J_dbms_connector_http_advertised__address: "0.0.0.0:7474"
+      # NEO4J_dbms_connector_bolt_advertised__address: "0.0.0.0:7687"
     restart: on-failure
+    ports:
+      - 7474:7474
+      - 7687:7687
     networks:
       - network
 
