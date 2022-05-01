@@ -2,6 +2,8 @@ package persistence
 
 import (
 	"context"
+	"fmt"
+
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -45,7 +47,7 @@ func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
 }
 
 func (store *UserMongoDBStore) SearchPublic(username string, name string) ([]*domain.User, error) {
-	filter := bson.M{"isPrivate":false, "$or": []bson.M{ bson.M{"username": username}, bson.M{"firstname":name} } } 
+	filter := bson.M{"isPrivate": false, "$or": []bson.M{bson.M{"username": username}, bson.M{"firstname": name}}}
 	return store.filter(filter)
 }
 
@@ -53,22 +55,22 @@ func (store *UserMongoDBStore) Insert(user *domain.User) (string, error) {
 	userInDatabase, err := store.Get(user.Id)
 	user.Id = primitive.NewObjectID()
 	if userInDatabase != nil {
-		return "id exists", nil
+		return "User with the same id already exists.", nil
 	}
 	userInDatabase, err = store.GetByEmail(user.Email)
 	if userInDatabase != nil {
-		return "email exists", nil
+		return "User with this email has already been registered.", nil
 	}
 	userInDatabase, err = store.GetByUsername(user.Username)
 	if userInDatabase != nil {
-		return "username exists", nil
+		return "Username is taken.", nil
 	}
 	result, err := store.users.InsertOne(context.TODO(), user)
 	if err != nil {
-		return "error while inserting", err
+		return "Register error.", err
 	}
 	user.Id = result.InsertedID.(primitive.ObjectID)
-	return "success", nil
+	return "User has been registered.", nil
 }
 
 func (store *UserMongoDBStore) DeleteAll() {
@@ -83,6 +85,76 @@ func (store *UserMongoDBStore) filter(filter interface{}) ([]*domain.User, error
 		return nil, err
 	}
 	return decode(cursor)
+}
+
+func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (string, error) {
+	fmt.Println(user.Id)
+	userInDatabase, err := store.Get(user.Id)
+	if userInDatabase == nil {
+		return "User doesn't exist.", nil
+	}
+	checkUsername, err := store.GetByUsername(user.Username)
+	if checkUsername != nil {
+		if checkUsername.Id != userInDatabase.Id {
+			return "Username is taken.", nil
+		}
+	}
+	userInDatabase.Firstname = user.Firstname
+	userInDatabase.Email = user.Email
+	userInDatabase.MobileNumber = user.MobileNumber
+	userInDatabase.Gender = user.Gender
+	userInDatabase.BirthDay = user.BirthDay
+	userInDatabase.Username = user.Username
+	userInDatabase.Biography = user.Biography
+	filter := bson.M{"_id": userInDatabase.Id}
+	update := bson.M{
+		"$set": userInDatabase,
+	}
+	_, err = store.users.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return "Update failed.", err
+	}
+
+	return "User has been updated.", nil
+}
+
+func (store *UserMongoDBStore) UpdateCareerInfo(user *domain.User) (string, error) {
+	userInDatabase, err := store.Get(user.Id)
+	if userInDatabase == nil {
+		return "User doesn't exist.", nil
+	}
+	userInDatabase.Experience = user.Experience
+	userInDatabase.Education = user.Education
+	filter := bson.M{"_id": userInDatabase.Id}
+	update := bson.M{
+		"$set": userInDatabase,
+	}
+	_, err = store.users.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return "Update failed.", err
+	}
+
+	return "User has been updated.", nil
+}
+
+func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (string, error) {
+
+	userInDatabase, err := store.Get(user.Id)
+	if userInDatabase == nil {
+		return "user doesn't exist", nil
+	}
+	userInDatabase.Skills = user.Skills
+	userInDatabase.Interests = user.Interests
+	filter := bson.M{"_id": userInDatabase.Id}
+	update := bson.M{
+		"$set": userInDatabase,
+	}
+	_, err = store.users.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return "Update failed.", err
+	}
+
+	return "User has been updated.", nil
 }
 
 func (store *UserMongoDBStore) filterOne(filter interface{}) (User *domain.User, err error) {

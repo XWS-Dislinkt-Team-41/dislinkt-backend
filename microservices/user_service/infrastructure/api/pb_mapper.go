@@ -70,6 +70,64 @@ func mapNewUser(userPb *pb.User) *domain.User {
 	}
 }
 
+func mapPersonalInfoUser(userPb *pb.User) *domain.User {
+
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
+
+	if userPb.BirthDay != nil {
+		user := &domain.User{
+			Id:           id,
+			Firstname:    userPb.Firstname,
+			Email:        userPb.Email,
+			MobileNumber: userPb.MobileNumber,
+			Gender:       mapNewGender(userPb.Gender),
+			BirthDay:     userPb.BirthDay.AsTime(),
+			Username:     userPb.Username,
+			Biography:    userPb.Biography,
+			Password:     userPb.Password,
+		}
+		return user
+	} else {
+		user := &domain.User{
+			Id:           id,
+			Firstname:    userPb.Firstname,
+			Email:        userPb.Email,
+			MobileNumber: userPb.MobileNumber,
+			Gender:       mapNewGender(userPb.Gender),
+			BirthDay:     time.Now(),
+			Username:     userPb.Username,
+			Biography:    userPb.Biography,
+			Password:     userPb.Password,
+		}
+		return user
+	}
+}
+
+func mapCareerInfoUser(userPb *pb.User) *domain.User {
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
+
+	user := &domain.User{
+		Id:         id,
+		Experience: userPb.Experience,
+		Education:  userPb.Education,
+		Password:   userPb.Password,
+	}
+	return user
+}
+
+func mapInterestsInfoUser(userPb *pb.User) *domain.User {
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
+
+	user := &domain.User{
+		Id:        id,
+		Skills:    userPb.Skills,
+		Interests: userPb.Interests,
+		Password:  userPb.Password,
+	}
+	return user
+}
+
+
 
 func mapGender(status domain.GenderEnum) pb.User_GenderEnum {
 	switch status {

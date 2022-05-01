@@ -24,12 +24,26 @@ func (service *UserService) GetAll() ([]*domain.User, error) {
 }
 
 func (service *UserService) Register(user *domain.User) (string, error) {
-	success, err := service.store.Insert(user)
-	return success, err
+	message, err := service.store.Insert(user)
+	return message, err
 }
 
 func (service *UserService) SearchPublic(username string, name string) ([]*domain.User, error) {
-	success, err := service.store.SearchPublic(username, name)
-	return success, err
+	message, err := service.store.SearchPublic(username, name)
+	return message, err
 }
 
+func (service *UserService) UpdatePersonalInfo(user *domain.User) (string, error) {
+	message, err := service.store.UpdatePersonalInfo(user)
+	return message, err
+}
+
+func (service *UserService) UpdateCareerInfo(user *domain.User) (string, error) {
+	message, err := service.store.UpdateCareerInfo(user)
+	return message, err
+}
+
+func (service *UserService) UpdateInterestsInfo(user *domain.User) (string, error) {
+	message, err := service.store.UpdateInterestsInfo(user)
+	return message, err
+}

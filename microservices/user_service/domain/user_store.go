@@ -12,4 +12,7 @@ type UserStore interface {
 	Insert(user *User) (string, error)
 	DeleteAll()
 	SearchPublic(username string, name string) ([]*User, error)
+	UpdatePersonalInfo(user *User) (string, error)
+	UpdateCareerInfo(user *User) (string, error)
+	UpdateInterestsInfo(user *User) (string, error)
 }

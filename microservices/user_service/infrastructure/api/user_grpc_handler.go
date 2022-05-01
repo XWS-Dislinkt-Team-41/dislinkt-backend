@@ -69,9 +69,36 @@ func (handler *UserHandler) SearchPublic(ctx context.Context, request *pb.Search
 
 func (handler *UserHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	user := mapNewUser(request.User)
-	successs, err := handler.service.Register(user)
+	message, err := handler.service.Register(user)
 	response := &pb.RegisterResponse{
-		Success: successs,
+		Message: message,
+	}
+	return response, err
+}
+
+func (handler *UserHandler) UpdatePersonalInfo(ctx context.Context, request *pb.UpdatePersonalInfoRequest) (*pb.UpdatePersonalInfoResponse, error) {
+	user := mapPersonalInfoUser(request.User)
+	message, err := handler.service.UpdatePersonalInfo(user)
+	response := &pb.UpdatePersonalInfoResponse{
+		Message: message,
+	}
+	return response, err
+}
+
+func (handler *UserHandler) UpdateCareerInfo(ctx context.Context, request *pb.UpdateCareerInfoRequest) (*pb.UpdateCareerInfoResponse, error) {
+	user := mapCareerInfoUser(request.User)
+	message, err := handler.service.UpdateCareerInfo(user)
+	response := &pb.UpdateCareerInfoResponse{
+		Message: message,
+	}
+	return response, err
+}
+
+func (handler *UserHandler) UpdateInterestsInfo(ctx context.Context, request *pb.UpdateInterestsInfoRequest) (*pb.UpdateInterestsInfoResponse, error) {
+	user := mapInterestsInfoUser(request.User)
+	message, err := handler.service.UpdateInterestsInfo(user)
+	response := &pb.UpdateInterestsInfoResponse{
+		Message: message,
 	}
 	return response, err
 }

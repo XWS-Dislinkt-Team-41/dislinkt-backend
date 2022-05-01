@@ -29,6 +29,24 @@ service UserService{
                         get: "/user"
                 };
         }
+        rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns(UpdatePersonalInfoResponse) {
+                option (google.api.http) = {
+                        put: "/user/personal"
+                        body: "user"
+                };
+        }
+        rpc UpdateCareerInfo(UpdateCareerInfoRequest) returns(UpdateCareerInfoResponse) {
+                option (google.api.http) = {
+                        put: "/user/career"
+                        body: "user"
+                };
+        }
+         rpc UpdateInterestsInfo(UpdateInterestsInfoRequest) returns(UpdateInterestsInfoResponse) {
+                option (google.api.http) = {
+                        put: "/user/interests"
+                        body: "user"
+                };
+        }
 }
 
 message GetRequest {
@@ -51,7 +69,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-        string success = 1;
+        string message = 1;
 }
 
 message SearchPublicRequest {
@@ -63,6 +81,29 @@ message SearchPublicResponse {
         repeated User users = 1;
 }
 
+message UpdatePersonalInfoRequest {
+        User user = 1;
+}
+
+message UpdatePersonalInfoResponse {
+        string message = 1;
+}
+
+message UpdateCareerInfoRequest {
+        User user = 1;
+}
+
+message UpdateCareerInfoResponse {
+        string message = 1;
+}
+
+message UpdateInterestsInfoRequest {
+        User user = 1;
+}
+
+message UpdateInterestsInfoResponse {
+        string message = 1;
+}
 
 
 message User {

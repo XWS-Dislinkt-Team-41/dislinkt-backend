@@ -26,6 +26,9 @@ type UserServiceClient interface {
 	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	SearchPublic(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*SearchPublicResponse, error)
+	UpdatePersonalInfo(ctx context.Context, in *UpdatePersonalInfoRequest, opts ...grpc.CallOption) (*UpdatePersonalInfoResponse, error)
+	UpdateCareerInfo(ctx context.Context, in *UpdateCareerInfoRequest, opts ...grpc.CallOption) (*UpdateCareerInfoResponse, error)
+	UpdateInterestsInfo(ctx context.Context, in *UpdateInterestsInfoRequest, opts ...grpc.CallOption) (*UpdateInterestsInfoResponse, error)
 }
 
 type userServiceClient struct {
@@ -72,6 +75,33 @@ func (c *userServiceClient) SearchPublic(ctx context.Context, in *SearchPublicRe
 	return out, nil
 }
 
+func (c *userServiceClient) UpdatePersonalInfo(ctx context.Context, in *UpdatePersonalInfoRequest, opts ...grpc.CallOption) (*UpdatePersonalInfoResponse, error) {
+	out := new(UpdatePersonalInfoResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/UpdatePersonalInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateCareerInfo(ctx context.Context, in *UpdateCareerInfoRequest, opts ...grpc.CallOption) (*UpdateCareerInfoResponse, error) {
+	out := new(UpdateCareerInfoResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/UpdateCareerInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) UpdateInterestsInfo(ctx context.Context, in *UpdateInterestsInfoRequest, opts ...grpc.CallOption) (*UpdateInterestsInfoResponse, error) {
+	out := new(UpdateInterestsInfoResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/UpdateInterestsInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -80,6 +110,9 @@ type UserServiceServer interface {
 	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	SearchPublic(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error)
+	UpdatePersonalInfo(context.Context, *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error)
+	UpdateCareerInfo(context.Context, *UpdateCareerInfoRequest) (*UpdateCareerInfoResponse, error)
+	UpdateInterestsInfo(context.Context, *UpdateInterestsInfoRequest) (*UpdateInterestsInfoResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -98,6 +131,15 @@ func (UnimplementedUserServiceServer) Register(context.Context, *RegisterRequest
 }
 func (UnimplementedUserServiceServer) SearchPublic(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchPublic not implemented")
+}
+func (UnimplementedUserServiceServer) UpdatePersonalInfo(context.Context, *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePersonalInfo not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateCareerInfo(context.Context, *UpdateCareerInfoRequest) (*UpdateCareerInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCareerInfo not implemented")
+}
+func (UnimplementedUserServiceServer) UpdateInterestsInfo(context.Context, *UpdateInterestsInfoRequest) (*UpdateInterestsInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateInterestsInfo not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -184,6 +226,60 @@ func _UserService_SearchPublic_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_UpdatePersonalInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePersonalInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdatePersonalInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/UpdatePersonalInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdatePersonalInfo(ctx, req.(*UpdatePersonalInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateCareerInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCareerInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateCareerInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/UpdateCareerInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateCareerInfo(ctx, req.(*UpdateCareerInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_UpdateInterestsInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateInterestsInfoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).UpdateInterestsInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/UpdateInterestsInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).UpdateInterestsInfo(ctx, req.(*UpdateInterestsInfoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +302,18 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchPublic",
 			Handler:    _UserService_SearchPublic_Handler,
+		},
+		{
+			MethodName: "UpdatePersonalInfo",
+			Handler:    _UserService_UpdatePersonalInfo_Handler,
+		},
+		{
+			MethodName: "UpdateCareerInfo",
+			Handler:    _UserService_UpdateCareerInfo_Handler,
+		},
+		{
+			MethodName: "UpdateInterestsInfo",
+			Handler:    _UserService_UpdateInterestsInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
