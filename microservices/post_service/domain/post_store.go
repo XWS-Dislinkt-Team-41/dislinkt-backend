@@ -7,6 +7,6 @@ import (
 type PostStore interface {
 	Get(id primitive.ObjectID) (*Post, error)
 	GetAll() ([]*Post, error)
-	Insert(post *Post) error
+	Insert(post *Post) (*Post, error)
 	DeleteAll()
 }

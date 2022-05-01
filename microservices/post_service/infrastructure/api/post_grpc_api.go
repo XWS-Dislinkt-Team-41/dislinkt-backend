@@ -7,6 +7,7 @@ import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/application"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
 type PostHandler struct {
 	pb.UnimplementedPostServiceServer
 	service *application.PostService
@@ -48,4 +49,13 @@ func (handler *PostHandler) GetAll(ctx context.Context, request *pb.GetAllReques
 		response.Posts = append(response.Posts, current)
 	}
 	return response, nil
+}
+
+func (handler *PostHandler) Insert(ctx context.Context, request *pb.NewPostRequest) (*pb.NewPostResponse, error) {
+	post := mapNewPost(request.Post)
+	newPost, err := handler.service.Insert(post)
+	response := &pb.NewPostResponse{
+		Post: mapPost(newPost),
+	}
+	return response, err
 }

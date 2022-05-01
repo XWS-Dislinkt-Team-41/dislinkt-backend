@@ -8,13 +8,13 @@ import (
 var posts = []*domain.Post{
 	{
 		Id:            getObjectId("623b0cc3a34d25d8567f9f82"),
-		Name:          "name",
-		ClothingBrand: "brand",
 	},
 	{
 		Id:            getObjectId("623b0cc3a34d25d8567f9f83"),
-		Name:          "name2",
-		ClothingBrand: "brand2",
+	
+	},
+		{
+		Id:            getObjectId("123"),
 	},
 }
 

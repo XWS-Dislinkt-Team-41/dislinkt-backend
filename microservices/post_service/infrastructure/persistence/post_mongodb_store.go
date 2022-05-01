@@ -11,23 +11,28 @@ import (
 
 const (
 	DATABASE   = "post"
-	COLLECTION = "posts-"
+	COLLECTION = "posts"
 )
 
 type PostMongoDBStore struct {
-	posts *mongo.Collection
+	dbPost *mongo.Database
 }
 
 func NewPostMongoDBStore(client *mongo.Client) domain.PostStore {
-	posts := client.Database(DATABASE).Collection(COLLECTION)
+
+	dbPost := client.Database(DATABASE)
 	return &PostMongoDBStore{
-		posts: posts,
+		dbPost: dbPost,
 	}
 }
 
-func (store *PostMongoDBStore) Get(id primitive.ObjectID) (*domain.Post, error) {
+func (store *PostMongoDBStore) Get(id primitive.ObjectID) (post *domain.Post, err error) {
+
 	filter := bson.M{"_id": id}
-	return store.filterOne(filter)
+	posts := store.dbPost.Collection(COLLECTION + id.Hex())
+	result := posts.FindOne(context.TODO(), filter)
+	err = result.Decode(&post)
+	return
 }
 
 func (store *PostMongoDBStore) GetAll() ([]*domain.Post, error) {
@@ -35,33 +40,33 @@ func (store *PostMongoDBStore) GetAll() ([]*domain.Post, error) {
 	return store.filter(filter)
 }
 
-func (store *PostMongoDBStore) Insert(post *domain.Post) error {
-	result, err := store.posts.InsertOne(context.TODO(), post)
+func (store *PostMongoDBStore) Insert(post *domain.Post) (*domain.Post, error) {
+
+	posts := store.dbPost.Collection(COLLECTION + "623b0cc3a34d25d8567f9f82")
+	result, err := posts.InsertOne(context.TODO(), post)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	post.Id = result.InsertedID.(primitive.ObjectID)
-	return nil
+	return post, nil
 }
 
 func (store *PostMongoDBStore) DeleteAll() {
-	store.posts.DeleteMany(context.TODO(), bson.D{{}})
+	// posts := store.dbPost.Collection(COLLECTION+"123")
+	// posts.DeleteMany(context.TODO(), bson.D{{}})
+
+	store.dbPost.Collection(COLLECTION+"623b0cc3a34d25d8567f9f82").DeleteMany(context.TODO(), bson.D{{}})
 }
 
 func (store *PostMongoDBStore) filter(filter interface{}) ([]*domain.Post, error) {
-	cursor, err := store.posts.Find(context.TODO(), filter)
+	posts := store.dbPost.Collection(COLLECTION + "623b0cc3a34d25d8567f9f82")
+	cursor, err := posts.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())
 
 	if err != nil {
 		return nil, err
 	}
 	return decode(cursor)
-}
-
-func (store *PostMongoDBStore) filterOne(filter interface{}) (post *domain.Post, err error) {
-	result := store.posts.FindOne(context.TODO(), filter)
-	err = result.Decode(&post)
-	return
 }
 
 func decode(cursor *mongo.Cursor) (posts []*domain.Post, err error) {

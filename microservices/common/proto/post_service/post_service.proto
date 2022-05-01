@@ -17,6 +17,12 @@ service PostService{
 			get: "/post"
 		};
         }
+          rpc Insert(NewPostRequest) returns(NewPostResponse) {
+                option (google.api.http) = {
+                        post: "/user/{id}/post",
+                        body: "post"
+                };
+        }
 }
 
 message GetRequest {
@@ -36,7 +42,29 @@ message GetAllResponse {
 
 message Post {
         string id = 1;
-        string name = 2;
-        string clothingBrand = 3;
+        string text = 2;
+        string link = 3;
+        string image = 4;
+        string owner_id  = 5;
+        int64 likes = 6;
+        int64 dislikes = 7;
+        repeated Comment comments = 8;
 }
 
+
+message NewPostRequest {
+        string id = 1;
+        Post post = 2;
+}
+
+message NewPostResponse {
+        Post post = 1;
+}
+
+
+
+
+message Comment {
+string code = 1;
+string text = 2;
+}
