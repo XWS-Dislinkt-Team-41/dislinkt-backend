@@ -5,6 +5,7 @@ import (
 
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/application"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -81,6 +82,32 @@ func (handler *PostHandler) InsertComment(ctx context.Context, request *pb.Comme
 	newComment, err := handler.service.InsertComment(objectId, objectPostId, mapCommentRequest(request.Comment))
 	response := &pb.CommentOnPostResponse{
 		Comment: mapComment(newComment),
+	}
+	return response, err
+}
+
+func (handler *PostHandler) InsertReaction(ctx context.Context, request *pb.ReactionOnPostRequest) (*pb.GetResponse, error) {
+	objectId, err := primitive.ObjectIDFromHex(request.Id)
+	if err != nil {
+		return nil, err
+	}
+	objectPostId, err := primitive.ObjectIDFromHex(request.PostId)
+	if err != nil {
+		return nil, err
+	}
+	var updatedPost *domain.Post
+	var err1 error
+	if request.Type == "like" {
+		updatedPost, err1 = handler.service.UpdateLikes(objectId, objectPostId)
+	}
+	if request.Type == "dislike" {
+		updatedPost, err1 = handler.service.UpdateDislikes(objectId, objectPostId)
+	}
+	if err1 != nil {
+		return nil, err1
+	}
+	response := &pb.GetResponse{
+		Post: mapPost(updatedPost),
 	}
 	return response, err
 }

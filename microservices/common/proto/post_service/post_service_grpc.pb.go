@@ -27,6 +27,7 @@ type PostServiceClient interface {
 	GetAllFromCollection(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	Insert(ctx context.Context, in *NewPostRequest, opts ...grpc.CallOption) (*NewPostResponse, error)
 	InsertComment(ctx context.Context, in *CommentOnPostRequest, opts ...grpc.CallOption) (*CommentOnPostResponse, error)
+	InsertReaction(ctx context.Context, in *ReactionOnPostRequest, opts ...grpc.CallOption) (*GetResponse, error)
 }
 
 type postServiceClient struct {
@@ -82,6 +83,15 @@ func (c *postServiceClient) InsertComment(ctx context.Context, in *CommentOnPost
 	return out, nil
 }
 
+func (c *postServiceClient) InsertReaction(ctx context.Context, in *ReactionOnPostRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+	out := new(GetResponse)
+	err := c.cc.Invoke(ctx, "/post.PostService/InsertReaction", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PostServiceServer is the server API for PostService service.
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility
@@ -91,6 +101,7 @@ type PostServiceServer interface {
 	GetAllFromCollection(context.Context, *GetRequest) (*GetAllResponse, error)
 	Insert(context.Context, *NewPostRequest) (*NewPostResponse, error)
 	InsertComment(context.Context, *CommentOnPostRequest) (*CommentOnPostResponse, error)
+	InsertReaction(context.Context, *ReactionOnPostRequest) (*GetResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -112,6 +123,9 @@ func (UnimplementedPostServiceServer) Insert(context.Context, *NewPostRequest) (
 }
 func (UnimplementedPostServiceServer) InsertComment(context.Context, *CommentOnPostRequest) (*CommentOnPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InsertComment not implemented")
+}
+func (UnimplementedPostServiceServer) InsertReaction(context.Context, *ReactionOnPostRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InsertReaction not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 
@@ -216,6 +230,24 @@ func _PostService_InsertComment_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_InsertReaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReactionOnPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).InsertReaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/post.PostService/InsertReaction",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).InsertReaction(ctx, req.(*ReactionOnPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // PostService_ServiceDesc is the grpc.ServiceDesc for PostService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +274,10 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "InsertComment",
 			Handler:    _PostService_InsertComment_Handler,
+		},
+		{
+			MethodName: "InsertReaction",
+			Handler:    _PostService_InsertReaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

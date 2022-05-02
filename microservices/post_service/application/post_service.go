@@ -15,7 +15,7 @@ func NewPostService(store domain.PostStore) *PostService {
 	}
 }
 
-func (service *PostService) Get(id primitive.ObjectID, post_id primitive.ObjectID) (*domain.Post, error) {
+func (service *PostService) Get(id, post_id primitive.ObjectID) (*domain.Post, error) {
 	return service.store.Get(id, post_id)
 }
 
@@ -41,4 +41,20 @@ func (service *PostService) InsertComment(id primitive.ObjectID, post_id primiti
 		return nil, err
 	}
 	return newComment, nil
+}
+
+func (service *PostService) UpdateLikes(id, post_id primitive.ObjectID) (*domain.Post, error) {
+	updatedPost, err := service.store.UpdateLikes(id, post_id)
+	if err != nil {
+		return nil, err
+	}
+	return updatedPost, nil
+}
+
+func (service *PostService) UpdateDislikes(id, post_id primitive.ObjectID) (*domain.Post, error) {
+	updatedPost, err := service.store.UpdateDislikes(id, post_id)
+	if err != nil {
+		return nil, err
+	}
+	return updatedPost, nil
 }

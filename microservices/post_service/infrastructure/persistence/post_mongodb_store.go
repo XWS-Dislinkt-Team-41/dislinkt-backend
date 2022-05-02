@@ -94,6 +94,56 @@ func (store *PostMongoDBStore) InsertComment(id primitive.ObjectID, post_id prim
 
 }
 
+func (store *PostMongoDBStore) UpdateLikes(id primitive.ObjectID, post_id primitive.ObjectID) (*domain.Post, error) {
+	post, err := store.Get(id, post_id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	post.Likes = post.Likes + 1
+
+	filter := bson.M{"_id": post_id}
+	update := bson.D{
+		{"$set", bson.D{{"likes", post.Likes}}},
+	}
+
+	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).UpdateOne(context.TODO(), filter,
+		update)
+	if err != nil {
+		return nil, err
+	}
+	if insertResult.MatchedCount != 1 {
+		log.Fatal(err, "one document should've been updated")
+		return nil, err
+	}
+	return post, err
+
+}
+
+func (store *PostMongoDBStore) UpdateDislikes(id primitive.ObjectID, post_id primitive.ObjectID) (*domain.Post, error) {
+	post, err := store.Get(id, post_id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	post.Dislikes = post.Dislikes + 1
+
+	filter := bson.M{"_id": post_id}
+	update := bson.D{
+		{"$set", bson.D{{"dislikes", post.Dislikes}}},
+	}
+
+	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).UpdateOne(context.TODO(), filter,
+		update)
+	if err != nil {
+		return nil, err
+	}
+	if insertResult.MatchedCount != 1 {
+		log.Fatal(err, "one document should've been updated")
+		return nil, err
+	}
+	return post, err
+
+}
+
 func (store *PostMongoDBStore) DeleteAll() {
 
 	store.dbPost.Collection(COLLECTION+"000000000000000000000000").DeleteMany(context.TODO(), bson.D{{}})

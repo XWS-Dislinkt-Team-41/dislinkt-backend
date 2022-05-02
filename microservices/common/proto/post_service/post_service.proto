@@ -35,6 +35,12 @@ service PostService{
                 };
         }
 
+        rpc InsertReaction(ReactionOnPostRequest) returns(GetResponse) {
+                option (google.api.http) = {
+                        put: "/user/{id}/post/{post_id}/reaction/{type}",
+                };
+        }
+
 }
 
 message GetRequest {
@@ -95,4 +101,10 @@ message CommentOnPostRequest{
 
 message CommentOnPostResponse{
         Comment comment=1;
+}
+
+message ReactionOnPostRequest{
+        string id = 1;
+        string post_id = 2;
+        string type = 3;
 }
