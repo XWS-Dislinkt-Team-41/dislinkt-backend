@@ -70,23 +70,27 @@ func (store *PostMongoDBStore) Insert(id primitive.ObjectID, post *domain.Post) 
 }
 
 func (store *PostMongoDBStore) InsertComment(id primitive.ObjectID, post_id primitive.ObjectID, comment *domain.Comment) (*domain.Comment, error) {
+	post, err := store.Get(id, post_id)
+	if err != nil {
+		log.Fatal(err)
+	}
+	post.Comments = append(post.Comments, *comment)
 
-	// insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).UpdateOne(context.TODO(), &domain.Post{
-	// 	Id:       primitive.NewObjectID(),
-	// 	Text:     post.Text,
-	// 	Link:     post.Link,
-	// 	Image:    post.Image,
-	// 	OwnerId:  post.OwnerId,
-	// 	Likes:    post.Likes,
-	// 	Dislikes: post.Dislikes,
-	// })
-	// if err != nil {
-	// 	log.Fatal(err, "Greskaaaa")
-	// }
+	filter := bson.M{"_id": post_id}
+	update := bson.D{
+		{"$set", bson.D{{"comments", post.Comments}}},
+	}
 
-	// fmt.Println("Inserted a single document: ", insertResult.InsertedID)
-
-	return comment, nil
+	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).UpdateOne(context.TODO(), filter,
+		update)
+	if err != nil {
+		return nil, err
+	}
+	if insertResult.MatchedCount != 1 {
+		log.Fatal(err, "one document should've been updated")
+		return nil, err
+	}
+	return comment, err
 
 }
 

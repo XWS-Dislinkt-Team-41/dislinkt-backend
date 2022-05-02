@@ -3,8 +3,8 @@ package domain
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type Comment struct {
-	Code string `bson:"_id"`
-	Text string `bson:"_id"`
+	Code string `bson:"code"`
+	Text string `bson:"text"`
 }
 
 type Post struct {
