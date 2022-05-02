@@ -15,8 +15,7 @@ service ConnectService{
         }
         rpc UnConnect(UnConnectRequest) returns(EmptyResponse) {
         	option (google.api.http) = {
-			put: "/connect"
-                        body: "*"
+			delete: "/connect/{user}/{userConnect}"
 		};
         }
         rpc GetUserConnections(GetUserConnectionsRequest) returns(GetUserConnectionsResponse) {

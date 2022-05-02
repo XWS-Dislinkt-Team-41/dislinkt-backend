@@ -9,7 +9,6 @@ import (
 func GetDriver(host, username, password, port string) (*neo4j.Driver, error) {
 	uri := fmt.Sprintf("bolt://%s:%s/", host, port)
 	driver, err := neo4j.NewDriver(uri, neo4j.BasicAuth(username, password, ""), func(config *neo4j.Config) {
-		config.Log = neo4j.ConsoleLogger(neo4j.ERROR)
 		config.Encrypted = false
 	})
 	if err != nil {

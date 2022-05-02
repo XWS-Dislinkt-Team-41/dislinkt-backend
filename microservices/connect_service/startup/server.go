@@ -47,14 +47,6 @@ func (server *Server) initNeo4jClient() *neo4j.Driver {
 
 func (server *Server) initConnectStore(driver *neo4j.Driver) domain.ConnectStore {
 	store := persistence.NewConnectNeo4jDBStore(driver)
-	err := store.Connect("1", "2")
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = store.Connect("1", "3")
-	if err != nil {
-		log.Fatal(err)
-	}
 	return store
 }
 

@@ -30,8 +30,8 @@ services:
       - ${GATEWAY_PORT}:${GATEWAY_PORT}
     environment:
       GATEWAY_PORT: ${GATEWAY_PORT}
-      CONNECT_DB_HOST: ${CONNECT_DB_HOST}
-      CONNECT_DB_PORT: ${CONNECT_DB_PORT} 
+      CONNECT_SERVICE_HOST: ${CONNECT_SERVICE_HOST}
+      CONNECT_SERVICE_PORT: ${CONNECT_SERVICE_PORT} 
     networks:
       - network
 
@@ -40,12 +40,10 @@ services:
     container_name: connect_db
     environment:
       NEO4J_AUTH: ${CONNECT_DB_USER}/${CONNECT_DB_PASS}
-      # NEO4J_dbms_connector_http_advertised__address: "0.0.0.0:7474"
-      # NEO4J_dbms_connector_bolt_advertised__address: "0.0.0.0:7687"
     restart: on-failure
     ports:
-      - 7474:7474
-      - 7687:7687
+      - ${CONNECT_DB_HTTP_PORT}:${CONNECT_DB_HTTP_PORT}
+      - ${CONNECT_DB_PORT}:${CONNECT_DB_PORT}
     networks:
       - network
 
