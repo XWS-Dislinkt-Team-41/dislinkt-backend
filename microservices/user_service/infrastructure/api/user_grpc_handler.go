@@ -50,6 +50,22 @@ func (handler *UserHandler) GetAll(ctx context.Context, request *pb.GetAllReques
 	return response, nil
 }
 
+func (handler *UserHandler) IsPrivate(ctx context.Context, request *pb.IsPrivateRequest) (*pb.IsPrivateResponse, error) {
+	id := request.Id
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+	isPrivate, err := handler.service.IsPrivate(objectId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.IsPrivateResponse{
+		Private : isPrivate,
+	}
+	return response, nil
+}
+
 func (handler *UserHandler) SearchPublic(ctx context.Context, request *pb.SearchPublicRequest) (*pb.SearchPublicResponse, error) {
 	name := request.Name
 	username := request.Username

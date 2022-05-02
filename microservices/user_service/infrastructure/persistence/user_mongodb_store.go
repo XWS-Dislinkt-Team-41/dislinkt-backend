@@ -41,6 +41,12 @@ func (store *UserMongoDBStore) Get(id primitive.ObjectID) (*domain.User, error) 
 	return store.filterOne(filter)
 }
 
+func (store *UserMongoDBStore) IsPrivate(id primitive.ObjectID) (bool, error) {
+	filter := bson.M{"_id":id}
+	result, error := store.filterOne(filter)
+	return result.IsPrivate, error
+}
+
 func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
 	filter := bson.D{{}}
 	return store.filter(filter)

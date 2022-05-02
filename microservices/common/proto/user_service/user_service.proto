@@ -18,6 +18,11 @@ service UserService{
 			get: "/user/users"
 		};
         }
+        rpc IsPrivate(IsPrivateRequest) returns(IsPrivateResponse) {
+        	option (google.api.http) = {
+			get: "/isUserPrivate/{id}"
+		};
+        }
         rpc Register(RegisterRequest) returns(RegisterResponse) {
                 option (google.api.http) = {
                         post: "/user"
@@ -62,6 +67,14 @@ message GetAllRequest {
 
 message GetAllResponse {
         repeated User users = 1;
+}
+
+message IsPrivateRequest {
+        string id = 1;
+}
+
+message IsPrivateResponse {
+        bool private = 1;
 }
 
 message RegisterRequest {
@@ -125,4 +138,8 @@ message User {
         string interests = 12;
         string password = 13;
         bool isPrivate = 14;
+}
+
+message isPrivate {
+        bool isPrivate = 1; 
 }

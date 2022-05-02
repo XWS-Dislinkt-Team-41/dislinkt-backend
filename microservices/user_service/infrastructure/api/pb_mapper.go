@@ -127,8 +127,6 @@ func mapInterestsInfoUser(userPb *pb.User) *domain.User {
 	return user
 }
 
-
-
 func mapGender(status domain.GenderEnum) pb.User_GenderEnum {
 	switch status {
 	case domain.Male:

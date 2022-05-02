@@ -23,6 +23,10 @@ func (service *UserService) GetAll() ([]*domain.User, error) {
 	return service.store.GetAll()
 }
 
+func (service *UserService) IsPrivate(id primitive.ObjectID) (bool, error) {
+	return service.store.IsPrivate(id)
+}
+
 func (service *UserService) Register(user *domain.User) (string, error) {
 	message, err := service.store.Insert(user)
 	return message, err
