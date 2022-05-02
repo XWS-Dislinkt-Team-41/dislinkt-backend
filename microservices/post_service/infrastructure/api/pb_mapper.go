@@ -3,6 +3,7 @@ package api
 import (
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func mapPost(post *domain.Post) *pb.Post {
@@ -24,8 +25,17 @@ func mapPost(post *domain.Post) *pb.Post {
 	return postPb
 }
 
-func mapNewPost(postPb *pb.Post) *domain.Post {
-	post := &domain.Post{
+func mapPostRequest(postPb *pb.Post) *domain.Post {
+	id, _ := primitive.ObjectIDFromHex(postPb.Id)
+	ownerId, _ := primitive.ObjectIDFromHex(postPb.OwnerId)
+	Post := &domain.Post{
+		Id:       id,
+		Text:     postPb.Text,
+		Link:     postPb.Link,
+		Image:    postPb.Image,
+		OwnerId:  ownerId,
+		Likes:    postPb.Likes,
+		Dislikes: postPb.Dislikes,
 		Comments: make([]domain.Comment, 0),
 	}
 	for _, commentPb := range postPb.Comments {
@@ -33,7 +43,23 @@ func mapNewPost(postPb *pb.Post) *domain.Post {
 			Code: commentPb.Code,
 			Text: commentPb.Text,
 		}
-		post.Comments = append(post.Comments, comment)
+		Post.Comments = append(Post.Comments, comment)
 	}
-	return post
+	return Post
+}
+
+func mapCommentRequest(commentPb *pb.Comment) *domain.Comment {
+	Comment := &domain.Comment{
+		Code: commentPb.Code,
+		Text: commentPb.Text,
+	}
+	return Comment
+}
+
+func mapComment(commentPb *domain.Comment) *pb.Comment {
+	Comment := &pb.Comment{
+		Code: commentPb.Code,
+		Text: commentPb.Text,
+	}
+	return Comment
 }

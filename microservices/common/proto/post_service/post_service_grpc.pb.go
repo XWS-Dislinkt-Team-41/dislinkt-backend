@@ -22,9 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostServiceClient interface {
-	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	Get(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
+	GetAllFromCollection(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	Insert(ctx context.Context, in *NewPostRequest, opts ...grpc.CallOption) (*NewPostResponse, error)
+	InsertComment(ctx context.Context, in *CommentOnPostRequest, opts ...grpc.CallOption) (*CommentOnPostResponse, error)
 }
 
 type postServiceClient struct {
@@ -35,7 +37,7 @@ func NewPostServiceClient(cc grpc.ClientConnInterface) PostServiceClient {
 	return &postServiceClient{cc}
 }
 
-func (c *postServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+func (c *postServiceClient) Get(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetResponse, error) {
 	out := new(GetResponse)
 	err := c.cc.Invoke(ctx, "/post.PostService/Get", in, out, opts...)
 	if err != nil {
@@ -53,9 +55,27 @@ func (c *postServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts 
 	return out, nil
 }
 
+func (c *postServiceClient) GetAllFromCollection(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
+	out := new(GetAllResponse)
+	err := c.cc.Invoke(ctx, "/post.PostService/GetAllFromCollection", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *postServiceClient) Insert(ctx context.Context, in *NewPostRequest, opts ...grpc.CallOption) (*NewPostResponse, error) {
 	out := new(NewPostResponse)
 	err := c.cc.Invoke(ctx, "/post.PostService/Insert", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postServiceClient) InsertComment(ctx context.Context, in *CommentOnPostRequest, opts ...grpc.CallOption) (*CommentOnPostResponse, error) {
+	out := new(CommentOnPostResponse)
+	err := c.cc.Invoke(ctx, "/post.PostService/InsertComment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +86,11 @@ func (c *postServiceClient) Insert(ctx context.Context, in *NewPostRequest, opts
 // All implementations must embed UnimplementedPostServiceServer
 // for forward compatibility
 type PostServiceServer interface {
-	Get(context.Context, *GetRequest) (*GetResponse, error)
+	Get(context.Context, *GetPostRequest) (*GetResponse, error)
 	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
+	GetAllFromCollection(context.Context, *GetRequest) (*GetAllResponse, error)
 	Insert(context.Context, *NewPostRequest) (*NewPostResponse, error)
+	InsertComment(context.Context, *CommentOnPostRequest) (*CommentOnPostResponse, error)
 	mustEmbedUnimplementedPostServiceServer()
 }
 
@@ -76,14 +98,20 @@ type PostServiceServer interface {
 type UnimplementedPostServiceServer struct {
 }
 
-func (UnimplementedPostServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
+func (UnimplementedPostServiceServer) Get(context.Context, *GetPostRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedPostServiceServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
+func (UnimplementedPostServiceServer) GetAllFromCollection(context.Context, *GetRequest) (*GetAllResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllFromCollection not implemented")
+}
 func (UnimplementedPostServiceServer) Insert(context.Context, *NewPostRequest) (*NewPostResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Insert not implemented")
+}
+func (UnimplementedPostServiceServer) InsertComment(context.Context, *CommentOnPostRequest) (*CommentOnPostResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InsertComment not implemented")
 }
 func (UnimplementedPostServiceServer) mustEmbedUnimplementedPostServiceServer() {}
 
@@ -99,7 +127,7 @@ func RegisterPostServiceServer(s grpc.ServiceRegistrar, srv PostServiceServer) {
 }
 
 func _PostService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetRequest)
+	in := new(GetPostRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -111,7 +139,7 @@ func _PostService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 		FullMethod: "/post.PostService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).Get(ctx, req.(*GetRequest))
+		return srv.(PostServiceServer).Get(ctx, req.(*GetPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -134,6 +162,24 @@ func _PostService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _PostService_GetAllFromCollection_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).GetAllFromCollection(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/post.PostService/GetAllFromCollection",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).GetAllFromCollection(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _PostService_Insert_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NewPostRequest)
 	if err := dec(in); err != nil {
@@ -148,6 +194,24 @@ func _PostService_Insert_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(PostServiceServer).Insert(ctx, req.(*NewPostRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostService_InsertComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CommentOnPostRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostServiceServer).InsertComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/post.PostService/InsertComment",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostServiceServer).InsertComment(ctx, req.(*CommentOnPostRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -168,8 +232,16 @@ var PostService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _PostService_GetAll_Handler,
 		},
 		{
+			MethodName: "GetAllFromCollection",
+			Handler:    _PostService_GetAllFromCollection_Handler,
+		},
+		{
 			MethodName: "Insert",
 			Handler:    _PostService_Insert_Handler,
+		},
+		{
+			MethodName: "InsertComment",
+			Handler:    _PostService_InsertComment_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

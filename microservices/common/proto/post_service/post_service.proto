@@ -7,9 +7,9 @@ package post;
 import "google/api/annotations.proto";
 
 service PostService{
-        rpc Get(GetRequest) returns(GetResponse) {
+        rpc Get(GetPostRequest) returns(GetResponse) {
         	option (google.api.http) = {
-			get: "/post/{id}"
+			get: "/user/{id}/post/{post_id}"
 		};
         }
         rpc GetAll(GetAllRequest) returns(GetAllResponse) {
@@ -17,12 +17,24 @@ service PostService{
 			get: "/post"
 		};
         }
-          rpc Insert(NewPostRequest) returns(NewPostResponse) {
+        rpc GetAllFromCollection(GetRequest) returns(GetAllResponse) {
+                option (google.api.http) = {
+                        get: "/user/{id}/post"
+                };
+        }
+        rpc Insert(NewPostRequest) returns(NewPostResponse) {
                 option (google.api.http) = {
                         post: "/user/{id}/post",
                         body: "post"
                 };
         }
+        rpc InsertComment(CommentOnPostRequest) returns(CommentOnPostResponse) {
+                option (google.api.http) = {
+                        post: "/user/{id}/post/{post_id}/comment",
+                        body: "comment"
+                };
+        }
+
 }
 
 message GetRequest {
@@ -51,6 +63,14 @@ message Post {
         repeated Comment comments = 8;
 }
 
+message GetPostRequest {
+        string id = 1;
+        string post_id = 2;
+}
+
+message GetPostResponse {
+        Post post = 1;
+}
 
 message NewPostRequest {
         string id = 1;
@@ -62,9 +82,17 @@ message NewPostResponse {
 }
 
 
-
-
 message Comment {
 string code = 1;
 string text = 2;
+}
+
+message CommentOnPostRequest{
+        string id = 1;
+        string post_id = 2;
+        Comment comment = 3;
+}
+
+message CommentOnPostResponse{
+        Comment comment=1;
 }

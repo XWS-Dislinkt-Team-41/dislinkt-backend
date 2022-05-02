@@ -5,16 +5,18 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var posts = []*domain.Post{
+var posts = []domain.Post{
 	{
-		Id:            getObjectId("623b0cc3a34d25d8567f9f82"),
+
+		Id: getObjectId("623b0cc3a34d25d8567f9f82"),
 	},
 	{
-		Id:            getObjectId("623b0cc3a34d25d8567f9f83"),
-	
+
+		Id: getObjectId("623b0cc3a34d25d8567f9f83"),
 	},
-		{
-		Id:            getObjectId("123"),
+	{
+
+		Id: getObjectId("623b0cc3a34d25d8567f9f83"),
 	},
 }
 

@@ -15,17 +15,30 @@ func NewPostService(store domain.PostStore) *PostService {
 	}
 }
 
-func (service *PostService) Get(id primitive.ObjectID) (*domain.Post, error) {
-	return service.store.Get(id)
+func (service *PostService) Get(id primitive.ObjectID, post_id primitive.ObjectID) (*domain.Post, error) {
+	return service.store.Get(id, post_id)
 }
 
 func (service *PostService) GetAll() ([]*domain.Post, error) {
 	return service.store.GetAll()
 }
-func (service *PostService) Insert(post *domain.Post) (*domain.Post, error) {
-	post, err := service.store.Insert(post)
+
+func (service *PostService) GetAllFromCollection(id primitive.ObjectID) ([]*domain.Post, error) {
+	return service.store.GetAllFromCollection(id)
+}
+
+func (service *PostService) Insert(id primitive.ObjectID, post *domain.Post) (*domain.Post, error) {
+	newPost, err := service.store.Insert(post.Id, post)
 	if err != nil {
 		return nil, err
 	}
-	return post, nil
+	return newPost, nil
+}
+
+func (service *PostService) InsertComment(id primitive.ObjectID, post_id primitive.ObjectID, comment *domain.Comment) (*domain.Comment, error) {
+	newComment, err := service.store.InsertComment(id, post_id, comment)
+	if err != nil {
+		return nil, err
+	}
+	return newComment, nil
 }

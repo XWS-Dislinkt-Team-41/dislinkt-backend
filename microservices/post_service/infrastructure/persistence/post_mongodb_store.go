@@ -2,6 +2,9 @@ package persistence
 
 import (
 	"context"
+	"log"
+
+	"fmt"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -26,9 +29,9 @@ func NewPostMongoDBStore(client *mongo.Client) domain.PostStore {
 	}
 }
 
-func (store *PostMongoDBStore) Get(id primitive.ObjectID) (post *domain.Post, err error) {
+func (store *PostMongoDBStore) Get(id primitive.ObjectID, post_id primitive.ObjectID) (post *domain.Post, err error) {
 
-	filter := bson.M{"_id": id}
+	filter := bson.M{"_id": post_id}
 	posts := store.dbPost.Collection(COLLECTION + id.Hex())
 	result := posts.FindOne(context.TODO(), filter)
 	err = result.Decode(&post)
@@ -37,29 +40,63 @@ func (store *PostMongoDBStore) Get(id primitive.ObjectID) (post *domain.Post, er
 
 func (store *PostMongoDBStore) GetAll() ([]*domain.Post, error) {
 	filter := bson.D{{}}
-	return store.filter(filter)
+	return store.filter(filter, "000000000000000000000000")
 }
 
-func (store *PostMongoDBStore) Insert(post *domain.Post) (*domain.Post, error) {
+func (store *PostMongoDBStore) GetAllFromCollection(id primitive.ObjectID) (post []*domain.Post, err error) {
 
-	posts := store.dbPost.Collection(COLLECTION + "623b0cc3a34d25d8567f9f82")
-	result, err := posts.InsertOne(context.TODO(), post)
+	filter := bson.D{{}}
+	return store.filter(filter, id.Hex())
+}
+
+func (store *PostMongoDBStore) Insert(id primitive.ObjectID, post *domain.Post) (*domain.Post, error) {
+
+	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).InsertOne(context.TODO(), &domain.Post{
+		Id:       primitive.NewObjectID(),
+		Text:     post.Text,
+		Link:     post.Link,
+		Image:    post.Image,
+		OwnerId:  post.OwnerId,
+		Likes:    post.Likes,
+		Dislikes: post.Dislikes,
+	})
 	if err != nil {
-		return nil, err
+		log.Fatal(err, "Greskaaaa")
 	}
-	post.Id = result.InsertedID.(primitive.ObjectID)
+
+	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+
 	return post, nil
 }
 
-func (store *PostMongoDBStore) DeleteAll() {
-	// posts := store.dbPost.Collection(COLLECTION+"123")
-	// posts.DeleteMany(context.TODO(), bson.D{{}})
+func (store *PostMongoDBStore) InsertComment(id primitive.ObjectID, post_id primitive.ObjectID, comment *domain.Comment) (*domain.Comment, error) {
 
-	store.dbPost.Collection(COLLECTION+"623b0cc3a34d25d8567f9f82").DeleteMany(context.TODO(), bson.D{{}})
+	// insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).UpdateOne(context.TODO(), &domain.Post{
+	// 	Id:       primitive.NewObjectID(),
+	// 	Text:     post.Text,
+	// 	Link:     post.Link,
+	// 	Image:    post.Image,
+	// 	OwnerId:  post.OwnerId,
+	// 	Likes:    post.Likes,
+	// 	Dislikes: post.Dislikes,
+	// })
+	// if err != nil {
+	// 	log.Fatal(err, "Greskaaaa")
+	// }
+
+	// fmt.Println("Inserted a single document: ", insertResult.InsertedID)
+
+	return comment, nil
+
 }
 
-func (store *PostMongoDBStore) filter(filter interface{}) ([]*domain.Post, error) {
-	posts := store.dbPost.Collection(COLLECTION + "623b0cc3a34d25d8567f9f82")
+func (store *PostMongoDBStore) DeleteAll() {
+
+	store.dbPost.Collection(COLLECTION+"000000000000000000000000").DeleteMany(context.TODO(), bson.D{{}})
+}
+
+func (store *PostMongoDBStore) filter(filter interface{}, id string) ([]*domain.Post, error) {
+	posts := store.dbPost.Collection(COLLECTION + id)
 	cursor, err := posts.Find(context.TODO(), filter)
 	defer cursor.Close(context.TODO())
 

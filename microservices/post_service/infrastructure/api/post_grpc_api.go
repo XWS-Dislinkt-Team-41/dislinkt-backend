@@ -19,13 +19,16 @@ func NewPostHandler(service *application.PostService) *PostHandler {
 	}
 }
 
-func (handler *PostHandler) Get(ctx context.Context, request *pb.GetRequest) (*pb.GetResponse, error) {
-	id := request.Id
-	objectId, err := primitive.ObjectIDFromHex(id)
+func (handler *PostHandler) Get(ctx context.Context, request *pb.GetPostRequest) (*pb.GetResponse, error) {
+	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	if err != nil {
 		return nil, err
 	}
-	post, err := handler.service.Get(objectId)
+	objectPostId, err := primitive.ObjectIDFromHex(request.PostId)
+	if err != nil {
+		return nil, err
+	}
+	post, err := handler.service.Get(objectId, objectPostId)
 	if err != nil {
 		return nil, err
 	}
@@ -52,10 +55,55 @@ func (handler *PostHandler) GetAll(ctx context.Context, request *pb.GetAllReques
 }
 
 func (handler *PostHandler) Insert(ctx context.Context, request *pb.NewPostRequest) (*pb.NewPostResponse, error) {
-	post := mapNewPost(request.Post)
-	newPost, err := handler.service.Insert(post)
+	objectId, err := primitive.ObjectIDFromHex(request.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	newPost, err := handler.service.Insert(objectId, mapPostRequest(request.Post))
 	response := &pb.NewPostResponse{
 		Post: mapPost(newPost),
 	}
 	return response, err
+}
+
+func (handler *PostHandler) InsertComment(ctx context.Context, request *pb.CommentOnPostRequest) (*pb.CommentOnPostResponse, error) {
+
+	objectId, err := primitive.ObjectIDFromHex(request.Id)
+	if err != nil {
+		return nil, err
+	}
+	objectPostId, err := primitive.ObjectIDFromHex(request.PostId)
+	if err != nil {
+		return nil, err
+	}
+
+	newComment, err := handler.service.InsertComment(objectId, objectPostId, mapCommentRequest(request.Comment))
+	response := &pb.CommentOnPostResponse{
+		Comment: mapComment(newComment),
+	}
+	return response, err
+}
+
+func (handler *PostHandler) GetAllFromCollection(ctx context.Context, request *pb.GetRequest) (*pb.GetAllResponse, error) {
+
+	id := request.Id
+	objectId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	posts, err := handler.service.GetAllFromCollection(objectId)
+	if err != nil {
+		return nil, err
+	}
+
+	response := &pb.GetAllResponse{
+		Posts: []*pb.Post{},
+	}
+	for _, post := range posts {
+		current := mapPost(post)
+		response.Posts = append(response.Posts, current)
+	}
+	return response, nil
 }
