@@ -15,7 +15,7 @@ service UserService{
         }
         rpc GetAll(GetAllRequest) returns(GetAllResponse) {
         	option (google.api.http) = {
-			get: "/user/users"
+			get: "/user"
 		};
         }
         rpc IsPrivate(IsPrivateRequest) returns(IsPrivateResponse) {
@@ -31,7 +31,7 @@ service UserService{
         }
         rpc SearchPublic(SearchPublicRequest) returns(SearchPublicResponse) {
                 option (google.api.http) = {
-                        get: "/user"
+                        get: "/user/search"
                 };
         }
         rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns(UpdatePersonalInfoResponse) {
