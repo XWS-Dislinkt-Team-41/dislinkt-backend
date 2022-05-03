@@ -8,6 +8,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"strings"
 )
 
 const (
@@ -52,9 +53,63 @@ func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
 	return store.filter(filter)
 }
 
-func (store *UserMongoDBStore) SearchPublic(username string, name string) ([]*domain.User, error) {
-	filter := bson.M{"isPrivate": false, "$or": []bson.M{bson.M{"username": username}, bson.M{"firstname": name}}}
-	return store.filter(filter)
+func (store *UserMongoDBStore) SearchPublic(filter string) ([]*domain.User, error) {
+	var foundUsers []*domain.User 
+
+	filter = strings.TrimSpace(filter)
+	splitSearch := strings.Split(filter, " ")
+
+	for _, splitSearchpart := range splitSearch {
+
+		//username
+		filtereds, err := store.users.Find(context.TODO(),bson.M{"isPrivate": false,"username" : primitive.Regex{Pattern: splitSearchpart, Options: "i"} })
+		if err != nil {
+			return nil, err
+		}
+		var usersUsername []*domain.User
+		if err = filtereds.All(context.TODO(), &usersUsername); err != nil {
+			return nil, err
+		}
+		for _, userOneSlice := range usersUsername {
+			foundUsers = AppendIfMissing(foundUsers, userOneSlice)
+		}
+
+		//name
+		filtereds, err = store.users.Find(context.TODO(), bson.M{"isPrivate": false, "firstname" : primitive.Regex{Pattern: splitSearchpart, Options: "i"} })
+		if err != nil {
+			return nil, err
+		}
+		var usersName []*domain.User
+		if err = filtereds.All(context.TODO(), &usersName); err != nil {
+			return nil, err
+		}
+		for _, userOneSlice := range usersName {
+			foundUsers = AppendIfMissing(foundUsers, userOneSlice)
+		}
+
+		//surname
+		filtereds, err = store.users.Find(context.TODO(), bson.M{"isPrivate": false,"lastname" : primitive.Regex{Pattern: splitSearchpart, Options: "i"} })
+		if err != nil {
+			return nil, err
+		}
+		var usersSurname []*domain.User
+		if err = filtereds.All(context.TODO(), &usersSurname); err != nil {
+			return nil, err
+		}
+		for _, userOneSlice := range usersSurname {
+			foundUsers = AppendIfMissing(foundUsers, userOneSlice)
+		}
+	}
+	return foundUsers, nil
+}
+
+func AppendIfMissing(slice []*domain.User, i *domain.User) []*domain.User {
+	for _, ele := range slice {
+		if ele.Id == i.Id {
+			return slice
+		}
+	}
+	return append(slice, i)
 }
 
 func (store *UserMongoDBStore) Insert(user *domain.User) (string, error) {

@@ -32,8 +32,8 @@ func (service *UserService) Register(user *domain.User) (string, error) {
 	return message, err
 }
 
-func (service *UserService) SearchPublic(username string, name string) ([]*domain.User, error) {
-	message, err := service.store.SearchPublic(username, name)
+func (service *UserService) SearchPublic(filter string) ([]*domain.User, error) {
+	message, err := service.store.SearchPublic(filter)
 	return message, err
 }
 

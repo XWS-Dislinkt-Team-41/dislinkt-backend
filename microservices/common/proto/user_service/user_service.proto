@@ -86,8 +86,7 @@ message RegisterResponse {
 }
 
 message SearchPublicRequest {
-        string username = 1;
-        string name = 2;
+        string filter = 1;
 }
 
 message SearchPublicResponse {
@@ -122,22 +121,23 @@ message UpdateInterestsInfoResponse {
 message User {
         string id = 1;
         string firstname = 2;
-        string email = 3;
-        string mobileNumber = 4;
+        string lastname = 3;
+        string email = 4;
+        string mobileNumber = 5;
         enum GenderEnum {
                 Male = 0;
                 Female = 1;
         }
-        GenderEnum gender = 5;
-        google.protobuf.Timestamp birthDay = 6;
-        string username = 7;
-        string biography = 8;
-        string experience = 9;
-        string education = 10;
-        string skills = 11;
-        string interests = 12;
-        string password = 13;
-        bool isPrivate = 14;
+        GenderEnum gender = 6;
+        google.protobuf.Timestamp birthDay = 7;
+        string username = 8;
+        string biography = 9;
+        string experience = 10;
+        string education = 11;
+        string skills = 12;
+        string interests = 13;
+        string password = 14;
+        bool isPrivate = 15;
 }
 
 message isPrivate {

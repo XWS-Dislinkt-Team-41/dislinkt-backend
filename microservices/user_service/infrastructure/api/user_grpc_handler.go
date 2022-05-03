@@ -67,9 +67,8 @@ func (handler *UserHandler) IsPrivate(ctx context.Context, request *pb.IsPrivate
 }
 
 func (handler *UserHandler) SearchPublic(ctx context.Context, request *pb.SearchPublicRequest) (*pb.SearchPublicResponse, error) {
-	name := request.Name
-	username := request.Username
-	users, err := handler.service.SearchPublic(username, name)
+	filter := request.Filter
+	users, err := handler.service.SearchPublic(filter)
 	if err != nil {
 		return nil, err
 	}

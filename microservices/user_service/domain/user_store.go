@@ -12,7 +12,7 @@ type UserStore interface {
 	IsPrivate(id primitive.ObjectID) (bool, error)
 	Insert(user *User) (string, error)
 	DeleteAll()
-	SearchPublic(username string, name string) ([]*User, error)
+	SearchPublic(filter string) ([]*User, error)
 	UpdatePersonalInfo(user *User) (string, error)
 	UpdateCareerInfo(user *User) (string, error)
 	UpdateInterestsInfo(user *User) (string, error)

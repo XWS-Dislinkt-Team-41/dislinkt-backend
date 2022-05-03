@@ -13,6 +13,7 @@ func mapUser(user *domain.User) *pb.User {
 	userPb := &pb.User{
 		Id:           user.Id.Hex(),
 		Firstname:    user.Firstname,
+		Lastname:     user.Lastname,
 		Email:        user.Email,
 		MobileNumber: user.MobileNumber,
 		Gender:       mapGender(user.Gender),
@@ -35,6 +36,7 @@ func mapNewUser(userPb *pb.User) *domain.User {
 		user := &domain.User{
 			Id:           primitive.NewObjectID(),
 			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
 			Email:        userPb.Email,
 			MobileNumber: userPb.MobileNumber,
 			Gender:       mapNewGender(userPb.Gender),
@@ -53,6 +55,7 @@ func mapNewUser(userPb *pb.User) *domain.User {
 		user := &domain.User{
 			Id:           primitive.NewObjectID(),
 			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
 			Email:        userPb.Email,
 			MobileNumber: userPb.MobileNumber,
 			Gender:       mapNewGender(userPb.Gender),
@@ -78,6 +81,7 @@ func mapPersonalInfoUser(userPb *pb.User) *domain.User {
 		user := &domain.User{
 			Id:           id,
 			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
 			Email:        userPb.Email,
 			MobileNumber: userPb.MobileNumber,
 			Gender:       mapNewGender(userPb.Gender),
@@ -91,6 +95,7 @@ func mapPersonalInfoUser(userPb *pb.User) *domain.User {
 		user := &domain.User{
 			Id:           id,
 			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
 			Email:        userPb.Email,
 			MobileNumber: userPb.MobileNumber,
 			Gender:       mapNewGender(userPb.Gender),
