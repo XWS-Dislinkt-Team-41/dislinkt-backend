@@ -3,12 +3,17 @@ package persistence
 import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/domain"
 	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
-	queryCreateConnection = "MERGE (u1:User{id:$user, name:$user}) MERGE (u2:User{id:$userConnect, name:$userConnect}) MERGE (u1)-[c:connection]-(u2)"
-	queryDeleteConnection = "MATCH (u1:User{id:$user, name:$user})-[c:connection]-(u2:User{id:$userConnect, name:$userConnect}) DELETE c"
-	queryGetConnections   = "MATCH (u:User{id:$user}) MATCH (u)-[c:connection]->(x) RETURN x.id"
+	queryCreateConnection      = "MERGE (u1:User{id:$userId, name:$userId}) MERGE (u2:User{id:$cUserId, name:$cUserId}) MERGE (u1)-[c:Connection]-(u2)"
+	queryDeleteConnection      = "MATCH (u1:User{id:$userId, name:$userId})-[c:Connection]-(u2:User{id:$cUserId, name:$cUserId}) DELETE c"
+	queryGetConnections        = "MATCH (u:User{id:$userId}) MATCH (u)-[c:Connection]-(x) RETURN x.id"
+	queryCreateInvite          = "MERGE (u1:User{id:$userId, name:$userId}) MERGE (u2:User{id:$cUserId, name:$cUserId}) MERGE (u1)-[i:Invite]->(u2)"
+	queryDeleteInvite          = "MATCH (u1:User{id:$userId, name:$userId})-[i:Invite]->(u2:User{id:$cUserId, name:$cUserId}) DELETE i"
+	queryGetAllInvitations     = "MATCH (u:User{id:$userId}) MATCH (u)<-[i:Invite]-(x) RETURN x.id"
+	queryGetAllSentInvitations = "MATCH (u:User{id:$userId}) MATCH (u)-[i:Invite]->(x) RETURN x.id"
 )
 
 type ConnectNeo4jDBStore struct {
@@ -19,68 +24,229 @@ func NewConnectNeo4jDBStore(driver *neo4j.Driver) domain.ConnectStore {
 	return &ConnectNeo4jDBStore{driver: driver}
 }
 
-func (store *ConnectNeo4jDBStore) Connect(user, userConnect string) error {
-	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	if err != nil {
-		return err
-	}
-	defer session.Close()
-	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		result, err := transaction.Run(queryCreateConnection, map[string]interface{}{"user": user, "userConnect": userConnect})
-		if err != nil {
-			return nil, err
-		}
-		return nil, result.Err()
-	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (store *ConnectNeo4jDBStore) UnConnect(user, userConnect string) error {
-	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
-	if err != nil {
-		return err
-	}
-	defer session.Close()
-	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		result, err := transaction.Run(queryDeleteConnection, map[string]interface{}{"user": user, "userConnect": userConnect})
-		if err != nil {
-			return nil, err
-		}
-		return nil, result.Err()
-	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
-func (store *ConnectNeo4jDBStore) GetUserConnections(user string) ([]string, error) {
+func (store *ConnectNeo4jDBStore) Connect(userId, cUserId primitive.ObjectID) (*domain.Connection, error) {
 	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return nil, err
 	}
 	defer session.Close()
-	connections, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		result, err := transaction.Run(queryGetConnections, map[string]interface{}{"user": user})
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryCreateConnection, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
 		if err != nil {
 			return nil, err
 		}
+		return result.Consume()
+	})
+	connection := domain.Connection{
+		User:  domain.Profile{Id: userId},
+		CUser: domain.Profile{Id: cUserId},
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &connection, nil
+}
 
-		var usersIds []string
+func (store *ConnectNeo4jDBStore) UnConnect(userId, cUserId primitive.ObjectID) error {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryDeleteConnection, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		return result.Consume()
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (store *ConnectNeo4jDBStore) GetUserConnections(userId primitive.ObjectID) ([]*domain.Connection, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	result, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryGetConnections, map[string]interface{}{"userId": userId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		var connections []*domain.Connection
+		var id string
 		for result.Next() {
-			if id, ok := result.Record().GetByIndex(0).(string); ok {
-				usersIds = append(usersIds, id)
+			if value, ok := result.Record().GetByIndex(0).(string); ok {
+				id = value
+			} else {
+				return nil, err
 			}
+			cUserId, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				return nil, err
+			}
+			connection := domain.Connection{
+				User:  domain.Profile{Id: userId},
+				CUser: domain.Profile{Id: cUserId},
+			}
+			connections = append(connections, &connection)
 		}
-
-		return usersIds, result.Err()
+		return connections, result.Err()
 	})
-
+	connections := result.([]*domain.Connection)
 	if err != nil {
 		return nil, err
 	}
-	return connections.([]string), nil
+	return connections, nil
+}
+
+func (store *ConnectNeo4jDBStore) Invite(userId, cUserId primitive.ObjectID) (*domain.Connection, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryCreateInvite, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		return nil, result.Err()
+	})
+	invite := domain.Connection{
+		User:  domain.Profile{Id: userId},
+		CUser: domain.Profile{Id: cUserId},
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &invite, nil
+}
+
+func (store *ConnectNeo4jDBStore) AcceptInvitation(userId primitive.ObjectID, cUserId primitive.ObjectID) (*domain.Connection, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		_, err = transaction.Run(queryDeleteInvite, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		result, err := transaction.Run(queryCreateConnection, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		return result.Consume()
+	})
+	connection := domain.Connection{
+		User:  domain.Profile{Id: userId},
+		CUser: domain.Profile{Id: cUserId},
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &connection, nil
+}
+
+func (store *ConnectNeo4jDBStore) DeclineInvitation(userId primitive.ObjectID, cUserId primitive.ObjectID) error {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryDeleteInvite, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		return nil, result.Err()
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (store *ConnectNeo4jDBStore) GetAllInvitations(userId primitive.ObjectID) ([]*domain.Connection, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	result, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryGetAllInvitations, map[string]interface{}{"userId": userId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+
+		var invites []*domain.Connection
+		var id string
+		for result.Next() {
+			if value, ok := result.Record().GetByIndex(0).(string); ok {
+				id = value
+			} else {
+				return nil, err
+			}
+			cUserId, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				return nil, err
+			}
+			invite := domain.Connection{
+				User:  domain.Profile{Id: userId},
+				CUser: domain.Profile{Id: cUserId},
+			}
+			invites = append(invites, &invite)
+		}
+		return invites, result.Err()
+	})
+	invites := result.([]*domain.Connection)
+	if err != nil {
+		return nil, err
+	}
+	return invites, nil
+}
+
+func (store *ConnectNeo4jDBStore) GetAllSentInvitations(userId primitive.ObjectID) ([]*domain.Connection, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	result, err := session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryGetAllSentInvitations, map[string]interface{}{"userId": userId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+
+		var invites []*domain.Connection
+		var id string
+		for result.Next() {
+			if value, ok := result.Record().GetByIndex(0).(string); ok {
+				id = value
+			} else {
+				return nil, err
+			}
+			cUserId, err := primitive.ObjectIDFromHex(id)
+			if err != nil {
+				return nil, err
+			}
+			invite := domain.Connection{
+				User:  domain.Profile{Id: userId},
+				CUser: domain.Profile{Id: cUserId},
+			}
+			invites = append(invites, &invite)
+		}
+		return invites, result.Err()
+	})
+	invites := result.([]*domain.Connection)
+	if err != nil {
+		return nil, err
+	}
+	return invites, nil
 }

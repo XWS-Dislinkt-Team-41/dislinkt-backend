@@ -1,14 +1,14 @@
 package domain
 
-import "time"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Connection struct {
-	Id          string    `bson:"id"`
-	Timestamp   time.Time `bson:"timestamp"`
-	User        Profile   `bson:"user"`
-	UserConnect Profile   `bson:"userConnect"`
+	User  Profile `bson:"user"`
+	CUser Profile `bson:"cUser"`
 }
 
 type Profile struct {
-	Id string `bson:"id"`
+	Id primitive.ObjectID `bson:"id"`
 }
