@@ -12,12 +12,11 @@ replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gatew
 
 require (
 	github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common v1.0.0
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0
-	google.golang.org/grpc v1.45.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
+	google.golang.org/grpc v1.46.0
 )
 
 require (
-	github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common v0.0.0-00010101000000-000000000000
 	github.com/golang/protobuf v1.5.2 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect

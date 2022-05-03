@@ -372,8 +372,4 @@ message CustomHttpPattern {
 
   // The path matched by this custom verb.
   string path = 2;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> feature_public_profile_search
