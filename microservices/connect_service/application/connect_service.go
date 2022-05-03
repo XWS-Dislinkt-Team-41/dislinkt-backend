@@ -65,6 +65,14 @@ func (service *ConnectService) DeclineInvitation(userId, cUserId primitive.Objec
 	return nil
 }
 
+func (service *ConnectService) CancelInvitation(userId, cUserId primitive.ObjectID) error {
+	err := service.store.CancelInvitation(userId, cUserId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (service *ConnectService) GetAllInvitations(userId primitive.ObjectID) ([]*domain.Connection, error) {
 	invitations, err := service.store.GetAllInvitations(userId)
 	if err != nil {

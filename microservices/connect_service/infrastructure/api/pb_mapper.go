@@ -6,6 +6,9 @@ import (
 )
 
 func mapConnection(connection *domain.Connection) *pb.Connection {
+	if connection == nil {
+		return nil
+	}
 	connectionPb := &pb.Connection{
 		User:  &pb.Profile{Id: connection.User.Id.Hex()},
 		CUser: &pb.Profile{Id: connection.CUser.Id.Hex()},

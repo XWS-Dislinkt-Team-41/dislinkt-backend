@@ -33,6 +33,11 @@ service ConnectService{
 			delete: "/user/{userId}/connect/invitation/{cUserId}"
 		};
         }
+        rpc CancelInvitation(CancelInvitationRequest) returns(EmptyRespones) {
+        	option (google.api.http) = {
+			delete: "/user/{userId}/connect/invitation/{cUserId}/cancel"
+		};
+        }
         rpc GetAllInvitations(GetAllUserInvitationsRequest) returns(GetAllInvitationsResponse) {
         	option (google.api.http) = {
 			get: "/user/{userId}/connect/invitation"
@@ -72,17 +77,18 @@ message ConnectionResponse {
         Connection connection = 1;
 }
 
-message EmptyRespones {
-
-}
-
 message DeclineInvitationRequest {
         string userId = 1;
         string cUserId = 2;
 }
 
-message DeclineInvitationResponse {
-        Connection invite = 1;
+message CancelInvitationRequest {
+        string userId = 1;
+        string cUserId = 2;
+}
+
+message EmptyRespones {
+
 }
 
 message GetAllUserInvitationsRequest {

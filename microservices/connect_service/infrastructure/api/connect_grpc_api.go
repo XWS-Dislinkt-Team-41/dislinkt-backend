@@ -110,6 +110,23 @@ func (handler *ConnectHandler) DeclineInvitation(ctx context.Context, request *p
 	return response, nil
 }
 
+func (handler *ConnectHandler) CancelInvitation(ctx context.Context, request *pb.CancelInvitationRequest) (*pb.EmptyRespones, error) {
+	userId, err := primitive.ObjectIDFromHex(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	cUserId, err := primitive.ObjectIDFromHex(request.CUserId)
+	if err != nil {
+		return nil, err
+	}
+	err = handler.service.CancelInvitation(userId, cUserId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.EmptyRespones{}
+	return response, nil
+}
+
 func (handler *ConnectHandler) GetAllInvitations(ctx context.Context, request *pb.GetAllUserInvitationsRequest) (*pb.GetAllInvitationsResponse, error) {
 	userId, err := primitive.ObjectIDFromHex(request.UserId)
 	if err != nil {

@@ -9,6 +9,7 @@ type ConnectStore interface {
 	Invite(userId, cUserId primitive.ObjectID) (*Connection, error)
 	AcceptInvitation(userId, cUserId primitive.ObjectID) (*Connection, error)
 	DeclineInvitation(userId, cUserId primitive.ObjectID) error
+	CancelInvitation(userId, cUserId primitive.ObjectID) error
 	GetAllInvitations(userId primitive.ObjectID) ([]*Connection, error)
 	GetAllSentInvitations(userId primitive.ObjectID) ([]*Connection, error)
 }

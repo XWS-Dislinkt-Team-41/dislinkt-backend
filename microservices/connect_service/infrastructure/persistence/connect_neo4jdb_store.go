@@ -12,6 +12,8 @@ const (
 	queryGetConnections        = "MATCH (u:User{id:$userId}) MATCH (u)-[c:Connection]-(x) RETURN x.id"
 	queryCreateInvite          = "MERGE (u1:User{id:$userId, name:$userId}) MERGE (u2:User{id:$cUserId, name:$cUserId}) MERGE (u1)-[i:Invite]->(u2)"
 	queryDeleteInvite          = "MATCH (u1:User{id:$userId, name:$userId})-[i:Invite]->(u2:User{id:$cUserId, name:$cUserId}) DELETE i"
+	queryDeleteReceivedInvite  = "MATCH (u1:User{id:$userId, name:$userId})<-[i:Invite]-(u2:User{id:$cUserId, name:$cUserId}) DELETE i"
+	queryIsReceivedInvite      = "MATCH (u1:User{id:$userId, name:$userId}) MATCH (u2:User{id:$cUserId, name:$cUserId}) RETURN exists((u1)<-[:Invite]-(u2)) AS IsReceived"
 	queryGetAllInvitations     = "MATCH (u:User{id:$userId}) MATCH (u)<-[i:Invite]-(x) RETURN x.id"
 	queryGetAllSentInvitations = "MATCH (u:User{id:$userId}) MATCH (u)-[i:Invite]->(x) RETURN x.id"
 )
@@ -133,28 +135,66 @@ func (store *ConnectNeo4jDBStore) AcceptInvitation(userId primitive.ObjectID, cU
 		return nil, err
 	}
 	defer session.Close()
+	isCreatedConection := false
 	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		_, err = transaction.Run(queryDeleteInvite, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+		result, err := transaction.Run(queryIsReceivedInvite, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
 		if err != nil {
 			return nil, err
 		}
-		result, err := transaction.Run(queryCreateConnection, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
-		if err != nil {
-			return nil, err
+		IsReceivedInvite := false
+		for result.Next() {
+			if value, ok := result.Record().Get("IsReceived"); ok {
+				IsReceivedInvite = value.(bool)
+			} else {
+				return nil, err
+			}
+		}
+		if IsReceivedInvite {
+			_, err = transaction.Run(queryDeleteReceivedInvite, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+			if err != nil {
+				return nil, err
+			}
+			result, err = transaction.Run(queryCreateConnection, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+			if err != nil {
+				return nil, err
+			}
+			isCreatedConection = true
 		}
 		return result.Consume()
 	})
-	connection := domain.Connection{
-		User:  domain.Profile{Id: userId},
-		CUser: domain.Profile{Id: cUserId},
+	var connection *domain.Connection
+	if isCreatedConection {
+		connection = &domain.Connection{
+			User:  domain.Profile{Id: userId},
+			CUser: domain.Profile{Id: cUserId},
+		}
 	}
 	if err != nil {
 		return nil, err
 	}
-	return &connection, nil
+	return connection, nil
 }
 
 func (store *ConnectNeo4jDBStore) DeclineInvitation(userId primitive.ObjectID, cUserId primitive.ObjectID) error {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryDeleteReceivedInvite, map[string]interface{}{"userId": userId.Hex(), "cUserId": cUserId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		return nil, result.Err()
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (store *ConnectNeo4jDBStore) CancelInvitation(userId primitive.ObjectID, cUserId primitive.ObjectID) error {
 	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	if err != nil {
 		return err

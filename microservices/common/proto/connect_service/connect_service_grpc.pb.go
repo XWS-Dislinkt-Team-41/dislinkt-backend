@@ -27,6 +27,7 @@ type ConnectServiceClient interface {
 	GetUserConnections(ctx context.Context, in *GetUserConnectionsRequest, opts ...grpc.CallOption) (*GetUserConnectionsResponse, error)
 	AcceptInvitation(ctx context.Context, in *AcceptInvitationRequest, opts ...grpc.CallOption) (*ConnectionResponse, error)
 	DeclineInvitation(ctx context.Context, in *DeclineInvitationRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
+	CancelInvitation(ctx context.Context, in *CancelInvitationRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
 	GetAllInvitations(ctx context.Context, in *GetAllUserInvitationsRequest, opts ...grpc.CallOption) (*GetAllInvitationsResponse, error)
 	GetAllSentInvitations(ctx context.Context, in *GetAllSentInvitationsRequest, opts ...grpc.CallOption) (*GetAllInvitationsResponse, error)
 }
@@ -84,6 +85,15 @@ func (c *connectServiceClient) DeclineInvitation(ctx context.Context, in *Declin
 	return out, nil
 }
 
+func (c *connectServiceClient) CancelInvitation(ctx context.Context, in *CancelInvitationRequest, opts ...grpc.CallOption) (*EmptyRespones, error) {
+	out := new(EmptyRespones)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/CancelInvitation", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *connectServiceClient) GetAllInvitations(ctx context.Context, in *GetAllUserInvitationsRequest, opts ...grpc.CallOption) (*GetAllInvitationsResponse, error) {
 	out := new(GetAllInvitationsResponse)
 	err := c.cc.Invoke(ctx, "/connections.ConnectService/GetAllInvitations", in, out, opts...)
@@ -111,6 +121,7 @@ type ConnectServiceServer interface {
 	GetUserConnections(context.Context, *GetUserConnectionsRequest) (*GetUserConnectionsResponse, error)
 	AcceptInvitation(context.Context, *AcceptInvitationRequest) (*ConnectionResponse, error)
 	DeclineInvitation(context.Context, *DeclineInvitationRequest) (*EmptyRespones, error)
+	CancelInvitation(context.Context, *CancelInvitationRequest) (*EmptyRespones, error)
 	GetAllInvitations(context.Context, *GetAllUserInvitationsRequest) (*GetAllInvitationsResponse, error)
 	GetAllSentInvitations(context.Context, *GetAllSentInvitationsRequest) (*GetAllInvitationsResponse, error)
 	mustEmbedUnimplementedConnectServiceServer()
@@ -134,6 +145,9 @@ func (UnimplementedConnectServiceServer) AcceptInvitation(context.Context, *Acce
 }
 func (UnimplementedConnectServiceServer) DeclineInvitation(context.Context, *DeclineInvitationRequest) (*EmptyRespones, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeclineInvitation not implemented")
+}
+func (UnimplementedConnectServiceServer) CancelInvitation(context.Context, *CancelInvitationRequest) (*EmptyRespones, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CancelInvitation not implemented")
 }
 func (UnimplementedConnectServiceServer) GetAllInvitations(context.Context, *GetAllUserInvitationsRequest) (*GetAllInvitationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllInvitations not implemented")
@@ -244,6 +258,24 @@ func _ConnectService_DeclineInvitation_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConnectService_CancelInvitation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelInvitationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).CancelInvitation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/CancelInvitation",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).CancelInvitation(ctx, req.(*CancelInvitationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _ConnectService_GetAllInvitations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetAllUserInvitationsRequest)
 	if err := dec(in); err != nil {
@@ -306,6 +338,10 @@ var ConnectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeclineInvitation",
 			Handler:    _ConnectService_DeclineInvitation_Handler,
+		},
+		{
+			MethodName: "CancelInvitation",
+			Handler:    _ConnectService_CancelInvitation_Handler,
 		},
 		{
 			MethodName: "GetAllInvitations",
