@@ -16,6 +16,24 @@ services:
     networks:
       - network
 
+  connect_service:
+    image: connect_service
+    container_name: connect_service
+    build:
+      context: .
+      dockerfile: ./connect_service/Dockerfile
+    restart: on-failure
+    environment:
+      CONNECT_DB_HOST: ${CONNECT_DB_HOST}
+      CONNECT_DB_PORT: ${CONNECT_DB_PORT}
+      CONNECT_DB_USER: ${CONNECT_DB_USER}
+      CONNECT_DB_PASS: ${CONNECT_DB_PASS}
+      CONNECT_SERVICE_PORT: ${CONNECT_SERVICE_PORT}
+    depends_on:
+      - connect_db
+    networks:
+      - network
+
   api_gateway:
     image: api_gateway
     container_name: api_gateway
@@ -31,7 +49,8 @@ services:
       USER_SERVICE_PORT: ${USER_SERVICE_PORT}
       POST_SERVICE_HOST: ${POST_SERVICE_HOST}
       POST_SERVICE_PORT: ${POST_SERVICE_PORT}
-
+      CONNECT_SERVICE_HOST: ${CONNECT_SERVICE_HOST}
+      CONNECT_SERVICE_PORT: ${CONNECT_SERVICE_PORT} 
     networks:
       - network
 
@@ -43,9 +62,9 @@ services:
       - PGID=1000
     ports:
       - 27017:27017
+    restart: unless-stopped
     networks:
       - network
-    restart: unless-stopped
     
   user_service:
     image: user_service
@@ -67,6 +86,18 @@ services:
     image: mongo
     container_name: user_db
     restart: on-failure
+    networks:
+      - network 
+
+  connect_db:
+    image: neo4j
+    container_name: connect_db
+    environment:
+      NEO4J_AUTH: ${CONNECT_DB_USER}/${CONNECT_DB_PASS}
+    restart: on-failure
+    ports:
+      - ${CONNECT_DB_HTTP_PORT}:${CONNECT_DB_HTTP_PORT}
+      - ${CONNECT_DB_PORT}:${CONNECT_DB_PORT}
     networks:
       - network
 

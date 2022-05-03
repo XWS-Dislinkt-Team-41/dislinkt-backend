@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
+	connectGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
 	postGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	userGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -25,14 +26,15 @@ func NewServer(config *cfg.Config) *Server {
 		mux:    runtime.NewServeMux(),
 	}
 	server.initHandlers()
+	server.initCustomHandlers()
 	return server
 }
 
 func (server *Server) initHandlers() {
 
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
-	catalogueEmdpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
-	err := postGw.RegisterPostServiceHandlerFromEndpoint(context.TODO(), server.mux, catalogueEmdpoint, opts)
+	postEmdpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
+	err := postGw.RegisterPostServiceHandlerFromEndpoint(context.TODO(), server.mux, postEmdpoint, opts)
 	if err != nil {
 		panic(err)
 	}
@@ -41,12 +43,14 @@ func (server *Server) initHandlers() {
 	if err != nil {
 		panic(err)
 	}
+	connectEmdpoint := fmt.Sprintf("%s:%s", server.config.ConnectHost, server.config.ConnectPort)
+	err = connectGw.RegisterConnectServiceHandlerFromEndpoint(context.TODO(), server.mux, connectEmdpoint, opts)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (server *Server) initCustomHandlers() {
-	// postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
-	// orderingHandler := api.NewOrderingHandler(postEndpoint)
-	// orderingHandler.Init(server.mux)
 }
 
 func (server *Server) Start() {
