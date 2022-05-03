@@ -25,6 +25,7 @@ func (status GenderEnum) String() string {
 type User struct {
 	Id           primitive.ObjectID `bson:"_id"`
 	Firstname    string             `bson:"firstname"`
+	Lastname 	 string 			`bson:"lastname"`
 	Email        string             `bson:"email"`
 	MobileNumber string             `bson:"mobileNumber"`
 	Gender       GenderEnum         `bson:"gender"`
