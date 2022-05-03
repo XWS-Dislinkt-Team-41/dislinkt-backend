@@ -4,9 +4,16 @@ go 1.17
 
 replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common => ../common
 
+replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service => ../common/proto/user_service
+
+replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config => ../api_gateway/startup/config
+
+replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup => ../api_gateway/startup
+
 require (
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
-	google.golang.org/grpc v1.46.0
+	github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common v1.0.0
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.9.0
+	google.golang.org/grpc v1.45.0
 )
 
 require (

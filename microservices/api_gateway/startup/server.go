@@ -6,11 +6,12 @@ import (
 	"log"
 	"net/http"
 
-	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
-	postGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	userGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
+	postGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
+	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
 )
 
 type Server struct {
@@ -24,7 +25,6 @@ func NewServer(config *cfg.Config) *Server {
 		mux:    runtime.NewServeMux(),
 	}
 	server.initHandlers()
-	server.initCustomHandlers()
 	return server
 }
 
@@ -33,6 +33,11 @@ func (server *Server) initHandlers() {
 	catalogueEmdpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
 	err := postGw.RegisterPostServiceHandlerFromEndpoint(context.TODO(), server.mux, catalogueEmdpoint, opts)
 	if err != nil {
+		panic(err)
+	}
+	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
+	userErr := userGw.RegisterUserServiceHandlerFromEndpoint(context.TODO(), server.mux, userEndpoint, opts)
+	if userErr != nil {
 		panic(err)
 	}
 }

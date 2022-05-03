@@ -28,4 +28,8 @@ option objc_class_prefix = "GAPI";
 extend google.protobuf.MethodOptions {
   // See `HttpRule`.
   HttpRule http = 72295728;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> feature_public_profile_search

@@ -2,6 +2,8 @@ module github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common
 
 go 1.18
 
+replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/user => ../common/user
+
 require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	google.golang.org/genproto v0.0.0-20220429170224-98d788798c3e
@@ -15,3 +17,4 @@ require (
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect
 )
+
