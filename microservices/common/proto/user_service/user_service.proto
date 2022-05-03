@@ -18,6 +18,11 @@ service UserService{
 			get: "/user"
 		};
         }
+        rpc GetAllPublicUserId(GetAllPublicUserIdRequest) returns(GetAllPublicUserIdResponse) {
+        	option (google.api.http) = {
+			get: "/userPublicId"
+		};
+        }
         rpc IsPrivate(IsPrivateRequest) returns(IsPrivateResponse) {
         	option (google.api.http) = {
 			get: "/isUserPrivate/{id}"
@@ -31,7 +36,8 @@ service UserService{
         }
         rpc SearchPublic(SearchPublicRequest) returns(SearchPublicResponse) {
                 option (google.api.http) = {
-                        get: "/user/search"
+                        post: "/user/search"
+                        body: "filter"
                 };
         }
         rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns(UpdatePersonalInfoResponse) {
@@ -46,7 +52,7 @@ service UserService{
                         body: "user"
                 };
         }
-         rpc UpdateInterestsInfo(UpdateInterestsInfoRequest) returns(UpdateInterestsInfoResponse) {
+        rpc UpdateInterestsInfo(UpdateInterestsInfoRequest) returns(UpdateInterestsInfoResponse) {
                 option (google.api.http) = {
                         put: "/user/interests"
                         body: "user"
@@ -67,6 +73,13 @@ message GetAllRequest {
 
 message GetAllResponse {
         repeated User users = 1;
+}
+
+message GetAllPublicUserIdRequest {
+}
+
+message GetAllPublicUserIdResponse {
+        repeated string ids = 1;
 }
 
 message IsPrivateRequest {

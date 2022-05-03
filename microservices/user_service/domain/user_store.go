@@ -9,6 +9,7 @@ type UserStore interface {
 	GetByEmail(email string) (*User, error)
 	GetByUsername(username string) (*User, error)
 	GetAll() ([]*User, error)
+	GetAllPublicUserId() ([]primitive.ObjectID, error)
 	IsPrivate(id primitive.ObjectID) (bool, error)
 	Insert(user *User) (string, error)
 	DeleteAll()

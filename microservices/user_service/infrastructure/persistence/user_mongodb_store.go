@@ -49,8 +49,24 @@ func (store *UserMongoDBStore) IsPrivate(id primitive.ObjectID) (bool, error) {
 }
 
 func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
-	filter := bson.D{{}}
+	filter := bson.D{}
 	return store.filter(filter)
+}
+
+func (store *UserMongoDBStore) GetAllPublicUserId() ([]primitive.ObjectID, error) {
+	var filteredUsers []*domain.User 
+	users, err := store.users.Find(context.TODO(),bson.M{"isPrivate": false})
+	if err != nil {
+		return nil, err
+	}
+	var ids []primitive.ObjectID
+	if err = users.All(context.TODO(), &filteredUsers); err != nil {
+		return nil, err
+	}
+	for _, user := range filteredUsers {
+		ids = append(ids, user.Id)
+	}
+	return ids, err
 }
 
 func (store *UserMongoDBStore) SearchPublic(filter string) ([]*domain.User, error) {

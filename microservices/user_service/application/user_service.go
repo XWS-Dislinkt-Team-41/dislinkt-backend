@@ -23,31 +23,30 @@ func (service *UserService) GetAll() ([]*domain.User, error) {
 	return service.store.GetAll()
 }
 
+func (service *UserService) GetAllPublicUserId() ([]primitive.ObjectID, error) {
+	return service.store.GetAllPublicUserId()
+}
+
 func (service *UserService) IsPrivate(id primitive.ObjectID) (bool, error) {
 	return service.store.IsPrivate(id)
 }
 
 func (service *UserService) Register(user *domain.User) (string, error) {
-	message, err := service.store.Insert(user)
-	return message, err
+	return service.store.Insert(user)
 }
 
 func (service *UserService) SearchPublic(filter string) ([]*domain.User, error) {
-	message, err := service.store.SearchPublic(filter)
-	return message, err
+	return service.store.SearchPublic(filter)
 }
 
 func (service *UserService) UpdatePersonalInfo(user *domain.User) (string, error) {
-	message, err := service.store.UpdatePersonalInfo(user)
-	return message, err
+	return service.store.UpdatePersonalInfo(user)
 }
 
 func (service *UserService) UpdateCareerInfo(user *domain.User) (string, error) {
-	message, err := service.store.UpdateCareerInfo(user)
-	return message, err
+	return service.store.UpdateCareerInfo(user)
 }
 
 func (service *UserService) UpdateInterestsInfo(user *domain.User) (string, error) {
-	message, err := service.store.UpdateInterestsInfo(user)
-	return message, err
+	return service.store.UpdateInterestsInfo(user)
 }

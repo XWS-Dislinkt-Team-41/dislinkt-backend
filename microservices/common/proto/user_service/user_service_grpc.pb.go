@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UserServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
+	GetAllPublicUserId(ctx context.Context, in *GetAllPublicUserIdRequest, opts ...grpc.CallOption) (*GetAllPublicUserIdResponse, error)
 	IsPrivate(ctx context.Context, in *IsPrivateRequest, opts ...grpc.CallOption) (*IsPrivateResponse, error)
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	SearchPublic(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*SearchPublicResponse, error)
@@ -52,6 +53,15 @@ func (c *userServiceClient) Get(ctx context.Context, in *GetRequest, opts ...grp
 func (c *userServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
 	out := new(GetAllResponse)
 	err := c.cc.Invoke(ctx, "/user.UserService/GetAll", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetAllPublicUserId(ctx context.Context, in *GetAllPublicUserIdRequest, opts ...grpc.CallOption) (*GetAllPublicUserIdResponse, error) {
+	out := new(GetAllPublicUserIdResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/GetAllPublicUserId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +128,7 @@ func (c *userServiceClient) UpdateInterestsInfo(ctx context.Context, in *UpdateI
 type UserServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
+	GetAllPublicUserId(context.Context, *GetAllPublicUserIdRequest) (*GetAllPublicUserIdResponse, error)
 	IsPrivate(context.Context, *IsPrivateRequest) (*IsPrivateResponse, error)
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	SearchPublic(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error)
@@ -136,6 +147,9 @@ func (UnimplementedUserServiceServer) Get(context.Context, *GetRequest) (*GetRes
 }
 func (UnimplementedUserServiceServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
+}
+func (UnimplementedUserServiceServer) GetAllPublicUserId(context.Context, *GetAllPublicUserIdRequest) (*GetAllPublicUserIdResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllPublicUserId not implemented")
 }
 func (UnimplementedUserServiceServer) IsPrivate(context.Context, *IsPrivateRequest) (*IsPrivateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method IsPrivate not implemented")
@@ -200,6 +214,24 @@ func _UserService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).GetAll(ctx, req.(*GetAllRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetAllPublicUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllPublicUserIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetAllPublicUserId(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/GetAllPublicUserId",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetAllPublicUserId(ctx, req.(*GetAllPublicUserIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -326,6 +358,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAll",
 			Handler:    _UserService_GetAll_Handler,
+		},
+		{
+			MethodName: "GetAllPublicUserId",
+			Handler:    _UserService_GetAllPublicUserId_Handler,
 		},
 		{
 			MethodName: "IsPrivate",
