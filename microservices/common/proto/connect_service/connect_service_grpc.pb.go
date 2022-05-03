@@ -25,6 +25,7 @@ type ConnectServiceClient interface {
 	Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectionResponse, error)
 	UnConnect(ctx context.Context, in *UnConnectRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
 	GetUserConnections(ctx context.Context, in *GetUserConnectionsRequest, opts ...grpc.CallOption) (*GetUserConnectionsResponse, error)
+	Invite(ctx context.Context, in *InviteRequest, opts ...grpc.CallOption) (*ConnectionResponse, error)
 	AcceptInvitation(ctx context.Context, in *AcceptInvitationRequest, opts ...grpc.CallOption) (*ConnectionResponse, error)
 	DeclineInvitation(ctx context.Context, in *DeclineInvitationRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
 	CancelInvitation(ctx context.Context, in *CancelInvitationRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
@@ -61,6 +62,15 @@ func (c *connectServiceClient) UnConnect(ctx context.Context, in *UnConnectReque
 func (c *connectServiceClient) GetUserConnections(ctx context.Context, in *GetUserConnectionsRequest, opts ...grpc.CallOption) (*GetUserConnectionsResponse, error) {
 	out := new(GetUserConnectionsResponse)
 	err := c.cc.Invoke(ctx, "/connections.ConnectService/GetUserConnections", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectServiceClient) Invite(ctx context.Context, in *InviteRequest, opts ...grpc.CallOption) (*ConnectionResponse, error) {
+	out := new(ConnectionResponse)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/Invite", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +129,7 @@ type ConnectServiceServer interface {
 	Connect(context.Context, *ConnectRequest) (*ConnectionResponse, error)
 	UnConnect(context.Context, *UnConnectRequest) (*EmptyRespones, error)
 	GetUserConnections(context.Context, *GetUserConnectionsRequest) (*GetUserConnectionsResponse, error)
+	Invite(context.Context, *InviteRequest) (*ConnectionResponse, error)
 	AcceptInvitation(context.Context, *AcceptInvitationRequest) (*ConnectionResponse, error)
 	DeclineInvitation(context.Context, *DeclineInvitationRequest) (*EmptyRespones, error)
 	CancelInvitation(context.Context, *CancelInvitationRequest) (*EmptyRespones, error)
@@ -139,6 +150,9 @@ func (UnimplementedConnectServiceServer) UnConnect(context.Context, *UnConnectRe
 }
 func (UnimplementedConnectServiceServer) GetUserConnections(context.Context, *GetUserConnectionsRequest) (*GetUserConnectionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserConnections not implemented")
+}
+func (UnimplementedConnectServiceServer) Invite(context.Context, *InviteRequest) (*ConnectionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Invite not implemented")
 }
 func (UnimplementedConnectServiceServer) AcceptInvitation(context.Context, *AcceptInvitationRequest) (*ConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AcceptInvitation not implemented")
@@ -218,6 +232,24 @@ func _ConnectService_GetUserConnections_Handler(srv interface{}, ctx context.Con
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ConnectServiceServer).GetUserConnections(ctx, req.(*GetUserConnectionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectService_Invite_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(InviteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).Invite(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/Invite",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).Invite(ctx, req.(*InviteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -330,6 +362,10 @@ var ConnectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserConnections",
 			Handler:    _ConnectService_GetUserConnections_Handler,
+		},
+		{
+			MethodName: "Invite",
+			Handler:    _ConnectService_Invite_Handler,
 		},
 		{
 			MethodName: "AcceptInvitation",

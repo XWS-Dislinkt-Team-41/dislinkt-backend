@@ -38,6 +38,25 @@ func (handler *ConnectHandler) Connect(ctx context.Context, request *pb.ConnectR
 	return response, nil
 }
 
+func (handler *ConnectHandler) Invite(ctx context.Context, request *pb.InviteRequest) (*pb.ConnectionResponse, error) {
+	userId, err := primitive.ObjectIDFromHex(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	cUserId, err := primitive.ObjectIDFromHex(request.CUser.Id)
+	if err != nil {
+		return nil, err
+	}
+	connection, err := handler.service.Invite(userId, cUserId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.ConnectionResponse{
+		Connection: mapConnection(connection),
+	}
+	return response, nil
+}
+
 func (handler *ConnectHandler) UnConnect(ctx context.Context, request *pb.UnConnectRequest) (*pb.EmptyRespones, error) {
 	userId, err := primitive.ObjectIDFromHex(request.UserId)
 	if err != nil {

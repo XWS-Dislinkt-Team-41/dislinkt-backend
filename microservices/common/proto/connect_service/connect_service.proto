@@ -14,14 +14,20 @@ service ConnectService{
 		};
         }
         rpc UnConnect(UnConnectRequest) returns(EmptyRespones) {
-        	option (google.api.http) = {
-			delete: "/user/{userId}/connect/{cUserId}"
+                option (google.api.http) = {
+                        delete: "/user/{userId}/connect/{cUserId}"
 		};
         }
         rpc GetUserConnections(GetUserConnectionsRequest) returns(GetUserConnectionsResponse) {
-        	option (google.api.http) = {
-			get: "/user/{userId}/connect"
+                option (google.api.http) = {
+                        get: "/user/{userId}/connect"
 		};
+        }
+        rpc Invite(InviteRequest) returns(ConnectionResponse) {
+                option (google.api.http) = {
+                        post: "/user/{userId}/connect/invitation"
+                        body: "cUser"
+                };
         }
         rpc AcceptInvitation(AcceptInvitationRequest) returns(ConnectionResponse) {
         	option (google.api.http) = {
@@ -66,6 +72,11 @@ message GetUserConnectionsRequest {
 
 message GetUserConnectionsResponse {
         repeated Connection connections = 1;
+}
+
+message InviteRequest {
+        string userId = 1;
+        Profile cUser = 2;
 }
 
 message AcceptInvitationRequest {

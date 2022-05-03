@@ -34,3 +34,12 @@ type PostsGetAllRequest struct {
 	Ids   []string
 	Posts []*post.Post
 }
+
+type Connection struct {
+	User  Profile
+	CUser Profile
+}
+
+type Profile struct {
+	Id string
+}

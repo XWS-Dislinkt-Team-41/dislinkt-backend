@@ -16,17 +16,15 @@ func NewConnectService(store domain.ConnectStore) *ConnectService {
 }
 
 func (service *ConnectService) Connect(userId, cUserId primitive.ObjectID) (*domain.Connection, error) {
-	var err error
-	var connection *domain.Connection
-	isPrivate, err := service.IsProfilePrivate(cUserId)
+	connection, err := service.store.Connect(userId, cUserId)
 	if err != nil {
 		return nil, err
 	}
-	if isPrivate {
-		connection, err = service.store.Invite(userId, cUserId)
-	} else {
-		connection, err = service.store.Connect(userId, cUserId)
-	}
+	return connection, nil
+}
+
+func (service *ConnectService) Invite(userId, cUserId primitive.ObjectID) (*domain.Connection, error) {
+	connection, err := service.store.Invite(userId, cUserId)
 	if err != nil {
 		return nil, err
 	}
@@ -87,8 +85,4 @@ func (service *ConnectService) GetAllSentInvitations(userId primitive.ObjectID) 
 		return nil, err
 	}
 	return invitations, err
-}
-
-func (service *ConnectService) IsProfilePrivate(cUserId primitive.ObjectID) (bool, error) {
-	return false, nil
 }
