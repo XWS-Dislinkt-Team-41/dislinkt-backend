@@ -38,6 +38,7 @@ service PostService{
         rpc InsertReaction(ReactionOnPostRequest) returns(GetResponse) {
                 option (google.api.http) = {
                         put: "/user/{id}/post/{post_id}/reaction/{type}",
+                        body: "reaction"
                 };
         }
 
@@ -64,9 +65,11 @@ message Post {
         string link = 3;
         string image = 4;
         string owner_id  = 5;
-        int64 likes = 6;
-        int64 dislikes = 7;
-        repeated Comment comments = 8;
+        repeated string LikedBy = 6;
+        repeated string DislikedBy = 7;
+        int64 likes = 8;
+        int64 dislikes = 9;
+        repeated Comment comments = 10;
 }
 
 message GetPostRequest {
@@ -107,4 +110,5 @@ message ReactionOnPostRequest{
         string id = 1;
         string post_id = 2;
         string type = 3;
+        string reaction = 4;
 }

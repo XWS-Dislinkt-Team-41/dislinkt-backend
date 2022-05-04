@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	post "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
+)
 
 type User struct {
 	Id           string
@@ -18,4 +22,10 @@ type User struct {
 	Interests    string
 	Password     string
 	IsPrivate    bool
+}
+
+type UserStatusRequest struct {
+	Id        string
+	IsPrivate bool
+	Posts     []*post.Post
 }

@@ -3,6 +3,7 @@ package services
 import (
 	"log"
 
+	post "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 
 	connections "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
@@ -24,6 +25,14 @@ func NewConnectClient(address string) connections.ConnectServiceClient {
 		log.Fatalf("Failed to start gRPC connection to Connect service: %v", err)
 	}
 	return connections.NewConnectServiceClient(conn)
+}
+
+func NewPostClient(address string) post.PostServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
+	}
+	return post.NewPostServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {

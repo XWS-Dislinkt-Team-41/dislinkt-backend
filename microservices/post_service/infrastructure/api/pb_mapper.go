@@ -8,13 +8,15 @@ import (
 
 func mapPost(post *domain.Post) *pb.Post {
 	postPb := &pb.Post{
-		Id:       post.Id.Hex(),
-		Text:     post.Text,
-		Link:     post.Link,
-		Image:    post.Image,
-		OwnerId:  post.OwnerId.Hex(),
-		Likes:    post.Likes,
-		Dislikes: post.Dislikes,
+		Id:         post.Id.Hex(),
+		Text:       post.Text,
+		Link:       post.Link,
+		Image:      post.Image,
+		LikedBy:    post.LikedBy,
+		DislikedBy: post.DislikedBy,
+		OwnerId:    post.OwnerId.Hex(),
+		Likes:      post.Likes,
+		Dislikes:   post.Dislikes,
 	}
 	for _, comment := range post.Comments {
 		postPb.Comments = append(postPb.Comments, &pb.Comment{
@@ -29,14 +31,16 @@ func mapPostRequest(postPb *pb.Post) *domain.Post {
 	id, _ := primitive.ObjectIDFromHex(postPb.Id)
 	ownerId, _ := primitive.ObjectIDFromHex(postPb.OwnerId)
 	Post := &domain.Post{
-		Id:       id,
-		Text:     postPb.Text,
-		Link:     postPb.Link,
-		Image:    postPb.Image,
-		OwnerId:  ownerId,
-		Likes:    postPb.Likes,
-		Dislikes: postPb.Dislikes,
-		Comments: make([]domain.Comment, 0),
+		Id:         id,
+		Text:       postPb.Text,
+		Link:       postPb.Link,
+		Image:      postPb.Image,
+		OwnerId:    ownerId,
+		LikedBy:    postPb.LikedBy,
+		DislikedBy: postPb.DislikedBy,
+		Likes:      postPb.Likes,
+		Dislikes:   postPb.Dislikes,
+		Comments:   make([]domain.Comment, 0),
 	}
 	for _, commentPb := range postPb.Comments {
 		comment := domain.Comment{

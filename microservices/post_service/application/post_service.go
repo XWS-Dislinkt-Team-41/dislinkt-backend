@@ -28,7 +28,7 @@ func (service *PostService) GetAllFromCollection(id primitive.ObjectID) ([]*doma
 }
 
 func (service *PostService) Insert(id primitive.ObjectID, post *domain.Post) (*domain.Post, error) {
-	newPost, err := service.store.Insert(post.Id, post)
+	newPost, err := service.store.Insert(id, post)
 	if err != nil {
 		return nil, err
 	}
@@ -43,16 +43,16 @@ func (service *PostService) InsertComment(id primitive.ObjectID, post_id primiti
 	return newComment, nil
 }
 
-func (service *PostService) UpdateLikes(id, post_id primitive.ObjectID) (*domain.Post, error) {
-	updatedPost, err := service.store.UpdateLikes(id, post_id)
+func (service *PostService) UpdateLikes(reaction *domain.Reaction) (*domain.Post, error) {
+	updatedPost, err := service.store.UpdateLikes(reaction)
 	if err != nil {
 		return nil, err
 	}
 	return updatedPost, nil
 }
 
-func (service *PostService) UpdateDislikes(id, post_id primitive.ObjectID) (*domain.Post, error) {
-	updatedPost, err := service.store.UpdateDislikes(id, post_id)
+func (service *PostService) UpdateDislikes(reaction *domain.Reaction) (*domain.Post, error) {
+	updatedPost, err := service.store.UpdateDislikes(reaction)
 	if err != nil {
 		return nil, err
 	}

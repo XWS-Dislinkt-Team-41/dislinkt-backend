@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/infrastructure/api"
 	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
 	connectGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
 	postGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
@@ -51,6 +52,10 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) initCustomHandlers() {
+	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
+	postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
+	publicPostHandler := api.NewPublicPostHandler(userEndpoint, postEndpoint)
+	publicPostHandler.Init(server.mux)
 }
 
 func (server *Server) Start() {

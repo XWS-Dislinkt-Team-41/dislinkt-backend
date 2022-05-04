@@ -10,7 +10,7 @@ type PostStore interface {
 	GetAllFromCollection(id primitive.ObjectID) ([]*Post, error)
 	Insert(id primitive.ObjectID, post *Post) (*Post, error)
 	InsertComment(id primitive.ObjectID, post_id primitive.ObjectID, comment *Comment) (*Comment, error)
-	UpdateLikes(id primitive.ObjectID, post_id primitive.ObjectID) (*Post, error)
-	UpdateDislikes(id primitive.ObjectID, post_id primitive.ObjectID) (*Post, error)
+	UpdateLikes(reaction *Reaction) (*Post, error)
+	UpdateDislikes(reaction *Reaction) (*Post, error)
 	DeleteAll()
 }
