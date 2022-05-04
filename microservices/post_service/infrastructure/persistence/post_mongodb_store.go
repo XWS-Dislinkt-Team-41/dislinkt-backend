@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"errors"
 	"fmt"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
@@ -39,12 +40,20 @@ func (store *PostMongoDBStore) Get(id primitive.ObjectID, post_id primitive.Obje
 }
 
 func (store *PostMongoDBStore) GetAll() ([]*domain.Post, error) {
+
 	filter := bson.D{{}}
-	return store.filter(filter, "000000000000000000000000")
+	x := []string{"000000000000000000000000", "110000000000000000000000"}
+	posts := []*domain.Post{}
+	for _, id := range x {
+		userPost, _ := store.filter(filter, id)
+		for _, post := range userPost {
+			posts = append(posts, post)
+		}
+	}
+	return posts, nil
 }
 
 func (store *PostMongoDBStore) GetAllFromCollection(id primitive.ObjectID) (post []*domain.Post, err error) {
-
 	filter := bson.D{{}}
 	return store.filter(filter, id.Hex())
 }
@@ -52,16 +61,14 @@ func (store *PostMongoDBStore) GetAllFromCollection(id primitive.ObjectID) (post
 func (store *PostMongoDBStore) Insert(id primitive.ObjectID, post *domain.Post) (*domain.Post, error) {
 
 	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).InsertOne(context.TODO(), &domain.Post{
-		Id:       primitive.NewObjectID(),
-		Text:     post.Text,
-		Link:     post.Link,
-		Image:    post.Image,
-		OwnerId:  post.OwnerId,
-		Likes:    post.Likes,
-		Dislikes: post.Dislikes,
+		Id:      primitive.NewObjectID(),
+		Text:    post.Text,
+		Link:    post.Link,
+		Image:   post.Image,
+		OwnerId: id,
 	})
 	if err != nil {
-		log.Fatal(err, "Greskaaaa")
+		log.Fatal(err)
 	}
 
 	fmt.Println("Inserted a single document: ", insertResult.InsertedID)
@@ -94,19 +101,24 @@ func (store *PostMongoDBStore) InsertComment(id primitive.ObjectID, post_id prim
 
 }
 
-func (store *PostMongoDBStore) UpdateLikes(id primitive.ObjectID, post_id primitive.ObjectID) (*domain.Post, error) {
-	post, err := store.Get(id, post_id)
+func (store *PostMongoDBStore) UpdateLikes(reaction *domain.Reaction) (*domain.Post, error) {
+	post, err := store.Get(reaction.Id, reaction.PostId)
 	if err != nil {
 		log.Fatal(err)
+		return nil, err
 	}
+	if contains(post.LikedBy, reaction.ReactionBy.Hex()) {
+		return nil, errors.New("User already liked post")
+	}
+	post.LikedBy = append(post.LikedBy, reaction.ReactionBy.Hex())
 	post.Likes = post.Likes + 1
 
-	filter := bson.M{"_id": post_id}
+	filter := bson.M{"_id": reaction.PostId}
 	update := bson.D{
-		{"$set", bson.D{{"likes", post.Likes}}},
+		{"$set", bson.D{{"liked_by", post.LikedBy}, {"likes", post.Likes}}},
 	}
 
-	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).UpdateOne(context.TODO(), filter,
+	insertResult, err := store.dbPost.Collection(COLLECTION+reaction.Id.Hex()).UpdateOne(context.TODO(), filter,
 		update)
 	if err != nil {
 		return nil, err
@@ -119,19 +131,23 @@ func (store *PostMongoDBStore) UpdateLikes(id primitive.ObjectID, post_id primit
 
 }
 
-func (store *PostMongoDBStore) UpdateDislikes(id primitive.ObjectID, post_id primitive.ObjectID) (*domain.Post, error) {
-	post, err := store.Get(id, post_id)
+func (store *PostMongoDBStore) UpdateDislikes(reaction *domain.Reaction) (*domain.Post, error) {
+	post, err := store.Get(reaction.Id, reaction.PostId)
 	if err != nil {
 		log.Fatal(err)
 	}
+	if contains(post.DislikedBy, reaction.ReactionBy.Hex()) {
+		return nil, errors.New("User already disliked post")
+	}
+	post.DislikedBy = append(post.DislikedBy, reaction.ReactionBy.Hex())
 	post.Dislikes = post.Dislikes + 1
 
-	filter := bson.M{"_id": post_id}
+	filter := bson.M{"_id": reaction.PostId}
 	update := bson.D{
-		{"$set", bson.D{{"dislikes", post.Dislikes}}},
+		{"$set", bson.D{{"disliked_by", post.DislikedBy}, {"dislikes", post.Dislikes}}},
 	}
 
-	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).UpdateOne(context.TODO(), filter,
+	insertResult, err := store.dbPost.Collection(COLLECTION+reaction.Id.Hex()).UpdateOne(context.TODO(), filter,
 		update)
 	if err != nil {
 		return nil, err
@@ -145,8 +161,18 @@ func (store *PostMongoDBStore) UpdateDislikes(id primitive.ObjectID, post_id pri
 }
 
 func (store *PostMongoDBStore) DeleteAll() {
+	result, err := store.dbPost.ListCollectionNames(
+		context.TODO(),
+		bson.D{{}})
 
-	store.dbPost.Collection(COLLECTION+"000000000000000000000000").DeleteMany(context.TODO(), bson.D{{}})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, coll := range result {
+		store.dbPost.Collection(coll).DeleteMany(context.TODO(), bson.D{{}})
+	}
+
 }
 
 func (store *PostMongoDBStore) filter(filter interface{}, id string) ([]*domain.Post, error) {
@@ -171,4 +197,14 @@ func decode(cursor *mongo.Cursor) (posts []*domain.Post, err error) {
 	}
 	err = cursor.Err()
 	return
+}
+
+func contains(s []string, str string) bool {
+	for _, v := range s {
+		if v == str {
+			return true
+		}
+	}
+
+	return false
 }

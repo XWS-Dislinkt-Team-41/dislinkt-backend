@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"fmt"
 
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/application"
@@ -87,21 +88,37 @@ func (handler *PostHandler) InsertComment(ctx context.Context, request *pb.Comme
 }
 
 func (handler *PostHandler) InsertReaction(ctx context.Context, request *pb.ReactionOnPostRequest) (*pb.GetResponse, error) {
+	fmt.Println("Pozvan")
 	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	if err != nil {
+		fmt.Println("PRVII 1")
 		return nil, err
 	}
 	objectPostId, err := primitive.ObjectIDFromHex(request.PostId)
 	if err != nil {
+		fmt.Println("PRVII 2")
 		return nil, err
 	}
+
+	objectReactionBy, err := primitive.ObjectIDFromHex(request.ReactionBy)
+	if err != nil {
+		fmt.Println("PRVII 3")
+		return nil, err
+	}
+	fmt.Println("Proso")
+	reaction := &domain.Reaction{
+		Id:         objectId,
+		PostId:     objectPostId,
+		ReactionBy: objectReactionBy,
+	}
+
 	var updatedPost *domain.Post
 	var err1 error
 	if request.Type == "like" {
-		updatedPost, err1 = handler.service.UpdateLikes(objectId, objectPostId)
+		updatedPost, err1 = handler.service.UpdateLikes(reaction)
 	}
 	if request.Type == "dislike" {
-		updatedPost, err1 = handler.service.UpdateDislikes(objectId, objectPostId)
+		updatedPost, err1 = handler.service.UpdateDislikes(reaction)
 	}
 	if err1 != nil {
 		return nil, err1

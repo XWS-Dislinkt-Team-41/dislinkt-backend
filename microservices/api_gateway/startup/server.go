@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/infrastructure/api"
 	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
 	postGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	userGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
@@ -25,6 +26,7 @@ func NewServer(config *cfg.Config) *Server {
 		mux:    runtime.NewServeMux(),
 	}
 	server.initHandlers()
+	server.initCustomHandlers()
 	return server
 }
 
@@ -44,9 +46,10 @@ func (server *Server) initHandlers() {
 }
 
 func (server *Server) initCustomHandlers() {
-	// postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
-	// orderingHandler := api.NewOrderingHandler(postEndpoint)
-	// orderingHandler.Init(server.mux)
+	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
+	postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
+	publicPostHandler := api.NewPublicPostHandler(userEndpoint, postEndpoint)
+	publicPostHandler.Init(server.mux)
 }
 
 func (server *Server) Start() {
