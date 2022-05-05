@@ -12,7 +12,7 @@ service PostService{
 			get: "/user/{id}/post/{post_id}"
 		};
         }
-        rpc GetAll(GetAllRequest) returns(GetAllResponse) {
+        rpc GetAll(GetAllPublicPostsRequest) returns(GetAllResponse) {
         	option (google.api.http) = {
 			get: "/post"
 		};
@@ -70,6 +70,7 @@ message Post {
         int64 likes = 8;
         int64 dislikes = 9;
         repeated Comment comments = 10;
+        string CreatedAt = 11;
 }
 
 message GetPostRequest {
@@ -79,6 +80,10 @@ message GetPostRequest {
 
 message GetPostResponse {
         Post post = 1;
+}
+
+message GetAllPublicPostsRequest {
+        repeated string PostIds = 1;
 }
 
 message NewPostRequest {
@@ -110,5 +115,10 @@ message ReactionOnPostRequest{
         string id = 1;
         string post_id = 2;
         string type = 3;
-        string reaction = 4;
+        Reaction reaction = 4;
+}
+
+
+message Reaction{
+        string by_user_id = 1;
 }

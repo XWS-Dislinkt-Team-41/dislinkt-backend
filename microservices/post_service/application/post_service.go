@@ -19,8 +19,8 @@ func (service *PostService) Get(id, post_id primitive.ObjectID) (*domain.Post, e
 	return service.store.Get(id, post_id)
 }
 
-func (service *PostService) GetAll() ([]*domain.Post, error) {
-	return service.store.GetAll()
+func (service *PostService) GetAll(postIds []string) ([]*domain.Post, error) {
+	return service.store.GetAll(postIds)
 }
 
 func (service *PostService) GetAllFromCollection(id primitive.ObjectID) ([]*domain.Post, error) {

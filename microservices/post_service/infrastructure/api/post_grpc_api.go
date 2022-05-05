@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/application"
@@ -41,8 +40,8 @@ func (handler *PostHandler) Get(ctx context.Context, request *pb.GetPostRequest)
 	return response, nil
 }
 
-func (handler *PostHandler) GetAll(ctx context.Context, request *pb.GetAllRequest) (*pb.GetAllResponse, error) {
-	posts, err := handler.service.GetAll()
+func (handler *PostHandler) GetAll(ctx context.Context, request *pb.GetAllPublicPostsRequest) (*pb.GetAllResponse, error) {
+	posts, err := handler.service.GetAll(request.PostIds)
 	if err != nil {
 		return nil, err
 	}
@@ -88,24 +87,19 @@ func (handler *PostHandler) InsertComment(ctx context.Context, request *pb.Comme
 }
 
 func (handler *PostHandler) InsertReaction(ctx context.Context, request *pb.ReactionOnPostRequest) (*pb.GetResponse, error) {
-	fmt.Println("Pozvan")
 	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	if err != nil {
-		fmt.Println("PRVII 1")
 		return nil, err
 	}
 	objectPostId, err := primitive.ObjectIDFromHex(request.PostId)
 	if err != nil {
-		fmt.Println("PRVII 2")
 		return nil, err
 	}
 
-	objectReactionBy, err := primitive.ObjectIDFromHex(request.ReactionBy)
+	objectReactionBy, err := primitive.ObjectIDFromHex(request.Reaction.ByUserId)
 	if err != nil {
-		fmt.Println("PRVII 3")
 		return nil, err
 	}
-	fmt.Println("Proso")
 	reaction := &domain.Reaction{
 		Id:         objectId,
 		PostId:     objectPostId,

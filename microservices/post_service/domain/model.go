@@ -18,6 +18,7 @@ type Post struct {
 	Likes      int64              `bson:"likes"`
 	Dislikes   int64              `bson:"dislikes"`
 	Comments   []Comment          `bson:"comments"`
+	CreatedAt  primitive.DateTime `bson:"created_at"`
 }
 
 type NewPostRequest struct {
@@ -35,8 +36,4 @@ type Reaction struct {
 	Id         primitive.ObjectID `bson:"_id"`
 	PostId     primitive.ObjectID `bson:"post_id"`
 	ReactionBy primitive.ObjectID `bson:"reaction"`
-}
-
-type ErrorExists struct {
-	err error
 }

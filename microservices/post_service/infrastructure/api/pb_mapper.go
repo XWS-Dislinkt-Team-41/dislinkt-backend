@@ -1,6 +1,8 @@
 package api
 
 import (
+	"time"
+
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,12 +20,14 @@ func mapPost(post *domain.Post) *pb.Post {
 		Likes:      post.Likes,
 		Dislikes:   post.Dislikes,
 	}
+
 	for _, comment := range post.Comments {
 		postPb.Comments = append(postPb.Comments, &pb.Comment{
 			Code: comment.Code,
 			Text: comment.Text,
 		})
 	}
+	postPb.CreatedAt = post.CreatedAt.Time().String()
 	return postPb
 }
 
@@ -49,6 +53,8 @@ func mapPostRequest(postPb *pb.Post) *domain.Post {
 		}
 		Post.Comments = append(Post.Comments, comment)
 	}
+	t, _ := time.Parse(time.RFC3339, postPb.CreatedAt)
+	Post.CreatedAt = primitive.NewDateTimeFromTime(t)
 	return Post
 }
 

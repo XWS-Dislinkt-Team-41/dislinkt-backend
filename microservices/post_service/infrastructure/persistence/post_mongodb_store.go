@@ -6,6 +6,7 @@ import (
 
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -39,12 +40,11 @@ func (store *PostMongoDBStore) Get(id primitive.ObjectID, post_id primitive.Obje
 	return
 }
 
-func (store *PostMongoDBStore) GetAll() ([]*domain.Post, error) {
+func (store *PostMongoDBStore) GetAll(postIds []string) ([]*domain.Post, error) {
 
 	filter := bson.D{{}}
-	x := []string{"000000000000000000000000", "110000000000000000000000"}
 	posts := []*domain.Post{}
-	for _, id := range x {
+	for _, id := range postIds {
 		userPost, _ := store.filter(filter, id)
 		for _, post := range userPost {
 			posts = append(posts, post)
@@ -61,11 +61,12 @@ func (store *PostMongoDBStore) GetAllFromCollection(id primitive.ObjectID) (post
 func (store *PostMongoDBStore) Insert(id primitive.ObjectID, post *domain.Post) (*domain.Post, error) {
 
 	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).InsertOne(context.TODO(), &domain.Post{
-		Id:      primitive.NewObjectID(),
-		Text:    post.Text,
-		Link:    post.Link,
-		Image:   post.Image,
-		OwnerId: id,
+		Id:        primitive.NewObjectID(),
+		Text:      post.Text,
+		Link:      post.Link,
+		Image:     post.Image,
+		OwnerId:   id,
+		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),
 	})
 	if err != nil {
 		log.Fatal(err)

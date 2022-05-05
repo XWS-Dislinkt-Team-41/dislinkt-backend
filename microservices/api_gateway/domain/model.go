@@ -9,7 +9,7 @@ import (
 type User struct {
 	Id           string
 	Firstname    string
-	Lastname 	 string
+	Lastname     string
 	Email        string
 	MobileNumber string
 	Gender       string
@@ -28,4 +28,9 @@ type UserStatusRequest struct {
 	Id        string
 	IsPrivate bool
 	Posts     []*post.Post
+}
+
+type PostsGetAllRequest struct {
+	Ids   []string
+	Posts []*post.Post
 }

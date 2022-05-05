@@ -23,7 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostServiceClient interface {
 	Get(ctx context.Context, in *GetPostRequest, opts ...grpc.CallOption) (*GetResponse, error)
-	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
+	GetAll(ctx context.Context, in *GetAllPublicPostsRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	GetAllFromCollection(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	Insert(ctx context.Context, in *NewPostRequest, opts ...grpc.CallOption) (*NewPostResponse, error)
 	InsertComment(ctx context.Context, in *CommentOnPostRequest, opts ...grpc.CallOption) (*CommentOnPostResponse, error)
@@ -47,7 +47,7 @@ func (c *postServiceClient) Get(ctx context.Context, in *GetPostRequest, opts ..
 	return out, nil
 }
 
-func (c *postServiceClient) GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
+func (c *postServiceClient) GetAll(ctx context.Context, in *GetAllPublicPostsRequest, opts ...grpc.CallOption) (*GetAllResponse, error) {
 	out := new(GetAllResponse)
 	err := c.cc.Invoke(ctx, "/post.PostService/GetAll", in, out, opts...)
 	if err != nil {
@@ -97,7 +97,7 @@ func (c *postServiceClient) InsertReaction(ctx context.Context, in *ReactionOnPo
 // for forward compatibility
 type PostServiceServer interface {
 	Get(context.Context, *GetPostRequest) (*GetResponse, error)
-	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
+	GetAll(context.Context, *GetAllPublicPostsRequest) (*GetAllResponse, error)
 	GetAllFromCollection(context.Context, *GetRequest) (*GetAllResponse, error)
 	Insert(context.Context, *NewPostRequest) (*NewPostResponse, error)
 	InsertComment(context.Context, *CommentOnPostRequest) (*CommentOnPostResponse, error)
@@ -112,7 +112,7 @@ type UnimplementedPostServiceServer struct {
 func (UnimplementedPostServiceServer) Get(context.Context, *GetPostRequest) (*GetResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
-func (UnimplementedPostServiceServer) GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error) {
+func (UnimplementedPostServiceServer) GetAll(context.Context, *GetAllPublicPostsRequest) (*GetAllResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAll not implemented")
 }
 func (UnimplementedPostServiceServer) GetAllFromCollection(context.Context, *GetRequest) (*GetAllResponse, error) {
@@ -159,7 +159,7 @@ func _PostService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 }
 
 func _PostService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetAllRequest)
+	in := new(GetAllPublicPostsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -171,7 +171,7 @@ func _PostService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/post.PostService/GetAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostServiceServer).GetAll(ctx, req.(*GetAllRequest))
+		return srv.(PostServiceServer).GetAll(ctx, req.(*GetAllPublicPostsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
