@@ -7,6 +7,18 @@ package connections;
 import "google/api/annotations.proto";
 
 service ConnectService{
+        rpc Register(RegisterRequest) returns(ProfileResponse) {
+        	option (google.api.http) = {
+			post: "/user/connect"
+                        body: "user"
+		};
+        }
+        rpc UpdateUser(UpdateUserRequest) returns(ProfileResponse) {
+        	option (google.api.http) = {
+			put: "/user/connect"
+                        body: "user"
+		};
+        }
         rpc Connect(ConnectRequest) returns(ConnectionResponse) {
         	option (google.api.http) = {
 			post: "/user/{userId}/connect"
@@ -48,6 +60,18 @@ service ConnectService{
 			get: "/user/{userId}/connect/invitation/sent"
 		};
         }
+}
+
+message RegisterRequest {
+        Profile user = 1;
+}
+
+message UpdateUserRequest {
+        Profile user = 1;
+}
+
+message ProfileResponse {
+        Profile user = 1;
 }
 
 message ConnectRequest {
@@ -105,6 +129,7 @@ message GetAllInvitationsResponse {
 
 message Profile {
         string id = 1;
+        bool private = 2;
 }
 
 message Connection {

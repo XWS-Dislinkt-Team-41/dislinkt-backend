@@ -4,6 +4,7 @@ import (
 	"time"
 
 	auth "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/auth_service"
+	conn "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
 	post "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 )
@@ -40,4 +41,5 @@ type PostsGetAllRequest struct {
 type RegisterRequest struct {
 	UserCredential auth.UserCredential
 	User           user.User
+	Profile        conn.Profile
 }

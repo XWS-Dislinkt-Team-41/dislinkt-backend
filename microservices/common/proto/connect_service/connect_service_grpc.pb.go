@@ -22,6 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ConnectServiceClient interface {
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*ProfileResponse, error)
+	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*ProfileResponse, error)
 	Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectionResponse, error)
 	UnConnect(ctx context.Context, in *UnConnectRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
 	GetUserConnections(ctx context.Context, in *GetUserConnectionsRequest, opts ...grpc.CallOption) (*GetUserConnectionsResponse, error)
@@ -38,6 +40,24 @@ type connectServiceClient struct {
 
 func NewConnectServiceClient(cc grpc.ClientConnInterface) ConnectServiceClient {
 	return &connectServiceClient{cc}
+}
+
+func (c *connectServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*ProfileResponse, error) {
+	out := new(ProfileResponse)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/Register", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectServiceClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*ProfileResponse, error) {
+	out := new(ProfileResponse)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/UpdateUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *connectServiceClient) Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectionResponse, error) {
@@ -116,6 +136,8 @@ func (c *connectServiceClient) GetAllSentInvitations(ctx context.Context, in *Ge
 // All implementations must embed UnimplementedConnectServiceServer
 // for forward compatibility
 type ConnectServiceServer interface {
+	Register(context.Context, *RegisterRequest) (*ProfileResponse, error)
+	UpdateUser(context.Context, *UpdateUserRequest) (*ProfileResponse, error)
 	Connect(context.Context, *ConnectRequest) (*ConnectionResponse, error)
 	UnConnect(context.Context, *UnConnectRequest) (*EmptyRespones, error)
 	GetUserConnections(context.Context, *GetUserConnectionsRequest) (*GetUserConnectionsResponse, error)
@@ -131,6 +153,12 @@ type ConnectServiceServer interface {
 type UnimplementedConnectServiceServer struct {
 }
 
+func (UnimplementedConnectServiceServer) Register(context.Context, *RegisterRequest) (*ProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+}
+func (UnimplementedConnectServiceServer) UpdateUser(context.Context, *UpdateUserRequest) (*ProfileResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+}
 func (UnimplementedConnectServiceServer) Connect(context.Context, *ConnectRequest) (*ConnectionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Connect not implemented")
 }
@@ -166,6 +194,42 @@ type UnsafeConnectServiceServer interface {
 
 func RegisterConnectServiceServer(s grpc.ServiceRegistrar, srv ConnectServiceServer) {
 	s.RegisterService(&ConnectService_ServiceDesc, srv)
+}
+
+func _ConnectService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).Register(ctx, req.(*RegisterRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectService_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).UpdateUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/UpdateUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _ConnectService_Connect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -319,6 +383,14 @@ var ConnectService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "connections.ConnectService",
 	HandlerType: (*ConnectServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Register",
+			Handler:    _ConnectService_Register_Handler,
+		},
+		{
+			MethodName: "UpdateUser",
+			Handler:    _ConnectService_UpdateUser_Handler,
+		},
 		{
 			MethodName: "Connect",
 			Handler:    _ConnectService_Connect_Handler,

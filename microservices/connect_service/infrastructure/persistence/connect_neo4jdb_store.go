@@ -7,13 +7,16 @@ import (
 )
 
 const (
-	queryCreateConnection      = "MERGE (u1:User{id:$userId, name:$userId}) MERGE (u2:User{id:$cUserId, name:$cUserId}) MERGE (u1)-[c:Connection]-(u2)"
-	queryDeleteConnection      = "MATCH (u1:User{id:$userId, name:$userId})-[c:Connection]-(u2:User{id:$cUserId, name:$cUserId}) DELETE c"
+	queryRegisterUser          = "CREATE (u:User{id:$userId, name:$userId, private:$userPrivate}) RETURN u"
+	queryUpdateUser            = "MATCH (u:User{id:$userId}) SET u.private = $userPrivate RETURN u"
+	queryIsUserPrivate         = "MATCH (u:User{id:$userId}) RETURN u.private AS IsUserPrivate"
+	queryCreateConnection      = "MATCH (u1:User{id:$userId}) MATCH (u2:User{id:$cUserId}) MERGE (u1)-[c:Connection]-(u2)"
+	queryDeleteConnection      = "MATCH (u1:User{id:$userId})-[c:Connection]-(u2:User{id:$cUserId}) DELETE c"
 	queryGetConnections        = "MATCH (u:User{id:$userId}) MATCH (u)-[c:Connection]-(x) RETURN x.id"
-	queryCreateInvite          = "MERGE (u1:User{id:$userId, name:$userId}) MERGE (u2:User{id:$cUserId, name:$cUserId}) MERGE (u1)-[i:Invite]->(u2)"
-	queryDeleteInvite          = "MATCH (u1:User{id:$userId, name:$userId})-[i:Invite]->(u2:User{id:$cUserId, name:$cUserId}) DELETE i"
-	queryDeleteReceivedInvite  = "MATCH (u1:User{id:$userId, name:$userId})<-[i:Invite]-(u2:User{id:$cUserId, name:$cUserId}) DELETE i"
-	queryIsReceivedInvite      = "MATCH (u1:User{id:$userId, name:$userId}) MATCH (u2:User{id:$cUserId, name:$cUserId}) RETURN exists((u1)<-[:Invite]-(u2)) AS IsReceived"
+	queryCreateInvite          = "MATCH (u1:User{id:$userId}) MATCH (u2:User{id:$cUserId}) MERGE (u1)-[i:Invite]->(u2)"
+	queryDeleteInvite          = "MATCH (u1:User{id:$userId})-[i:Invite]->(u2:User{id:$cUserId}) DELETE i"
+	queryDeleteReceivedInvite  = "MATCH (u1:User{id:$userId})<-[i:Invite]-(u2:User{id:$cUserId}) DELETE i"
+	queryIsReceivedInvite      = "MATCH (u1:User{id:$userId}) MATCH (u2:User{id:$cUserId) RETURN exists((u1)<-[:Invite]-(u2)) AS IsReceived"
 	queryGetAllInvitations     = "MATCH (u:User{id:$userId}) MATCH (u)<-[i:Invite]-(x) RETURN x.id"
 	queryGetAllSentInvitations = "MATCH (u:User{id:$userId}) MATCH (u)-[i:Invite]->(x) RETURN x.id"
 )
@@ -24,6 +27,80 @@ type ConnectNeo4jDBStore struct {
 
 func NewConnectNeo4jDBStore(driver *neo4j.Driver) domain.ConnectStore {
 	return &ConnectNeo4jDBStore{driver: driver}
+}
+
+func (store *ConnectNeo4jDBStore) Register(user domain.Profile) (*domain.Profile, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryRegisterUser, map[string]interface{}{"userId": user.Id.Hex(), "userPrivate": user.Private})
+		if err != nil {
+			return nil, err
+		}
+		return result.Consume()
+	})
+	connection := domain.Profile{
+		Id:      user.Id,
+		Private: user.Private,
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &connection, nil
+}
+
+func (store *ConnectNeo4jDBStore) UpdateUser(user domain.Profile) (*domain.Profile, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	_, err = session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryUpdateUser, map[string]interface{}{"userId": user.Id.Hex(), "userPrivate": user.Private})
+		if err != nil {
+			return nil, err
+		}
+		return result.Consume()
+	})
+	connection := domain.Profile{
+		Id:      user.Id,
+		Private: user.Private,
+	}
+	if err != nil {
+		return nil, err
+	}
+	return &connection, nil
+}
+
+func (store *ConnectNeo4jDBStore) IsUserPrivate(userId primitive.ObjectID) (*bool, error) {
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	if err != nil {
+		return nil, err
+	}
+	defer session.Close()
+	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryUpdateUser, map[string]interface{}{"userId": userId.Hex()})
+		if err != nil {
+			return nil, err
+		}
+		IsUserPrivate := true
+		for result.Next() {
+			if value, ok := result.Record().Get("IsUserPrivate"); ok {
+				IsUserPrivate = value.(bool)
+			} else {
+				return nil, err
+			}
+		}
+		return IsUserPrivate, result.Err()
+	})
+	IsUserPrivate := result.(bool)
+	if err != nil {
+		return nil, err
+	}
+	return &IsUserPrivate, nil
 }
 
 func (store *ConnectNeo4jDBStore) Connect(userId, cUserId primitive.ObjectID) (*domain.Connection, error) {

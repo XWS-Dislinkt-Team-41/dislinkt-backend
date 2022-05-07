@@ -10,5 +10,6 @@ type Connection struct {
 }
 
 type Profile struct {
-	Id primitive.ObjectID `bson:"id"`
+	Id      primitive.ObjectID `bson:"id"`
+	Private bool               `bson:"private"`
 }

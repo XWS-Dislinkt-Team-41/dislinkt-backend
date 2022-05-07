@@ -19,6 +19,36 @@ func NewConnectHandler(service *application.ConnectService) *ConnectHandler {
 	}
 }
 
+func (handler *ConnectHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.ProfileResponse, error) {
+	profile, err := mapProfilePb(request.User)
+	if err != nil {
+		return nil, err
+	}
+	user, err := handler.service.Register(*profile)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.ProfileResponse{
+		User: mapProfile(user),
+	}
+	return response, nil
+}
+
+func (handler *ConnectHandler) UpdateUser(ctx context.Context, request *pb.UpdateUserRequest) (*pb.ProfileResponse, error) {
+	profile, err := mapProfilePb(request.User)
+	if err != nil {
+		return nil, err
+	}
+	user, err := handler.service.UpdateUser(*profile)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.ProfileResponse{
+		User: mapProfile(user),
+	}
+	return response, nil
+}
+
 func (handler *ConnectHandler) Connect(ctx context.Context, request *pb.ConnectRequest) (*pb.ConnectionResponse, error) {
 	userId, err := primitive.ObjectIDFromHex(request.UserId)
 	if err != nil {

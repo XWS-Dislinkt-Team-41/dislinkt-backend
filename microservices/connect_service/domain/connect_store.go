@@ -1,8 +1,13 @@
 package domain
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type ConnectStore interface {
+	Register(user Profile) (*Profile, error)
+	UpdateUser(user Profile) (*Profile, error)
+	IsUserPrivate(userId primitive.ObjectID) (*bool, error)
 	Connect(userId, cUserId primitive.ObjectID) (*Connection, error)
 	UnConnect(userId, cUserId primitive.ObjectID) error
 	GetUserConnections(userId primitive.ObjectID) ([]*Connection, error)

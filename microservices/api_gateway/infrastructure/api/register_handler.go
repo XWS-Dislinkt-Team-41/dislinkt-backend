@@ -8,19 +8,22 @@ import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/domain"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/infrastructure/services"
 	auth "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/auth_service"
+	conn "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
 type RegisterHandler struct {
-	authClientAddress string
-	userClientAddress string
+	authClientAddress    string
+	userClientAddress    string
+	connectClientAddress string
 }
 
-func NewRegisterHandler(userClientAddress, authClientAddress string) Handler {
+func NewRegisterHandler(userClientAddress, authClientAddress, connectClientAddress string) Handler {
 	return &RegisterHandler{
-		userClientAddress: userClientAddress,
-		authClientAddress: authClientAddress,
+		userClientAddress:    userClientAddress,
+		authClientAddress:    authClientAddress,
+		connectClientAddress: connectClientAddress,
 	}
 }
 
@@ -51,6 +54,10 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 			Username: userRequest.Username,
 			Password: userRequest.Password,
 		},
+		Profile: conn.Profile{
+			Id:      userRequest.Id,
+			Private: userRequest.IsPrivate,
+		},
 	}
 
 	err = handler.RegisterUser(registerRequest)
@@ -58,8 +65,13 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	} else {
-		err1 := handler.RegisterUserCredential(registerRequest)
-		if err1 != nil {
+		err = handler.RegisterUserCredential(registerRequest)
+		if err != nil {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+		err = handler.RegisterProfile(registerRequest)
+		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
@@ -72,7 +84,6 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 		w.WriteHeader(http.StatusOK)
 		w.Write(response)
 	}
-	return
 }
 
 func (handler *RegisterHandler) RegisterUser(registerUserRequest *domain.RegisterRequest) error {
@@ -87,6 +98,15 @@ func (handler *RegisterHandler) RegisterUser(registerUserRequest *domain.Registe
 func (handler *RegisterHandler) RegisterUserCredential(registerUserRequest *domain.RegisterRequest) error {
 	authClient := services.NewAuthClient(handler.authClientAddress)
 	_, err := authClient.Register(context.TODO(), &auth.RegisterRequest{User: &registerUserRequest.UserCredential})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (handler *RegisterHandler) RegisterProfile(registerUserRequest *domain.RegisterRequest) error {
+	connectClient := services.NewConnectClient(handler.connectClientAddress)
+	_, err := connectClient.Register(context.TODO(), &conn.RegisterRequest{User: &registerUserRequest.Profile})
 	if err != nil {
 		return err
 	}
