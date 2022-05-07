@@ -2,7 +2,6 @@ package api
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/application"
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/auth_service"
@@ -31,7 +30,7 @@ func (handler *AuthHandler) Login(ctx context.Context, request *pb.LoginRequest)
 }
 
 func (handler *AuthHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	fmt.Println("UPAOOO")
+
 	userCredential := mapPbUserCredential(request.User)
 	user, err := handler.service.Register(userCredential)
 	if err != nil {

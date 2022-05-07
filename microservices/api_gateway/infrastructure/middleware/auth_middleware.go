@@ -11,8 +11,7 @@ import (
 
 func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("Putanja " + r.URL.Path)
-		if !(r.URL.Path == "/auth/login" || r.URL.Path == "/auth/register") {
+		if isProtectedRoute(r.Method, r.URL.Path) {
 			if r.Header["Token"] != nil {
 
 				token, err := jwt.Parse(r.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
@@ -50,4 +49,22 @@ func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 		}
 		handler.ServeHTTP(w, r)
 	})
+}
+
+func isProtectedRoute(method, path string) bool {
+
+	if method == "GET" {
+		if path == "/user/{id}/public" ||
+			path == "/post/public" {
+			return false
+		}
+	}
+
+	if method == "POST" {
+		if path == "/auth/register" ||
+			path == "/auth/login" {
+			return false
+		}
+	}
+	return true
 }

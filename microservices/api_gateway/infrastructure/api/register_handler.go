@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/domain"
@@ -42,7 +41,6 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("Pozvanoo 2")
 	registerRequest := &domain.RegisterRequest{
 		User: user.User{
 			Id:       userRequest.Id,
@@ -63,7 +61,6 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 		err1 := handler.RegisterUserCredential(registerRequest)
 		if err1 != nil {
 			w.WriteHeader(http.StatusNotFound)
-			fmt.Println("Pozvanoo 4")
 			return
 		}
 		response, err := json.Marshal(registerRequest.User)
@@ -74,7 +71,6 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(response)
-		fmt.Println("Pozvanoo 3")
 	}
 	return
 }

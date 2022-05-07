@@ -2,13 +2,13 @@ package persistence
 
 import (
 	"context"
-	"fmt"
+
+	"strings"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"strings"
 )
 
 const (
@@ -43,7 +43,7 @@ func (store *UserMongoDBStore) Get(id primitive.ObjectID) (*domain.User, error) 
 }
 
 func (store *UserMongoDBStore) IsPrivate(id primitive.ObjectID) (bool, error) {
-	filter := bson.M{"_id":id}
+	filter := bson.M{"_id": id}
 	result, error := store.filterOne(filter)
 	return result.IsPrivate, error
 }
@@ -54,8 +54,8 @@ func (store *UserMongoDBStore) GetAll() ([]*domain.User, error) {
 }
 
 func (store *UserMongoDBStore) GetAllPublicUserId() ([]primitive.ObjectID, error) {
-	var filteredUsers []*domain.User 
-	users, err := store.users.Find(context.TODO(),bson.M{"isPrivate": false})
+	var filteredUsers []*domain.User
+	users, err := store.users.Find(context.TODO(), bson.M{"isPrivate": false})
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (store *UserMongoDBStore) GetAllPublicUserId() ([]primitive.ObjectID, error
 }
 
 func (store *UserMongoDBStore) SearchPublic(filter string) ([]*domain.User, error) {
-	var foundUsers []*domain.User 
+	var foundUsers []*domain.User
 
 	filter = strings.TrimSpace(filter)
 	splitSearch := strings.Split(filter, " ")
@@ -78,7 +78,7 @@ func (store *UserMongoDBStore) SearchPublic(filter string) ([]*domain.User, erro
 	for _, splitSearchpart := range splitSearch {
 
 		//username
-		filtereds, err := store.users.Find(context.TODO(),bson.M{"isPrivate": false,"username" : primitive.Regex{Pattern: splitSearchpart, Options: "i"} })
+		filtereds, err := store.users.Find(context.TODO(), bson.M{"isPrivate": false, "username": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
 		if err != nil {
 			return nil, err
 		}
@@ -91,7 +91,7 @@ func (store *UserMongoDBStore) SearchPublic(filter string) ([]*domain.User, erro
 		}
 
 		//name
-		filtereds, err = store.users.Find(context.TODO(), bson.M{"isPrivate": false, "firstname" : primitive.Regex{Pattern: splitSearchpart, Options: "i"} })
+		filtereds, err = store.users.Find(context.TODO(), bson.M{"isPrivate": false, "firstname": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
 		if err != nil {
 			return nil, err
 		}
@@ -104,7 +104,7 @@ func (store *UserMongoDBStore) SearchPublic(filter string) ([]*domain.User, erro
 		}
 
 		//surname
-		filtereds, err = store.users.Find(context.TODO(), bson.M{"isPrivate": false,"lastname" : primitive.Regex{Pattern: splitSearchpart, Options: "i"} })
+		filtereds, err = store.users.Find(context.TODO(), bson.M{"isPrivate": false, "lastname": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
 		if err != nil {
 			return nil, err
 		}
@@ -165,7 +165,6 @@ func (store *UserMongoDBStore) filter(filter interface{}) ([]*domain.User, error
 }
 
 func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (string, error) {
-	fmt.Println(user.Id)
 	userInDatabase, err := store.Get(user.Id)
 	if userInDatabase == nil {
 		return "User doesn't exist.", nil

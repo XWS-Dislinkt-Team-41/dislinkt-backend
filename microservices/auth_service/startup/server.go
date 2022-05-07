@@ -26,15 +26,11 @@ func NewServer(config *config.Config) *Server {
 }
 
 func (server *Server) Start() {
-	fmt.Println("UPAOOO 1")
+
 	mongoClient := server.initMongoClient()
-	fmt.Println("UPAOOO 2")
 	authStore := server.initAuthStore(mongoClient)
-	fmt.Println("UPAOOO 3")
 	authService := server.initAuthService(authStore)
-	fmt.Println("UPAOOO 4")
 	authHandler := server.initAuthHandler(authService)
-	fmt.Println("UPAOOO 5")
 	server.startGrpcServer(authHandler)
 }
 

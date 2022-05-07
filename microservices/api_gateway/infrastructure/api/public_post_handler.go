@@ -28,12 +28,12 @@ func NewPublicPostHandler(userClientAddress, postClientAddress string) Handler {
 func (handler *PublicPostHandler) Init(mux *runtime.ServeMux) {
 	err := mux.HandlePath("GET", "/user/{id}/public", handler.GetPublicPostsByUserId)
 	if err != nil {
-		fmt.Println("Panikaaa")
+		fmt.Println("Panika")
 		panic(err)
 	}
 	err1 := mux.HandlePath("GET", "/post/public", handler.GetAllPublicPosts)
 	if err1 != nil {
-		fmt.Println("Panikaaa")
+		fmt.Println("Panika")
 		panic(err1)
 	}
 }
