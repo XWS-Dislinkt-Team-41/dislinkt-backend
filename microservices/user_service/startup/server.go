@@ -2,6 +2,9 @@ package startup
 
 import (
 	"fmt"
+	"log"
+	"net"
+
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/application"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
@@ -10,8 +13,6 @@ import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/startup/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc"
-	"log"
-	"net"
 )
 
 type Server struct {
@@ -51,7 +52,7 @@ func (server *Server) initUserStore(client *mongo.Client) domain.UserStore {
 	store := persistence.NewUserMongoDBStore(client)
 	store.DeleteAll()
 	for _, user := range users {
-		_ ,err := store.Insert(user)
+		_, err := store.Insert(user)
 		if err != nil {
 			log.Fatal(err)
 		}

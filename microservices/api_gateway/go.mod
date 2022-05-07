@@ -6,6 +6,7 @@ replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common =>
 
 require (
 	github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common v1.0.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	google.golang.org/grpc v1.46.0
 )

@@ -1,6 +1,22 @@
 version: "3.8"
 
 services:
+
+  auth_service:
+    image: auth_service
+    build:
+      context: .
+      dockerfile: ./auth_service/Dockerfile
+    restart: on-failure
+    environment:
+      AUTH_DB_HOST: ${AUTH_DB_HOST}
+      AUTH_DB_PORT: ${AUTH_DB_PORT}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
+    depends_on:
+      - auth_db
+    networks:
+      - network
+
   post_service:
     image: post_service
     build:
@@ -51,6 +67,8 @@ services:
       POST_SERVICE_PORT: ${POST_SERVICE_PORT}
       CONNECT_SERVICE_HOST: ${CONNECT_SERVICE_HOST}
       CONNECT_SERVICE_PORT: ${CONNECT_SERVICE_PORT} 
+      AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT} 
     networks:
       - network
 
@@ -62,6 +80,16 @@ services:
       - PGID=1000
     ports:
       - 27017:27017
+    restart: unless-stopped
+    networks:
+      - network
+  
+  auth_db:
+    image: mongo
+    container_name: auth_db
+    environment:
+      - PUID=1000
+      - PGID=1000
     restart: unless-stopped
     networks:
       - network
