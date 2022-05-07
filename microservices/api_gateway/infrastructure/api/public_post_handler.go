@@ -52,7 +52,7 @@ func (handler *PublicPostHandler) GetPublicPostsByUserId(w http.ResponseWriter, 
 		return
 	}
 
-	if userStatus.IsPrivate == true {
+	if userStatus.IsPrivate {
 		w.WriteHeader(http.StatusNotFound)
 		return
 	} else {
@@ -71,7 +71,6 @@ func (handler *PublicPostHandler) GetPublicPostsByUserId(w http.ResponseWriter, 
 		w.Write(response)
 
 	}
-	return
 }
 
 func (handler *PublicPostHandler) checkUserStatus(userPostsRequest *domain.UserStatusRequest) error {
@@ -124,7 +123,6 @@ func (handler *PublicPostHandler) GetAllPublicPosts(w http.ResponseWriter, r *ht
 		w.Write(response)
 
 	}
-	return
 }
 
 func (handler *PublicPostHandler) getPublicUsersIds(publicPost *domain.PostsGetAllRequest) error {

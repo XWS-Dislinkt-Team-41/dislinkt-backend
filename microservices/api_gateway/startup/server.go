@@ -63,10 +63,14 @@ func (server *Server) initCustomHandlers() {
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
 	authEndpoint := fmt.Sprintf("%s:%s", server.config.AuthHost, server.config.AuthPort)
+	connEndpoint := fmt.Sprintf("%s:%s", server.config.ConnectHost, server.config.ConnectPort)
 	publicPostHandler := api.NewPublicPostHandler(userEndpoint, postEndpoint)
 	publicPostHandler.Init(server.mux)
-	registerHandler := api.NewRegisterHandler(userEndpoint, authEndpoint)
+	registerHandler := api.NewRegisterHandler(userEndpoint, authEndpoint, connEndpoint)
 	registerHandler.Init(server.mux)
+	connectPostHandler := api.NewConnectPostHandler(postEndpoint, connEndpoint)
+	connectPostHandler.Init(server.mux)
+
 }
 
 func (server *Server) Start() {
