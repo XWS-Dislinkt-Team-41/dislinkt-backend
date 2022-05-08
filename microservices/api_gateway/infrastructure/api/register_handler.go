@@ -67,7 +67,6 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 			Private: userRequest.IsPrivate,
 		},
 	}
-
 	err = handler.RegisterUser(registerRequest)
 	if err != nil {
 		w.Header().Set("Content-Type", "application/json")
@@ -101,13 +100,14 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 func (handler *RegisterHandler) RegisterUser(registerUserRequest *domain.RegisterRequest) error {
 	userClient := services.NewUserClient(handler.userClientAddress)
 	user, err := userClient.Register(context.TODO(), &user.RegisterRequest{User: &registerUserRequest.User})
+	if user == nil {
+		return status.Error(codes.AlreadyExists, "User already exists with same credentials")
+	}
 	registerUserRequest.User = *user.User
 	if err != nil {
 		return err
 	}
-	if user == nil {
-		return status.Error(codes.AlreadyExists, "User already exists with same credentials")
-	}
+
 	return nil
 }
 
