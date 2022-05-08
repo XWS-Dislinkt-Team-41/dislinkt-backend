@@ -132,7 +132,6 @@ func AppendIfMissing(slice []*domain.User, i *domain.User) []*domain.User {
 func (store *UserMongoDBStore) Insert(user *domain.User) (*domain.User, error) {
 	userInDatabase, _ := store.Get(user.Id)
 	user.Id = primitive.NewObjectID()
-	user.IsPrivate = false
 	if userInDatabase != nil {
 		return nil, errors.New("user with the same id already exists")
 	}

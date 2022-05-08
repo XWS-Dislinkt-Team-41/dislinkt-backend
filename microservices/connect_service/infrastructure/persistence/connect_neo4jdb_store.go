@@ -16,7 +16,7 @@ const (
 	queryCreateInvite          = "MATCH (u1:User{id:$userId}) MATCH (u2:User{id:$cUserId}) MERGE (u1)-[i:Invite]->(u2)"
 	queryDeleteInvite          = "MATCH (u1:User{id:$userId})-[i:Invite]->(u2:User{id:$cUserId}) DELETE i"
 	queryDeleteReceivedInvite  = "MATCH (u1:User{id:$userId})<-[i:Invite]-(u2:User{id:$cUserId}) DELETE i"
-	queryIsReceivedInvite      = "MATCH (u1:User{id:$userId}) MATCH (u2:User{id:$cUserId) RETURN exists((u1)<-[:Invite]-(u2)) AS IsReceived"
+	queryIsReceivedInvite      = "MATCH (u1:User{id:$userId}) MATCH (u2:User{id:$cUserId}) RETURN exists((u1)<-[:Invite]-(u2)) AS IsReceived"
 	queryGetAllInvitations     = "MATCH (u:User{id:$userId}) MATCH (u)<-[i:Invite]-(x) RETURN x.id"
 	queryGetAllSentInvitations = "MATCH (u:User{id:$userId}) MATCH (u)-[i:Invite]->(x) RETURN x.id"
 )

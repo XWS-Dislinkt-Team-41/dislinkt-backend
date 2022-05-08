@@ -47,9 +47,14 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 	}
 	registerRequest := &domain.RegisterRequest{
 		User: user.User{
-			Id:       userRequest.Id,
-			Username: userRequest.Username,
-			Password: userRequest.Password,
+			Id:           userRequest.Id,
+			Username:     userRequest.Username,
+			Password:     userRequest.Password,
+			IsPrivate:    userRequest.IsPrivate,
+			Firstname:    userRequest.Firstname,
+			Lastname:     userRequest.Lastname,
+			MobileNumber: userRequest.MobileNumber,
+			Email:        userRequest.Email,
 		},
 		UserCredential: auth.UserCredential{
 			Username: userRequest.Username,
