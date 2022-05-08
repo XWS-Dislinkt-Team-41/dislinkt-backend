@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"regexp"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -52,19 +53,17 @@ func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 }
 
 func isProtectedRoute(method, path string) bool {
-
+	publicProfilePostsPath, _ := regexp.MatchString(`\/user\/[0-9a-f]{24}\/public`, path)
 	if method == "GET" {
-		if path == "/user/{id}/public" ||
-			path == "/post/public" {
+		if path == "/post/public" ||
+			publicProfilePostsPath {
 			return false
 		}
 	}
 
 	if method == "POST" {
-		if path == "/auth/register" ||
-			path == "/user/comporeg" ||
-			path == "/auth/login" ||
-			path == "/user" {
+		if path == "/user/register" ||
+			path == "/auth/login" {
 			return false
 		}
 	}

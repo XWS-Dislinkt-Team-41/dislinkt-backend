@@ -63,7 +63,7 @@ func (store *PostMongoDBStore) Insert(id primitive.ObjectID, post *domain.Post) 
 	insertResult, err := store.dbPost.Collection(COLLECTION+id.Hex()).InsertOne(context.TODO(), &domain.Post{
 		Id:        primitive.NewObjectID(),
 		Text:      post.Text,
-		Link:      post.Link,
+		Links:     post.Links,
 		Image:     post.Image,
 		OwnerId:   id,
 		CreatedAt: primitive.NewDateTimeFromTime(time.Now()),

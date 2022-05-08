@@ -29,7 +29,7 @@ func NewRegisterHandler(userClientAddress, authClientAddress, connectClientAddre
 
 func (handler *RegisterHandler) Init(mux *runtime.ServeMux) {
 
-	err := mux.HandlePath("POST", "/user/comporeg", handler.Register)
+	err := mux.HandlePath("POST", "/user/register", handler.Register)
 	if err != nil {
 		panic(err)
 	}

@@ -12,11 +12,7 @@ service PostService{
 			get: "/user/{id}/post/{post_id}"
 		};
         }
-        rpc GetAll(GetAllPublicPostsRequest) returns(GetAllResponse) {
-        	option (google.api.http) = {
-			get: "/post"
-		};
-        }
+        rpc GetAll(GetAllPublicPostsRequest) returns(GetAllResponse) {}
         rpc GetAllFromCollection(GetRequest) returns(GetAllResponse) {
                 option (google.api.http) = {
                         get: "/user/{id}/post"
@@ -62,7 +58,7 @@ message GetAllResponse {
 message Post {
         string id = 1;
         string text = 2;
-        string link = 3;
+        repeated string links = 3;
         string image = 4;
         string owner_id  = 5;
         repeated string LikedBy = 6;

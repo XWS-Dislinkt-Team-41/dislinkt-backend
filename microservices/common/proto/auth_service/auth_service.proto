@@ -13,12 +13,7 @@ service AuthService{
                         body: "user"
                     };
         }
-        rpc Register(RegisterRequest) returns (RegisterResponse) {
-        	option (google.api.http) = {
-                        post: "/auth/register",
-                        body: "user"
-                      };
-        }
+        rpc Register(RegisterRequest) returns (RegisterResponse) {}
 }
 
 message LoginRequest {

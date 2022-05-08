@@ -8,6 +8,10 @@ import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
 service UserService{
+       
+        rpc GetAllPublicUserId(GetAllPublicUserIdRequest) returns(GetAllPublicUserIdResponse) {}
+        rpc IsPrivate(IsPrivateRequest) returns(IsPrivateResponse) {}
+        rpc Register(RegisterRequest) returns(RegisterResponse) {}
         rpc Get(GetRequest) returns(GetResponse) {
         	option (google.api.http) = {
 			get: "/user/{id}"
@@ -17,22 +21,6 @@ service UserService{
         	option (google.api.http) = {
 			get: "/user"
 		};
-        }
-        rpc GetAllPublicUserId(GetAllPublicUserIdRequest) returns(GetAllPublicUserIdResponse) {
-        	option (google.api.http) = {
-			get: "/userPublicId"
-		};
-        }
-        rpc IsPrivate(IsPrivateRequest) returns(IsPrivateResponse) {
-        	option (google.api.http) = {
-			get: "/isUserPrivate/{id}"
-		};
-        }
-        rpc Register(RegisterRequest) returns(RegisterResponse) {
-                option (google.api.http) = {
-                        post: "/user"
-                        body: "user"
-                };
         }
         rpc SearchPublic(SearchPublicRequest) returns(SearchPublicResponse) {
                 option (google.api.http) = {

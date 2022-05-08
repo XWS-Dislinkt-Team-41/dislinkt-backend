@@ -7,18 +7,8 @@ package connections;
 import "google/api/annotations.proto";
 
 service ConnectService{
-        rpc Register(RegisterRequest) returns(ProfileResponse) {
-        	option (google.api.http) = {
-			post: "/user/connect"
-                        body: "user"
-		};
-        }
-        rpc UpdateUser(UpdateUserRequest) returns(ProfileResponse) {
-        	option (google.api.http) = {
-			put: "/user/connect"
-                        body: "user"
-		};
-        }
+        rpc Register(RegisterRequest) returns(ProfileResponse) {}
+        rpc UpdateUser(UpdateUserRequest) returns(ProfileResponse) {}
         rpc Connect(ConnectRequest) returns(ConnectionResponse) {
         	option (google.api.http) = {
 			post: "/user/{userId}/connect"

@@ -12,7 +12,7 @@ func mapPost(post *domain.Post) *pb.Post {
 	postPb := &pb.Post{
 		Id:         post.Id.Hex(),
 		Text:       post.Text,
-		Link:       post.Link,
+		Links:      post.Links,
 		Image:      post.Image,
 		LikedBy:    post.LikedBy,
 		DislikedBy: post.DislikedBy,
@@ -37,7 +37,7 @@ func mapPostRequest(postPb *pb.Post) *domain.Post {
 	Post := &domain.Post{
 		Id:         id,
 		Text:       postPb.Text,
-		Link:       postPb.Link,
+		Links:      postPb.Links,
 		Image:      postPb.Image,
 		OwnerId:    ownerId,
 		LikedBy:    postPb.LikedBy,
