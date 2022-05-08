@@ -6,6 +6,8 @@ import (
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/application"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type UserHandler struct {
@@ -101,6 +103,12 @@ func (handler *UserHandler) SearchPublic(ctx context.Context, request *pb.Search
 func (handler *UserHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 	userRequest := mapNewUser(request.User)
 	user, err := handler.service.Register(userRequest)
+	if err != nil {
+		return nil, err
+	}
+	if user == nil {
+		return nil, status.Error(codes.AlreadyExists, "User already exists with same credentials")
+	}
 	response := &pb.RegisterResponse{
 		User: mapRegisterUser(user),
 	}

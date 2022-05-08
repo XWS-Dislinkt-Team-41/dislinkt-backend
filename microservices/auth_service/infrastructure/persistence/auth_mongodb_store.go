@@ -2,12 +2,13 @@ package persistence
 
 import (
 	"context"
-	"errors"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 const (
@@ -37,11 +38,11 @@ func (store *AuthMongoDBStore) Login(userCredential *domain.UserCredential) (*do
 }
 
 func (store *AuthMongoDBStore) Register(userCredential *domain.UserCredential) (*domain.UserCredential, error) {
+	filter := bson.M{"username": userCredential.Username}
+	userCredenitalExsist, err := store.filterOne(filter)
 
-	userCredenitalExsist, err := store.checkIfExsist(userCredential.Username)
-
-	if userCredenitalExsist == true {
-		return nil, errors.New("User exsist")
+	if userCredenitalExsist != nil {
+		return nil, status.Error(codes.AlreadyExists, "User already exists with same credentials")
 	}
 	userCredential.Id = primitive.NewObjectID()
 	result, err := store.userCredentials.InsertOne(context.TODO(), userCredential)
@@ -64,6 +65,9 @@ func (store *AuthMongoDBStore) DeleteAll() {
 func (store *AuthMongoDBStore) filterOne(filter interface{}) (userCredential *domain.UserCredential, err error) {
 	result := store.userCredentials.FindOne(context.TODO(), filter)
 	err = result.Decode(&userCredential)
+	if err != nil {
+		return nil, nil
+	}
 	return
 }
 

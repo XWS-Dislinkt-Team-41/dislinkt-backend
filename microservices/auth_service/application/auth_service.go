@@ -7,6 +7,8 @@ import (
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/domain"
 	jwt "github.com/dgrijalva/jwt-go"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type AuthService struct {
@@ -23,6 +25,9 @@ func (service *AuthService) Login(user *domain.UserCredential) (*domain.JWTToken
 	user, err := service.store.Login(user)
 	if err != nil {
 		return nil, err
+	}
+	if user == nil {
+		return nil, status.Error(codes.NotFound, "User was not found")
 	}
 	token, err := service.GenerateJWT(user.Username)
 	if err != nil {

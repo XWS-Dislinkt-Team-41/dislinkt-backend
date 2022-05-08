@@ -11,6 +11,8 @@ import (
 	conn "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type RegisterHandler struct {
@@ -68,12 +70,16 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 
 	err = handler.RegisterUser(registerRequest)
 	if err != nil {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte(err.Error()))
 		return
 	} else {
 		err = handler.RegisterUserCredential(registerRequest)
 		if err != nil {
-			w.WriteHeader(http.StatusNotFound)
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte(err.Error()))
 			return
 		}
 		err = handler.RegisterProfile(registerRequest)
@@ -98,6 +104,9 @@ func (handler *RegisterHandler) RegisterUser(registerUserRequest *domain.Registe
 	registerUserRequest.User = *user.User
 	if err != nil {
 		return err
+	}
+	if user == nil {
+		return status.Error(codes.AlreadyExists, "User already exists with same credentials")
 	}
 	return nil
 }
