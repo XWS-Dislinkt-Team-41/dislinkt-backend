@@ -1,0 +1,160 @@
+package api
+
+import (
+	"time"
+
+	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"google.golang.org/protobuf/types/known/timestamppb"
+)
+
+func mapUser(user *domain.User) *pb.User {
+	userPb := &pb.User{
+		Id:           user.Id.Hex(),
+		Firstname:    user.Firstname,
+		Lastname:     user.Lastname,
+		Email:        user.Email,
+		MobileNumber: user.MobileNumber,
+		Gender:       mapGender(user.Gender),
+		BirthDay:     timestamppb.New(user.BirthDay),
+		Username:     user.Username,
+		Biography:    user.Biography,
+		Experience:   user.Experience,
+		Education:    user.Education,
+		Skills:       user.Skills,
+		Interests:    user.Interests,
+		Password:     user.Password,
+		IsPrivate:    user.IsPrivate,
+	}
+	return userPb
+}
+
+func mapNewUser(userPb *pb.User) *domain.User {
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
+	if userPb.BirthDay != nil {
+		user := &domain.User{
+			Id:           id,
+			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
+			Email:        userPb.Email,
+			MobileNumber: userPb.MobileNumber,
+			Gender:       mapNewGender(userPb.Gender),
+			BirthDay:     userPb.BirthDay.AsTime(),
+			Username:     userPb.Username,
+			Biography:    userPb.Biography,
+			Experience:   userPb.Experience,
+			Education:    userPb.Education,
+			Skills:       userPb.Skills,
+			Interests:    userPb.Interests,
+			Password:     userPb.Password,
+			IsPrivate:    userPb.IsPrivate,
+		}
+		return user
+	} else {
+		user := &domain.User{
+			Id:           id,
+			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
+			Email:        userPb.Email,
+			MobileNumber: userPb.MobileNumber,
+			Gender:       mapNewGender(userPb.Gender),
+			BirthDay:     time.Now(),
+			Username:     userPb.Username,
+			Biography:    userPb.Biography,
+			Experience:   userPb.Experience,
+			Education:    userPb.Education,
+			Skills:       userPb.Skills,
+			Interests:    userPb.Interests,
+			Password:     userPb.Password,
+			IsPrivate:    userPb.IsPrivate,
+		}
+		return user
+	}
+}
+
+func mapPersonalInfoUser(userPb *pb.User) *domain.User {
+
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
+
+	if userPb.BirthDay != nil {
+		user := &domain.User{
+			Id:           id,
+			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
+			Email:        userPb.Email,
+			MobileNumber: userPb.MobileNumber,
+			Gender:       mapNewGender(userPb.Gender),
+			BirthDay:     userPb.BirthDay.AsTime(),
+			Username:     userPb.Username,
+			Biography:    userPb.Biography,
+			Password:     userPb.Password,
+		}
+		return user
+	} else {
+		user := &domain.User{
+			Id:           id,
+			Firstname:    userPb.Firstname,
+			Lastname:     userPb.Lastname,
+			Email:        userPb.Email,
+			MobileNumber: userPb.MobileNumber,
+			Gender:       mapNewGender(userPb.Gender),
+			BirthDay:     time.Now(),
+			Username:     userPb.Username,
+			Biography:    userPb.Biography,
+			Password:     userPb.Password,
+		}
+		return user
+	}
+}
+
+func mapCareerInfoUser(userPb *pb.User) *domain.User {
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
+
+	user := &domain.User{
+		Id:         id,
+		Experience: userPb.Experience,
+		Education:  userPb.Education,
+		Password:   userPb.Password,
+	}
+	return user
+}
+
+func mapInterestsInfoUser(userPb *pb.User) *domain.User {
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
+
+	user := &domain.User{
+		Id:        id,
+		Skills:    userPb.Skills,
+		Interests: userPb.Interests,
+		Password:  userPb.Password,
+	}
+	return user
+}
+
+func mapGender(status domain.GenderEnum) pb.User_GenderEnum {
+	switch status {
+	case domain.Male:
+		return pb.User_Male
+	}
+	return pb.User_Female
+
+}
+
+func mapNewGender(status pb.User_GenderEnum) domain.GenderEnum {
+	switch status {
+	case pb.User_Male:
+		return domain.Male
+	}
+	return domain.Female
+
+}
+
+func mapRegisterUser(user *domain.User) *pb.User {
+	userPb := &pb.User{
+		Id:        user.Id.Hex(),
+		Username:  user.Username,
+		IsPrivate: user.IsPrivate,
+	}
+	return userPb
+}

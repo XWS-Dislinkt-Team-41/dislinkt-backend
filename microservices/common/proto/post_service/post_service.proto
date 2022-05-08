@@ -1,0 +1,120 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/post";
+
+package post;
+
+import "google/api/annotations.proto";
+
+service PostService{
+        rpc Get(GetPostRequest) returns(GetResponse) {
+        	option (google.api.http) = {
+			get: "/user/{id}/post/{post_id}"
+		};
+        }
+        rpc GetAll(GetAllPublicPostsRequest) returns(GetAllResponse) {}
+        rpc GetAllFromCollection(GetRequest) returns(GetAllResponse) {
+                option (google.api.http) = {
+                        get: "/user/{id}/post"
+                };
+        }
+        rpc Insert(NewPostRequest) returns(NewPostResponse) {
+                option (google.api.http) = {
+                        post: "/user/{id}/post",
+                        body: "post"
+                };
+        }
+        rpc InsertComment(CommentOnPostRequest) returns(CommentOnPostResponse) {
+                option (google.api.http) = {
+                        post: "/user/{id}/post/{post_id}/comment",
+                        body: "comment"
+                };
+        }
+
+        rpc InsertReaction(ReactionOnPostRequest) returns(GetResponse) {
+                option (google.api.http) = {
+                        put: "/user/{id}/post/{post_id}/reaction/{type}",
+                        body: "reaction"
+                };
+        }
+
+}
+
+message GetRequest {
+        string id = 1;
+}
+
+message GetResponse {
+        Post post = 1;
+}
+
+message GetAllRequest {
+}
+
+message GetAllResponse {
+        repeated Post posts = 1;
+}
+
+message Post {
+        string id = 1;
+        string text = 2;
+        repeated string links = 3;
+        string image = 4;
+        string owner_id  = 5;
+        repeated string LikedBy = 6;
+        repeated string DislikedBy = 7;
+        int64 likes = 8;
+        int64 dislikes = 9;
+        repeated Comment comments = 10;
+        string CreatedAt = 11;
+}
+
+message GetPostRequest {
+        string id = 1;
+        string post_id = 2;
+}
+
+message GetPostResponse {
+        Post post = 1;
+}
+
+message GetAllPublicPostsRequest {
+        repeated string PostIds = 1;
+}
+
+message NewPostRequest {
+        string id = 1;
+        Post post = 2;
+}
+
+message NewPostResponse {
+        Post post = 1;
+}
+
+
+message Comment {
+string code = 1;
+string text = 2;
+}
+
+message CommentOnPostRequest{
+        string id = 1;
+        string post_id = 2;
+        Comment comment = 3;
+}
+
+message CommentOnPostResponse{
+        Comment comment=1;
+}
+
+message ReactionOnPostRequest{
+        string id = 1;
+        string post_id = 2;
+        string type = 3;
+        Reaction reaction = 4;
+}
+
+
+message Reaction{
+        string by_user_id = 1;
+}

@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/auth";
+
+package auth;
+
+import "google/api/annotations.proto";
+
+service AuthService{
+        rpc Login(LoginRequest) returns (JWTResponse) {
+                option (google.api.http) = {
+                        post: "/auth/login",
+                        body: "user"
+                    };
+        }
+        rpc Register(RegisterRequest) returns (RegisterResponse) {}
+}
+
+message LoginRequest {
+        UserCredential user = 1; 
+}
+            
+message RegisterRequest { 
+        UserCredential user = 1; 
+}
+
+message RegisterResponse {
+        UserCredential user = 1; 
+}
+              
+message JWTResponse {
+        string token = 1;
+}
+            
+message UserCredential {
+        string username = 1;
+        string password = 2;
+}

@@ -1,0 +1,128 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/connections";
+
+package connections;
+
+import "google/api/annotations.proto";
+
+service ConnectService{
+        rpc Register(RegisterRequest) returns(ProfileResponse) {}
+        rpc UpdateUser(UpdateUserRequest) returns(ProfileResponse) {}
+        rpc Connect(ConnectRequest) returns(ConnectionResponse) {
+        	option (google.api.http) = {
+			post: "/user/{userId}/connect"
+                        body: "cUser"
+		};
+        }
+        rpc UnConnect(UnConnectRequest) returns(EmptyRespones) {
+        	option (google.api.http) = {
+			delete: "/user/{userId}/connect/{cUserId}"
+		};
+        }
+        rpc GetUserConnections(GetUserConnectionsRequest) returns(GetUserConnectionsResponse) {
+        	option (google.api.http) = {
+			get: "/user/{userId}/connect"
+		};
+        }
+        rpc AcceptInvitation(AcceptInvitationRequest) returns(ConnectionResponse) {
+        	option (google.api.http) = {
+			put: "/user/{userId}/connect/invitation/{cUserId}"
+		};
+        }
+        rpc DeclineInvitation(DeclineInvitationRequest) returns(EmptyRespones) {
+        	option (google.api.http) = {
+			delete: "/user/{userId}/connect/invitation/{cUserId}"
+		};
+        }
+        rpc CancelInvitation(CancelInvitationRequest) returns(EmptyRespones) {
+        	option (google.api.http) = {
+			delete: "/user/{userId}/connect/invitation/{cUserId}/cancel"
+		};
+        }
+        rpc GetAllInvitations(GetAllUserInvitationsRequest) returns(GetAllInvitationsResponse) {
+        	option (google.api.http) = {
+			get: "/user/{userId}/connect/invitation"
+		};
+        }
+        rpc GetAllSentInvitations(GetAllSentInvitationsRequest) returns(GetAllInvitationsResponse) {
+        	option (google.api.http) = {
+			get: "/user/{userId}/connect/invitation/sent"
+		};
+        }
+}
+
+message RegisterRequest {
+        Profile user = 1;
+}
+
+message UpdateUserRequest {
+        Profile user = 1;
+}
+
+message ProfileResponse {
+        Profile user = 1;
+}
+
+message ConnectRequest {
+        string userId = 1;
+        Profile cUser = 2;
+}
+
+message UnConnectRequest {
+        string userId = 1;
+        string cUserId = 2;
+}
+
+message GetUserConnectionsRequest {
+        string userId = 1;
+}
+
+message GetUserConnectionsResponse {
+        repeated Connection connections = 1;
+}
+
+message AcceptInvitationRequest {
+        string userId = 1;
+        string cUserId = 2;
+}
+
+message ConnectionResponse {
+        Connection connection = 1;
+}
+
+message DeclineInvitationRequest {
+        string userId = 1;
+        string cUserId = 2;
+}
+
+message CancelInvitationRequest {
+        string userId = 1;
+        string cUserId = 2;
+}
+
+message EmptyRespones {
+
+}
+
+message GetAllUserInvitationsRequest {
+        string userId = 1;
+}
+
+message GetAllSentInvitationsRequest {
+        string userId = 1;
+}
+
+message GetAllInvitationsResponse {
+        repeated Connection connectInvitations = 1;
+}
+
+message Profile {
+        string id = 1;
+        bool private = 2;
+}
+
+message Connection {
+        Profile user = 1;
+        Profile cUser = 2;
+}

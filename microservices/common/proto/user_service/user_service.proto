@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/user";
+
+package user;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service UserService{
+       
+        rpc GetAllPublicUserId(GetAllPublicUserIdRequest) returns(GetAllPublicUserIdResponse) {}
+        rpc IsPrivate(IsPrivateRequest) returns(IsPrivateResponse) {}
+        rpc Register(RegisterRequest) returns(RegisterResponse) {}
+        rpc Get(GetRequest) returns(GetResponse) {
+        	option (google.api.http) = {
+			get: "/user/{id}"
+		};
+        }
+        rpc GetAll(GetAllRequest) returns(GetAllResponse) {
+        	option (google.api.http) = {
+			get: "/user"
+		};
+        }
+        rpc SearchPublic(SearchPublicRequest) returns(SearchPublicResponse) {
+                option (google.api.http) = {
+                        post: "/user/search"
+                        body: "filter"
+                };
+        }
+        rpc UpdatePersonalInfo(UpdatePersonalInfoRequest) returns(UpdatePersonalInfoResponse) {
+                option (google.api.http) = {
+                        put: "/user/personal"
+                        body: "user"
+                };
+        }
+        rpc UpdateCareerInfo(UpdateCareerInfoRequest) returns(UpdateCareerInfoResponse) {
+                option (google.api.http) = {
+                        put: "/user/career"
+                        body: "user"
+                };
+        }
+        rpc UpdateInterestsInfo(UpdateInterestsInfoRequest) returns(UpdateInterestsInfoResponse) {
+                option (google.api.http) = {
+                        put: "/user/interests"
+                        body: "user"
+                };
+        }
+}
+
+message GetRequest {
+        string id = 1;
+}
+
+message GetResponse {
+        User user = 1;
+}
+
+message GetAllRequest {
+}
+
+message GetAllResponse {
+        repeated User users = 1;
+}
+
+message GetAllPublicUserIdRequest {
+}
+
+message GetAllPublicUserIdResponse {
+        repeated string ids = 1;
+}
+
+message IsPrivateRequest {
+        string id = 1;
+}
+
+message IsPrivateResponse {
+        bool private = 1;
+}
+
+message RegisterRequest {
+        User user = 1;
+}
+
+message RegisterResponse {
+        User user = 1;
+}
+
+message SearchPublicRequest {
+        string filter = 1;
+}
+
+message SearchPublicResponse {
+        repeated User users = 1;
+}
+
+message UpdatePersonalInfoRequest {
+        User user = 1;
+}
+
+message UpdatePersonalInfoResponse {
+        string message = 1;
+}
+
+message UpdateCareerInfoRequest {
+        User user = 1;
+}
+
+message UpdateCareerInfoResponse {
+        string message = 1;
+}
+
+message UpdateInterestsInfoRequest {
+        User user = 1;
+}
+
+message UpdateInterestsInfoResponse {
+        string message = 1;
+}
+
+
+message User {
+        string id = 1;
+        string firstname = 2;
+        string lastname = 3;
+        string email = 4;
+        string mobileNumber = 5;
+        enum GenderEnum {
+                Male = 0;
+                Female = 1;
+        }
+        GenderEnum gender = 6;
+        google.protobuf.Timestamp birthDay = 7;
+        string username = 8;
+        string biography = 9;
+        string experience = 10;
+        string education = 11;
+        string skills = 12;
+        string interests = 13;
+        string password = 14;
+        bool isPrivate = 15;
+}
+
+message isPrivate {
+        bool isPrivate = 1; 
+}
