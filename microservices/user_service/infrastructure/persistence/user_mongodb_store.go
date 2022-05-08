@@ -130,7 +130,9 @@ func AppendIfMissing(slice []*domain.User, i *domain.User) []*domain.User {
 }
 
 func (store *UserMongoDBStore) Insert(user *domain.User) (*domain.User, error) {
-	userInDatabase, _ := store.Get(user.Id)
+	filter := bson.M{"username": user.Username}
+	userInDatabase, _ := store.filterOneRegister(filter)
+
 	user.Id = primitive.NewObjectID()
 	if userInDatabase != nil {
 		return nil, errors.New("user with the same id already exists")
@@ -139,12 +141,12 @@ func (store *UserMongoDBStore) Insert(user *domain.User) (*domain.User, error) {
 	// if userInDatabase != nil {
 	// 	return nil, errors.New("user with this email has already been registered")
 	// }
-	userInDatabase, _ = store.GetByUsername(user.Username)
-	if userInDatabase != nil {
-		return nil, errors.New("username is taken")
-	}
-	_, err := store.users.InsertOne(context.TODO(), user)
-	if err != nil {
+	// userInDatabase, _ = store.GetByUsername(user.Username)
+	// if userInDatabase != nil {
+	// 	return nil, errors.New("username is taken")
+	// }
+	_, err1 := store.users.InsertOne(context.TODO(), user)
+	if err1 != nil {
 		return nil, errors.New("register error")
 	}
 
@@ -250,5 +252,14 @@ func decode(cursor *mongo.Cursor) (users []*domain.User, err error) {
 		users = append(users, &User)
 	}
 	err = cursor.Err()
+	return
+}
+
+func (store *UserMongoDBStore) filterOneRegister(filter interface{}) (user *domain.User, err error) {
+	result := store.users.FindOne(context.TODO(), filter)
+	err = result.Decode(&user)
+	if err != nil {
+		return nil, nil
+	}
 	return
 }
