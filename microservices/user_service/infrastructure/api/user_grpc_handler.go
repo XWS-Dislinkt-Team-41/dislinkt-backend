@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/application"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -76,7 +77,7 @@ func (handler *UserHandler) IsPrivate(ctx context.Context, request *pb.IsPrivate
 		return nil, err
 	}
 	response := &pb.IsPrivateResponse{
-		Private : isPrivate,
+		Private: isPrivate,
 	}
 	return response, nil
 }
@@ -98,10 +99,10 @@ func (handler *UserHandler) SearchPublic(ctx context.Context, request *pb.Search
 }
 
 func (handler *UserHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
-	user := mapNewUser(request.User)
-	message, err := handler.service.Register(user)
+	userRequest := mapNewUser(request.User)
+	user, err := handler.service.Register(userRequest)
 	response := &pb.RegisterResponse{
-		Message: message,
+		User: mapRegisterUser(user),
 	}
 	return response, err
 }

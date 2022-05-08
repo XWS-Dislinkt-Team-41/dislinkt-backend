@@ -12,9 +12,9 @@ import (
 func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if isProtectedRoute(r.Method, r.URL.Path) {
-			if r.Header["Token"] != nil {
+			if r.Header["Authorization"] != nil {
 
-				token, err := jwt.Parse(r.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
+				token, err := jwt.Parse(r.Header["Authorization"][0], func(token *jwt.Token) (interface{}, error) {
 					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 						return nil, fmt.Errorf(("Invalid Signing Method"))
 					}
@@ -62,7 +62,9 @@ func isProtectedRoute(method, path string) bool {
 
 	if method == "POST" {
 		if path == "/auth/register" ||
-			path == "/auth/login" {
+			path == "/user/comporeg" ||
+			path == "/auth/login" ||
+			path == "/user" {
 			return false
 		}
 	}

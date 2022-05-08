@@ -31,10 +31,10 @@ func mapUser(user *domain.User) *pb.User {
 }
 
 func mapNewUser(userPb *pb.User) *domain.User {
-
+	id, _ := primitive.ObjectIDFromHex(userPb.Id)
 	if userPb.BirthDay != nil {
 		user := &domain.User{
-			Id:           primitive.NewObjectID(),
+			Id:           id,
 			Firstname:    userPb.Firstname,
 			Lastname:     userPb.Lastname,
 			Email:        userPb.Email,
@@ -53,7 +53,7 @@ func mapNewUser(userPb *pb.User) *domain.User {
 		return user
 	} else {
 		user := &domain.User{
-			Id:           primitive.NewObjectID(),
+			Id:           id,
 			Firstname:    userPb.Firstname,
 			Lastname:     userPb.Lastname,
 			Email:        userPb.Email,
@@ -148,4 +148,13 @@ func mapNewGender(status pb.User_GenderEnum) domain.GenderEnum {
 	}
 	return domain.Female
 
+}
+
+func mapRegisterUser(user *domain.User) *pb.User {
+	userPb := &pb.User{
+		Id:        user.Id.Hex(),
+		Username:  user.Username,
+		IsPrivate: user.IsPrivate,
+	}
+	return userPb
 }

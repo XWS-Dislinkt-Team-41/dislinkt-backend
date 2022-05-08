@@ -31,7 +31,7 @@ func (service *UserService) IsPrivate(id primitive.ObjectID) (bool, error) {
 	return service.store.IsPrivate(id)
 }
 
-func (service *UserService) Register(user *domain.User) (string, error) {
+func (service *UserService) Register(user *domain.User) (*domain.User, error) {
 	return service.store.Insert(user)
 }
 

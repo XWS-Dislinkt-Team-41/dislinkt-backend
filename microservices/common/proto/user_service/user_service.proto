@@ -95,7 +95,7 @@ message RegisterRequest {
 }
 
 message RegisterResponse {
-        string message = 1;
+        User user = 1;
 }
 
 message SearchPublicRequest {

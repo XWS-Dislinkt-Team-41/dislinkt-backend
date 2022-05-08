@@ -11,7 +11,7 @@ type UserStore interface {
 	GetAll() ([]*User, error)
 	GetAllPublicUserId() ([]primitive.ObjectID, error)
 	IsPrivate(id primitive.ObjectID) (bool, error)
-	Insert(user *User) (string, error)
+	Insert(user *User) (*User, error)
 	DeleteAll()
 	SearchPublic(filter string) ([]*User, error)
 	UpdatePersonalInfo(user *User) (string, error)

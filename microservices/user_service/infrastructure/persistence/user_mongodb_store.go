@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+	"errors"
 
 	"strings"
 
@@ -128,26 +129,27 @@ func AppendIfMissing(slice []*domain.User, i *domain.User) []*domain.User {
 	return append(slice, i)
 }
 
-func (store *UserMongoDBStore) Insert(user *domain.User) (string, error) {
-	userInDatabase, err := store.Get(user.Id)
+func (store *UserMongoDBStore) Insert(user *domain.User) (*domain.User, error) {
+	userInDatabase, _ := store.Get(user.Id)
 	user.Id = primitive.NewObjectID()
+	user.IsPrivate = false
 	if userInDatabase != nil {
-		return "User with the same id already exists.", nil
+		return nil, errors.New("user with the same id already exists")
 	}
-	userInDatabase, err = store.GetByEmail(user.Email)
+	// userInDatabase, _ = store.GetByEmail(user.Email)
+	// if userInDatabase != nil {
+	// 	return nil, errors.New("user with this email has already been registered")
+	// }
+	userInDatabase, _ = store.GetByUsername(user.Username)
 	if userInDatabase != nil {
-		return "User with this email has already been registered.", nil
+		return nil, errors.New("username is taken")
 	}
-	userInDatabase, err = store.GetByUsername(user.Username)
-	if userInDatabase != nil {
-		return "Username is taken.", nil
-	}
-	result, err := store.users.InsertOne(context.TODO(), user)
+	_, err := store.users.InsertOne(context.TODO(), user)
 	if err != nil {
-		return "Register error.", err
+		return nil, errors.New("register error")
 	}
-	user.Id = result.InsertedID.(primitive.ObjectID)
-	return "User has been registered.", nil
+
+	return user, nil
 }
 
 func (store *UserMongoDBStore) DeleteAll() {

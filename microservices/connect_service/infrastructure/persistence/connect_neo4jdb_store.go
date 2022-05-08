@@ -76,17 +76,17 @@ func (store *ConnectNeo4jDBStore) UpdateUser(user domain.Profile) (*domain.Profi
 }
 
 func (store *ConnectNeo4jDBStore) IsUserPrivate(userId primitive.ObjectID) (*bool, error) {
-	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	session, err := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
 	if err != nil {
 		return nil, err
 	}
 	defer session.Close()
-	result, err := session.WriteTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
-		result, err := transaction.Run(queryUpdateUser, map[string]interface{}{"userId": userId.Hex()})
+	IsUserPrivate := true
+	_, err = session.ReadTransaction(func(transaction neo4j.Transaction) (interface{}, error) {
+		result, err := transaction.Run(queryIsUserPrivate, map[string]interface{}{"userId": userId.Hex()})
 		if err != nil {
 			return nil, err
 		}
-		IsUserPrivate := true
 		for result.Next() {
 			if value, ok := result.Record().Get("IsUserPrivate"); ok {
 				IsUserPrivate = value.(bool)
@@ -94,9 +94,9 @@ func (store *ConnectNeo4jDBStore) IsUserPrivate(userId primitive.ObjectID) (*boo
 				return nil, err
 			}
 		}
-		return IsUserPrivate, result.Err()
+		return nil, result.Err()
 	})
-	IsUserPrivate := result.(bool)
+
 	if err != nil {
 		return nil, err
 	}

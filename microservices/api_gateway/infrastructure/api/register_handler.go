@@ -28,6 +28,7 @@ func NewRegisterHandler(userClientAddress, authClientAddress, connectClientAddre
 }
 
 func (handler *RegisterHandler) Init(mux *runtime.ServeMux) {
+
 	err := mux.HandlePath("POST", "/user/comporeg", handler.Register)
 	if err != nil {
 		panic(err)
@@ -88,7 +89,8 @@ func (handler *RegisterHandler) Register(w http.ResponseWriter, r *http.Request,
 
 func (handler *RegisterHandler) RegisterUser(registerUserRequest *domain.RegisterRequest) error {
 	userClient := services.NewUserClient(handler.userClientAddress)
-	_, err := userClient.Register(context.TODO(), &user.RegisterRequest{User: &registerUserRequest.User})
+	user, err := userClient.Register(context.TODO(), &user.RegisterRequest{User: &registerUserRequest.User})
+	registerUserRequest.User = *user.User
 	if err != nil {
 		return err
 	}
@@ -106,6 +108,8 @@ func (handler *RegisterHandler) RegisterUserCredential(registerUserRequest *doma
 
 func (handler *RegisterHandler) RegisterProfile(registerUserRequest *domain.RegisterRequest) error {
 	connectClient := services.NewConnectClient(handler.connectClientAddress)
+	registerUserRequest.Profile.Id = registerUserRequest.User.Id
+	registerUserRequest.Profile.Private = registerUserRequest.User.IsPrivate
 	_, err := connectClient.Register(context.TODO(), &conn.RegisterRequest{User: &registerUserRequest.Profile})
 	if err != nil {
 		return err
