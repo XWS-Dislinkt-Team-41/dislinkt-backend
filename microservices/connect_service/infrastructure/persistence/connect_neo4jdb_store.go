@@ -339,3 +339,16 @@ func (store *ConnectNeo4jDBStore) GetAllSentInvitations(userId primitive.ObjectI
 	}
 	return invites, nil
 }
+
+func (store *ConnectNeo4jDBStore) InitNeo4jDB() error {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close()
+	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		err := store.DeleteAllInDBTx(tx)
+		return nil, err
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}

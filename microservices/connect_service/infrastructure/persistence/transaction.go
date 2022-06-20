@@ -243,3 +243,9 @@ func (store *ConnectNeo4jDBStore) DeleteReceivedInviteTx(tx neo4j.Transaction, u
 	_, err := tx.Run(query, params)
 	return nil, err
 }
+
+func (store *ConnectNeo4jDBStore) DeleteAllInDBTx(tx neo4j.Transaction) error {
+	query := "MATCH (n) DETACH DELETE n"
+	_, err := tx.Run(query, map[string]interface{}{})
+	return err
+}
