@@ -11,7 +11,7 @@ import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/infrastructure/api"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/infrastructure/persistence"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/startup/config"
-	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 	"google.golang.org/grpc"
 )
 
@@ -47,6 +47,13 @@ func (server *Server) initNeo4jClient() *neo4j.Driver {
 
 func (server *Server) initConnectStore(driver *neo4j.Driver) domain.ConnectStore {
 	store := persistence.NewConnectNeo4jDBStore(driver)
+	store.InitNeo4jDB()
+	for _, user := range users {
+		_, err := store.Register(*user)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 	return store
 }
 
