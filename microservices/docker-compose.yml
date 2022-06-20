@@ -17,20 +17,20 @@ services:
     networks:
       - network
 
-  post_service:
-    image: post_service
-    build:
-      context: .
-      dockerfile: ./post_service/Dockerfile
-    restart: on-failure
-    environment:
-      POST_DB_HOST: ${POST_DB_HOST}
-      POST_DB_PORT: ${POST_DB_PORT}
-      POST_SERVICE_PORT: ${POST_SERVICE_PORT}
-    depends_on:
-      - post_db
-    networks:
-      - network
+  # post_service:
+  #   image: post_service
+  #   build:
+  #     context: .
+  #     dockerfile: ./post_service/Dockerfile
+  #   restart: on-failure
+  #   environment:
+  #     POST_DB_HOST: ${POST_DB_HOST}
+  #     POST_DB_PORT: ${POST_DB_PORT}
+  #     POST_SERVICE_PORT: ${POST_SERVICE_PORT}
+  #   depends_on:
+  #     - post_db
+  #   networks:
+  #     - network
 
   connect_service:
     image: connect_service
@@ -72,17 +72,17 @@ services:
     networks:
       - network
 
-  post_db:
-    image: mongo
-    container_name: post_db
-    environment:
-      - PUID=1000
-      - PGID=1000
-    ports:
-      - 27017:27017
-    restart: unless-stopped
-    networks:
-      - network
+  # post_db:
+  #   image: mongo
+  #   container_name: post_db
+  #   environment:
+  #     - PUID=1000
+  #     - PGID=1000
+  #   ports:
+  #     - 27017:27017
+  #   restart: unless-stopped
+  #   networks:
+  #     - network
   
   auth_db:
     image: mongo
@@ -94,28 +94,28 @@ services:
     networks:
       - network
     
-  user_service:
-    image: user_service
-    container_name: user_service
-    build:
-      context: .
-      dockerfile: ./user_service/Dockerfile
-    restart: on-failure
-    environment:
-      USER_DB_HOST: ${USER_DB_HOST}
-      USER_DB_PORT: ${USER_DB_PORT}
-      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
-    depends_on:
-      - user_db
-    networks:
-      - network 
+  # user_service:
+  #   image: user_service
+  #   container_name: user_service
+  #   build:
+  #     context: .
+  #     dockerfile: ./user_service/Dockerfile
+  #   restart: on-failure
+  #   environment:
+  #     USER_DB_HOST: ${USER_DB_HOST}
+  #     USER_DB_PORT: ${USER_DB_PORT}
+  #     USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+  #   depends_on:
+  #     - user_db
+  #   networks:
+  #     - network 
 
-  user_db:
-    image: mongo
-    container_name: user_db
-    restart: on-failure
-    networks:
-      - network 
+  # user_db:
+  #   image: mongo
+  #   container_name: user_db
+  #   restart: on-failure
+  #   networks:
+  #     - network 
 
   connect_db:
     image: neo4j
