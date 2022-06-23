@@ -194,3 +194,22 @@ func (handler *ConnectHandler) GetAllSentInvitations(ctx context.Context, reques
 	}
 	return response, nil
 }
+
+func (handler *ConnectHandler) GetUserSuggestions(ctx context.Context, request *pb.GetUserSuggestionsRequest) (*pb.GetUserSuggestionsResponse, error) {
+	userId, err := primitive.ObjectIDFromHex(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	userSuggestions, err := handler.service.GetUserSuggestions(userId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetUserSuggestionsResponse{
+		UserSuggestions: []*pb.Profile{},
+	}
+	for _, user := range userSuggestions {
+		current := mapProfile(user)
+		response.UserSuggestions = append(response.UserSuggestions, current)
+	}
+	return response, nil
+}

@@ -50,6 +50,11 @@ service ConnectService{
 			get: "/user/{userId}/connect/invitation/sent"
 		};
         }
+        rpc GetUserSuggestions(GetUserSuggestionsRequest) returns(GetUserSuggestionsResponse) {
+        	option (google.api.http) = {
+			get: "/user/{userId}/connect/suggestions"
+		};
+        }
 }
 
 message RegisterRequest {
@@ -115,6 +120,14 @@ message GetAllSentInvitationsRequest {
 
 message GetAllInvitationsResponse {
         repeated Connection connectInvitations = 1;
+}
+
+message GetUserSuggestionsRequest {
+        string userId = 1;
+}
+
+message GetUserSuggestionsResponse {
+        repeated Profile userSuggestions = 1;
 }
 
 message Profile {

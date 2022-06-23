@@ -249,3 +249,35 @@ func (store *ConnectNeo4jDBStore) DeleteAllInDBTx(tx neo4j.Transaction) error {
 	_, err := tx.Run(query, map[string]interface{}{})
 	return err
 }
+
+func (store *ConnectNeo4jDBStore) GetConnectionsOfUserConectionsTx(tx neo4j.Transaction, userId primitive.ObjectID, depth int) ([]*domain.Profile, error) {
+	query := `MATCH (u:User{id:$userId}) MATCH (u)-[c:Connection]-(x)
+		      WITH u AS self, collect(x) AS excluded
+			  
+		      MATCH (u1:User {id:$userId})-[:Connection*2..$depth]-(u2:User)
+		      WITH self, excluded, collect(u2) AS suggestions, u2
+		      WHERE NONE (u2 IN suggestions WHERE u2 IN excluded) AND u2 <> self
+		      WITH DISTINCT u2
+		      RETURN u2.id LIMIT 30`
+	params := map[string]interface{}{
+		"userId": userId.Hex(),
+		"depth":  depth,
+	}
+	result, err := tx.Run(query, params)
+	if err != nil {
+		return nil, err
+	}
+	var users []*domain.Profile
+	for result.Next() {
+		id, _ := result.Record().Get("UserId")
+		userId, err := primitive.ObjectIDFromHex(id.(string))
+		if err != nil {
+			return nil, err
+		}
+		profile := domain.Profile{
+			Id: userId,
+		}
+		users = append(users, &profile)
+	}
+	return users, err
+}

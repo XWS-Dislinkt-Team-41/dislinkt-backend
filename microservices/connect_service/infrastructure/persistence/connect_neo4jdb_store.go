@@ -352,3 +352,21 @@ func (store *ConnectNeo4jDBStore) InitNeo4jDB() error {
 	}
 	return nil
 }
+
+func (store *ConnectNeo4jDBStore) GetUserSuggestions(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		result, err := store.GetConnectionsOfUserConectionsTx(tx, userId, 2)
+		return result, err
+	})
+	users := result.([]*domain.Profile)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}

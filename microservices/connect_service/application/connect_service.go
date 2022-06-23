@@ -112,3 +112,11 @@ func (service *ConnectService) IsProfilePrivate(userId primitive.ObjectID) (*boo
 	}
 	return isUserPrivate, err
 }
+
+func (service *ConnectService) GetUserSuggestions(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	users, err := service.store.GetUserSuggestions(userId)
+	if err != nil {
+		return nil, err
+	}
+	return users, err
+}
