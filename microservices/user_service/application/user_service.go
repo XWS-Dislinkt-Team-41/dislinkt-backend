@@ -39,14 +39,14 @@ func (service *UserService) SearchPublic(filter string) ([]*domain.User, error) 
 	return service.store.SearchPublic(filter)
 }
 
-func (service *UserService) UpdatePersonalInfo(user *domain.User) (string, error) {
+func (service *UserService) UpdatePersonalInfo(user *domain.User) (*domain.User, error) {
 	return service.store.UpdatePersonalInfo(user)
 }
 
-func (service *UserService) UpdateCareerInfo(user *domain.User) (string, error) {
+func (service *UserService) UpdateCareerInfo(user *domain.User) (*domain.User, error) {
 	return service.store.UpdateCareerInfo(user)
 }
 
-func (service *UserService) UpdateInterestsInfo(user *domain.User) (string, error) {
+func (service *UserService) UpdateInterestsInfo(user *domain.User) (*domain.User, error) {
 	return service.store.UpdateInterestsInfo(user)
 }

@@ -117,27 +117,39 @@ func (handler *UserHandler) Register(ctx context.Context, request *pb.RegisterRe
 
 func (handler *UserHandler) UpdatePersonalInfo(ctx context.Context, request *pb.UpdatePersonalInfoRequest) (*pb.UpdatePersonalInfoResponse, error) {
 	user := mapPersonalInfoUser(request.User)
-	message, err := handler.service.UpdatePersonalInfo(user)
+	user, err := handler.service.UpdatePersonalInfo(user)
+	if err != nil {
+		return nil, err
+	}
+	userPb := mapUser(user)
 	response := &pb.UpdatePersonalInfoResponse{
-		Message: message,
+		User: userPb,
 	}
 	return response, err
 }
 
 func (handler *UserHandler) UpdateCareerInfo(ctx context.Context, request *pb.UpdateCareerInfoRequest) (*pb.UpdateCareerInfoResponse, error) {
 	user := mapCareerInfoUser(request.User)
-	message, err := handler.service.UpdateCareerInfo(user)
+	user, err := handler.service.UpdateCareerInfo(user)
+	if err != nil {
+		return nil, err
+	}
+	userPb := mapUser(user)
 	response := &pb.UpdateCareerInfoResponse{
-		Message: message,
+		User: userPb,
 	}
 	return response, err
 }
 
 func (handler *UserHandler) UpdateInterestsInfo(ctx context.Context, request *pb.UpdateInterestsInfoRequest) (*pb.UpdateInterestsInfoResponse, error) {
 	user := mapInterestsInfoUser(request.User)
-	message, err := handler.service.UpdateInterestsInfo(user)
+	user, err := handler.service.UpdateInterestsInfo(user)
+	if err != nil {
+		return nil, err
+	}
+	userPb := mapUser(user)
 	response := &pb.UpdateInterestsInfoResponse{
-		Message: message,
+		User: userPb,
 	}
 	return response, err
 }

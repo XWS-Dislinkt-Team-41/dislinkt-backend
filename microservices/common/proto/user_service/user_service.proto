@@ -99,7 +99,7 @@ message UpdatePersonalInfoRequest {
 }
 
 message UpdatePersonalInfoResponse {
-        string message = 1;
+        User user = 1;
 }
 
 message UpdateCareerInfoRequest {
@@ -107,7 +107,7 @@ message UpdateCareerInfoRequest {
 }
 
 message UpdateCareerInfoResponse {
-        string message = 1;
+        User user = 1;
 }
 
 message UpdateInterestsInfoRequest {
@@ -115,7 +115,7 @@ message UpdateInterestsInfoRequest {
 }
 
 message UpdateInterestsInfoResponse {
-        string message = 1;
+        User user = 1;
 }
 
 

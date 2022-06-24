@@ -167,15 +167,15 @@ func (store *UserMongoDBStore) filter(filter interface{}) ([]*domain.User, error
 	return decode(cursor)
 }
 
-func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (string, error) {
+func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (*domain.User, error) {
 	userInDatabase, err := store.Get(user.Id)
 	if userInDatabase == nil {
-		return "User doesn't exist.", nil
+		return nil,errors.New("User doesn't exist.")
 	}
 	checkUsername, err := store.GetByUsername(user.Username)
 	if checkUsername != nil {
 		if checkUsername.Id != userInDatabase.Id {
-			return "Username is taken.", nil
+			return nil,errors.New("Username is taken.")
 		}
 	}
 	userInDatabase.Firstname = user.Firstname
@@ -191,16 +191,16 @@ func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (string, er
 	}
 	_, err = store.users.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return "Update failed.", err
+		return nil, err
 	}
 
-	return "User has been updated.", nil
+	return userInDatabase, nil
 }
 
-func (store *UserMongoDBStore) UpdateCareerInfo(user *domain.User) (string, error) {
+func (store *UserMongoDBStore) UpdateCareerInfo(user *domain.User) (*domain.User, error) {
 	userInDatabase, err := store.Get(user.Id)
 	if userInDatabase == nil {
-		return "User doesn't exist.", nil
+		return nil, err
 	}
 	userInDatabase.Experience = user.Experience
 	userInDatabase.Education = user.Education
@@ -210,17 +210,17 @@ func (store *UserMongoDBStore) UpdateCareerInfo(user *domain.User) (string, erro
 	}
 	_, err = store.users.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return "Update failed.", err
+		return nil, err
 	}
 
-	return "User has been updated.", nil
+	return userInDatabase, nil
 }
 
-func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (string, error) {
+func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (*domain.User, error) {
 
 	userInDatabase, err := store.Get(user.Id)
 	if userInDatabase == nil {
-		return "user doesn't exist", nil
+		return nil,errors.New("User doesn't exist.")
 	}
 	userInDatabase.Skills = user.Skills
 	userInDatabase.Interests = user.Interests
@@ -230,10 +230,10 @@ func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (string, e
 	}
 	_, err = store.users.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return "Update failed.", err
+		return nil,errors.New("Update failed.")
 	}
 
-	return "User has been updated.", nil
+	return userInDatabase, nil
 }
 
 func (store *UserMongoDBStore) filterOne(filter interface{}) (User *domain.User, err error) {
