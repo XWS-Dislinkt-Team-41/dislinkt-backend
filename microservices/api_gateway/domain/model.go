@@ -19,10 +19,10 @@ type User struct {
 	BirthDay     time.Time
 	Username     string
 	Biography    string
-	Experience   string
+	Experience   []string
 	Education    string
-	Skills       string
-	Interests    string
+	Skills       []string
+	Interests    []string
 	Password     string
 	IsPrivate    bool
 }

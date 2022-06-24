@@ -2,6 +2,7 @@ package startup
 
 import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain/enums"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
 )
@@ -17,10 +18,10 @@ var users = []*domain.User{
 		BirthDay:     time.Now(),
 		Username:     "leka",
 		Biography:    "Bio",
-		Experience:   "Praksa u Excaliburu",
-		Education:    "Srednje",
-		Skills:       "Programiranje",
-		Interests:    "Biciklizam",
+		Experience:   []string{"Praksa u Excaliburu"},
+		Education:    enums.Master,
+		Skills:       []string{"Programiranje"},
+		Interests:    []string{"Biciklizam"},
 		Password:     "123",
 		IsPrivate:    false,
 	},
@@ -34,10 +35,10 @@ var users = []*domain.User{
 		BirthDay:     time.Now(),
 		Username:     "pape",
 		Biography:    "Bio",
-		Experience:   "Radio u Vega IT",
-		Education:    "Fakultet",
-		Skills:       "Programiranje",
-		Interests:    "Gejming",
+		Experience:   []string{"Radio u Vega IT"},
+		Education:    enums.PostSecondary,
+		Skills:       []string{"Programiranje"},
+		Interests:    []string{"Gejming"},
 		Password:     "123",
 		IsPrivate:    true,
 	},
@@ -51,10 +52,10 @@ var users = []*domain.User{
 		BirthDay:     time.Now(),
 		Username:     "dare",
 		Biography:    "Bio",
-		Experience:   "Zivi u Zr",
-		Education:    "Fakultet",
-		Skills:       "Programiranje",
-		Interests:    "Rukomet",
+		Experience:   []string{"Zivi u Zr"},
+		Education:    enums.Bachelor,
+		Skills:       []string{"Programiranje"},
+		Interests:    []string{"Rukomet"},
 		Password:     "123",
 		IsPrivate:    true,
 	},
