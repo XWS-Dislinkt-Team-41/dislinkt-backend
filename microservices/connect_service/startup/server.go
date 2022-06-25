@@ -47,7 +47,10 @@ func (server *Server) initNeo4jClient() *neo4j.Driver {
 
 func (server *Server) initConnectStore(driver *neo4j.Driver) domain.ConnectStore {
 	store := persistence.NewConnectNeo4jDBStore(driver)
-	store.InitNeo4jDB()
+	err := store.InitNeo4jDB()
+	if err != nil {
+		log.Fatal(err)
+	}
 	for _, user := range users {
 		_, err := store.Register(*user)
 		if err != nil {

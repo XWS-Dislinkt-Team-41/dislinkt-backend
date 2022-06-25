@@ -345,6 +345,14 @@ func (store *ConnectNeo4jDBStore) InitNeo4jDB() error {
 	defer session.Close()
 	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		err := store.DeleteAllInDBTx(tx)
+		if err != nil {
+			return nil, err
+		}
+		err = store.LoadNodesFromCSVTx(tx)
+		if err != nil {
+			return nil, err
+		}
+		err = store.LoadRelationshipsFromCSVTx(tx)
 		return nil, err
 	})
 	if err != nil {

@@ -281,3 +281,19 @@ func (store *ConnectNeo4jDBStore) GetConnectionsOfUserConectionsTx(tx neo4j.Tran
 	}
 	return users, err
 }
+
+func (store *ConnectNeo4jDBStore) LoadNodesFromCSVTx(tx neo4j.Transaction) error {
+	query := `LOAD CSV WITH HEADERS FROM "file:///nodes.csv" AS row
+			  WITH DISTINCT row 
+			  MERGE (:User{id:row.id, name:row.name, private:(case row.private when 'true' then true else false end)})`
+	_, err := tx.Run(query, map[string]interface{}{})
+	return err
+}
+
+func (store *ConnectNeo4jDBStore) LoadRelationshipsFromCSVTx(tx neo4j.Transaction) error {
+	query := `LOAD CSV WITH HEADERS FROM "file:///relationships.csv" AS row
+			  WITH DISTINCT row 
+			  MATCH (u1:User{id:row.userId}) MATCH (u2:User{id:row.cUserId}) MERGE (u1)-[c:Connection]-(u2)`
+	_, err := tx.Run(query, map[string]interface{}{})
+	return err
+}
