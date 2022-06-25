@@ -157,8 +157,8 @@ func (store *ConnectNeo4jDBStore) Connect(userId, cUserId primitive.ObjectID) (*
 		return nil, err
 	}
 	connection := domain.Connection{
-		User:  domain.Profile{Id: userId},
-		CUser: domain.Profile{Id: cUserId},
+		UserId:  userId,
+		CUserId: cUserId,
 	}
 	return &connection, nil
 }
@@ -225,8 +225,8 @@ func (store *ConnectNeo4jDBStore) Invite(userId, cUserId primitive.ObjectID) (*d
 		return nil, err
 	}
 	invite := domain.Connection{
-		User:  domain.Profile{Id: userId},
-		CUser: domain.Profile{Id: cUserId},
+		UserId:  userId,
+		CUserId: cUserId,
 	}
 	return &invite, nil
 }
@@ -257,8 +257,8 @@ func (store *ConnectNeo4jDBStore) AcceptInvitation(userId primitive.ObjectID, cU
 	var connection *domain.Connection
 	if isCreatedConection {
 		connection = &domain.Connection{
-			User:  domain.Profile{Id: userId},
-			CUser: domain.Profile{Id: cUserId},
+			UserId:  userId,
+			CUserId: cUserId,
 		}
 	}
 	return connection, nil
@@ -315,10 +315,10 @@ func (store *ConnectNeo4jDBStore) GetAllInvitations(userId primitive.ObjectID) (
 		result, err := store.GetAllInvitationsTx(tx, userId)
 		return result, err
 	})
-	invites := result.([]*domain.Connection)
 	if err != nil {
 		return nil, err
 	}
+	invites := result.([]*domain.Connection)
 	return invites, nil
 }
 
@@ -333,10 +333,10 @@ func (store *ConnectNeo4jDBStore) GetAllSentInvitations(userId primitive.ObjectI
 		result, err := store.GetAllSentInvitationsTx(tx, userId)
 		return result, err
 	})
-	invites := result.([]*domain.Connection)
 	if err != nil {
 		return nil, err
 	}
+	invites := result.([]*domain.Connection)
 	return invites, nil
 }
 
@@ -369,12 +369,12 @@ func (store *ConnectNeo4jDBStore) GetUserSuggestions(userId primitive.ObjectID) 
 		if err != nil {
 			return nil, err
 		}
-		result, err := store.GetConnectionsOfUserConectionsTx(tx, userId, 2)
+		result, err := store.GetConnectionsOfUserConectionsTx(tx, userId)
 		return result, err
 	})
-	users := result.([]*domain.Profile)
 	if err != nil {
 		return nil, err
 	}
+	users := result.([]*domain.Profile)
 	return users, nil
 }

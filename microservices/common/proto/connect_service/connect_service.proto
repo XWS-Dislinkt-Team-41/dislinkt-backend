@@ -136,6 +136,6 @@ message Profile {
 }
 
 message Connection {
-        Profile user = 1;
-        Profile cUser = 2;
+        string userId = 1;
+        string cUserId = 2;
 }

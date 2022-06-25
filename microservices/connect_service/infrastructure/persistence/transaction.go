@@ -156,8 +156,8 @@ func (store *ConnectNeo4jDBStore) GetConnectionsTx(tx neo4j.Transaction, userId 
 			return nil, err
 		}
 		connection := domain.Connection{
-			User:  domain.Profile{Id: userId},
-			CUser: domain.Profile{Id: cUserId},
+			UserId:  userId,
+			CUserId: cUserId,
 		}
 		connections = append(connections, &connection)
 	}
@@ -191,8 +191,8 @@ func (store *ConnectNeo4jDBStore) GetAllInvitationsTx(tx neo4j.Transaction, user
 			return nil, err
 		}
 		connection := domain.Connection{
-			User:  domain.Profile{Id: userId},
-			CUser: domain.Profile{Id: cUserId},
+			UserId:  userId,
+			CUserId: cUserId,
 		}
 		invites = append(invites, &connection)
 	}
@@ -216,8 +216,8 @@ func (store *ConnectNeo4jDBStore) GetAllSentInvitationsTx(tx neo4j.Transaction, 
 			return nil, err
 		}
 		connection := domain.Connection{
-			User:  domain.Profile{Id: userId},
-			CUser: domain.Profile{Id: cUserId},
+			UserId:  userId,
+			CUserId: cUserId,
 		}
 		invites = append(invites, &connection)
 	}
@@ -250,32 +250,34 @@ func (store *ConnectNeo4jDBStore) DeleteAllInDBTx(tx neo4j.Transaction) error {
 	return err
 }
 
-func (store *ConnectNeo4jDBStore) GetConnectionsOfUserConectionsTx(tx neo4j.Transaction, userId primitive.ObjectID, depth int) ([]*domain.Profile, error) {
+func (store *ConnectNeo4jDBStore) GetConnectionsOfUserConectionsTx(tx neo4j.Transaction, userId primitive.ObjectID) ([]*domain.Profile, error) {
 	query := `MATCH (u:User{id:$userId}) MATCH (u)-[c:Connection]-(x)
 		      WITH u AS self, collect(x) AS excluded
 			  
-		      MATCH (u1:User {id:$userId})-[:Connection*2..$depth]-(u2:User)
+		      MATCH (u1:User {id:$userId})-[:Connection*2..2]-(u2:User)
 		      WITH self, excluded, collect(u2) AS suggestions, u2
 		      WHERE NONE (u2 IN suggestions WHERE u2 IN excluded) AND u2 <> self
 		      WITH DISTINCT u2
-		      RETURN u2.id LIMIT 30`
+		      RETURN u2.id AS UserId, u2.private AS Private LIMIT 30`
 	params := map[string]interface{}{
 		"userId": userId.Hex(),
-		"depth":  depth,
 	}
 	result, err := tx.Run(query, params)
 	if err != nil {
 		return nil, err
 	}
-	var users []*domain.Profile
+	var users []*domain.Profile = []*domain.Profile{}
 	for result.Next() {
 		id, _ := result.Record().Get("UserId")
+		p, _ := result.Record().Get("Private")
 		userId, err := primitive.ObjectIDFromHex(id.(string))
+		private := p.(bool)
 		if err != nil {
 			return nil, err
 		}
 		profile := domain.Profile{
-			Id: userId,
+			Id:      userId,
+			Private: private,
 		}
 		users = append(users, &profile)
 	}
