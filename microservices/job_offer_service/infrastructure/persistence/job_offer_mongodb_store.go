@@ -100,11 +100,10 @@ func AppendIfMissing(slice []*domain.JobOffer, i *domain.JobOffer) []*domain.Job
 func (store *JobOfferMongoDBStore) Insert(jobOffer *domain.JobOffer) (*domain.JobOffer, error) {
 	filter := bson.M{"id": jobOffer.Id}
 	jobOfferInDatabase, _ := store.filterOneRegister(filter)
-
-	jobOffer.Id = primitive.NewObjectID()
 	if jobOfferInDatabase != nil {
 		return nil, errors.New("Job Offer with the same id already exists.")
 	}
+	jobOffer.Id = primitive.NewObjectID()
 	_, err := store.jobOffers.InsertOne(context.TODO(), jobOffer)
 	if err != nil {
 		return nil, errors.New("Create error.")
