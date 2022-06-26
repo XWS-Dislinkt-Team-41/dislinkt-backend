@@ -16,6 +16,22 @@ services:
       - auth_db
     networks:
       - network
+    
+  user_service:
+    image: user_service
+    container_name: user_service
+    build:
+      context: .
+      dockerfile: ./user_service/Dockerfile
+    restart: on-failure
+    environment:
+      USER_DB_HOST: ${USER_DB_HOST}
+      USER_DB_PORT: ${USER_DB_PORT}
+      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
+    depends_on:
+      - user_db
+    networks:
+      - network 
 
   post_service:
     image: post_service
@@ -72,6 +88,22 @@ services:
     networks:
       - network
 
+  job_offer_service:
+    image: job_offer_service
+    container_name: job_offer_service
+    build:
+      context: .
+      dockerfile: ./job_offer_service/Dockerfile
+    restart: on-failure
+    environment:
+      JOB_OFFER_DB_HOST: ${JOB_OFFER_DB_HOST}
+      JOB_OFFER_DB_PORT: ${JOB_OFFER_DB_PORT}
+      JOB_OFFER_SERVICE_PORT: ${JOB_OFFER_SERVICE_PORT}
+    depends_on:
+      - job_offer_db
+    networks:
+      - network 
+
   post_db:
     image: mongo
     container_name: post_db
@@ -93,22 +125,6 @@ services:
     restart: unless-stopped
     networks:
       - network
-    
-  user_service:
-    image: user_service
-    container_name: user_service
-    build:
-      context: .
-      dockerfile: ./user_service/Dockerfile
-    restart: on-failure
-    environment:
-      USER_DB_HOST: ${USER_DB_HOST}
-      USER_DB_PORT: ${USER_DB_PORT}
-      USER_SERVICE_PORT: ${USER_SERVICE_PORT}
-    depends_on:
-      - user_db
-    networks:
-      - network 
 
   user_db:
     image: mongo
@@ -128,6 +144,13 @@ services:
       - ${CONNECT_DB_PORT}:${CONNECT_DB_PORT}
     networks:
       - network
+
+  job_offer_db:
+    image: mongo
+    container_name: job_offer_db
+    restart: on-failure
+    networks:
+      - network 
 
   nats:
     image: nats
