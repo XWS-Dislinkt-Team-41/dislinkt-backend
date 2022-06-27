@@ -378,3 +378,39 @@ func (store *ConnectNeo4jDBStore) GetUserSuggestions(userId primitive.ObjectID) 
 	users := result.([]*domain.Profile)
 	return users, nil
 }
+
+func (store *ConnectNeo4jDBStore) GetRandomUsersWithoutConections(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		result, err := store.GetRandomUsersWithoutConectionsTx(tx, userId)
+		return result, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	users := result.([]*domain.Profile)
+	return users, nil
+}
+
+func (store *ConnectNeo4jDBStore) GetRandomUsers(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		result, err := store.GetRandomUsersTx(tx, userId)
+		return result, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	users := result.([]*domain.Profile)
+	return users, nil
+}
