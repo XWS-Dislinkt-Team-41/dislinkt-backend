@@ -11,8 +11,8 @@ func mapConnection(connection *domain.Connection) *pb.Connection {
 		return nil
 	}
 	connectionPb := &pb.Connection{
-		User:  &pb.Profile{Id: connection.User.Id.Hex()},
-		CUser: &pb.Profile{Id: connection.CUser.Id.Hex()},
+		UserId:  connection.UserId.Hex(),
+		CUserId: connection.CUserId.Hex(),
 	}
 	return connectionPb
 }

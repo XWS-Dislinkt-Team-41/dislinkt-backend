@@ -123,6 +123,8 @@ services:
     environment:
       NEO4J_AUTH: ${CONNECT_DB_USER}/${CONNECT_DB_PASS}
     restart: on-failure
+    volumes:
+      - ./data:/import
     ports:
       - ${CONNECT_DB_HTTP_PORT}:${CONNECT_DB_HTTP_PORT}
       - ${CONNECT_DB_PORT}:${CONNECT_DB_PORT}

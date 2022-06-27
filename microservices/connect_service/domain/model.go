@@ -5,8 +5,8 @@ import (
 )
 
 type Connection struct {
-	User  Profile `bson:"user"`
-	CUser Profile `bson:"cUser"`
+	UserId  primitive.ObjectID `bson:"userId"`
+	CUserId primitive.ObjectID `bson:"cUserId"`
 }
 
 type Profile struct {

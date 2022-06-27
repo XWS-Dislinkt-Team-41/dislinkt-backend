@@ -32,6 +32,7 @@ type ConnectServiceClient interface {
 	CancelInvitation(ctx context.Context, in *CancelInvitationRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
 	GetAllInvitations(ctx context.Context, in *GetAllUserInvitationsRequest, opts ...grpc.CallOption) (*GetAllInvitationsResponse, error)
 	GetAllSentInvitations(ctx context.Context, in *GetAllSentInvitationsRequest, opts ...grpc.CallOption) (*GetAllInvitationsResponse, error)
+	GetUserSuggestions(ctx context.Context, in *GetUserSuggestionsRequest, opts ...grpc.CallOption) (*GetUserSuggestionsResponse, error)
 }
 
 type connectServiceClient struct {
@@ -132,6 +133,15 @@ func (c *connectServiceClient) GetAllSentInvitations(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *connectServiceClient) GetUserSuggestions(ctx context.Context, in *GetUserSuggestionsRequest, opts ...grpc.CallOption) (*GetUserSuggestionsResponse, error) {
+	out := new(GetUserSuggestionsResponse)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/GetUserSuggestions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConnectServiceServer is the server API for ConnectService service.
 // All implementations must embed UnimplementedConnectServiceServer
 // for forward compatibility
@@ -146,6 +156,7 @@ type ConnectServiceServer interface {
 	CancelInvitation(context.Context, *CancelInvitationRequest) (*EmptyRespones, error)
 	GetAllInvitations(context.Context, *GetAllUserInvitationsRequest) (*GetAllInvitationsResponse, error)
 	GetAllSentInvitations(context.Context, *GetAllSentInvitationsRequest) (*GetAllInvitationsResponse, error)
+	GetUserSuggestions(context.Context, *GetUserSuggestionsRequest) (*GetUserSuggestionsResponse, error)
 	mustEmbedUnimplementedConnectServiceServer()
 }
 
@@ -182,6 +193,9 @@ func (UnimplementedConnectServiceServer) GetAllInvitations(context.Context, *Get
 }
 func (UnimplementedConnectServiceServer) GetAllSentInvitations(context.Context, *GetAllSentInvitationsRequest) (*GetAllInvitationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllSentInvitations not implemented")
+}
+func (UnimplementedConnectServiceServer) GetUserSuggestions(context.Context, *GetUserSuggestionsRequest) (*GetUserSuggestionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserSuggestions not implemented")
 }
 func (UnimplementedConnectServiceServer) mustEmbedUnimplementedConnectServiceServer() {}
 
@@ -376,6 +390,24 @@ func _ConnectService_GetAllSentInvitations_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConnectService_GetUserSuggestions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserSuggestionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).GetUserSuggestions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/GetUserSuggestions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).GetUserSuggestions(ctx, req.(*GetUserSuggestionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ConnectService_ServiceDesc is the grpc.ServiceDesc for ConnectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +454,10 @@ var ConnectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllSentInvitations",
 			Handler:    _ConnectService_GetAllSentInvitations_Handler,
+		},
+		{
+			MethodName: "GetUserSuggestions",
+			Handler:    _ConnectService_GetUserSuggestions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

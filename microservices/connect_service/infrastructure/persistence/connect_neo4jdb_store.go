@@ -157,8 +157,8 @@ func (store *ConnectNeo4jDBStore) Connect(userId, cUserId primitive.ObjectID) (*
 		return nil, err
 	}
 	connection := domain.Connection{
-		User:  domain.Profile{Id: userId},
-		CUser: domain.Profile{Id: cUserId},
+		UserId:  userId,
+		CUserId: cUserId,
 	}
 	return &connection, nil
 }
@@ -225,8 +225,8 @@ func (store *ConnectNeo4jDBStore) Invite(userId, cUserId primitive.ObjectID) (*d
 		return nil, err
 	}
 	invite := domain.Connection{
-		User:  domain.Profile{Id: userId},
-		CUser: domain.Profile{Id: cUserId},
+		UserId:  userId,
+		CUserId: cUserId,
 	}
 	return &invite, nil
 }
@@ -257,8 +257,8 @@ func (store *ConnectNeo4jDBStore) AcceptInvitation(userId primitive.ObjectID, cU
 	var connection *domain.Connection
 	if isCreatedConection {
 		connection = &domain.Connection{
-			User:  domain.Profile{Id: userId},
-			CUser: domain.Profile{Id: cUserId},
+			UserId:  userId,
+			CUserId: cUserId,
 		}
 	}
 	return connection, nil
@@ -315,10 +315,10 @@ func (store *ConnectNeo4jDBStore) GetAllInvitations(userId primitive.ObjectID) (
 		result, err := store.GetAllInvitationsTx(tx, userId)
 		return result, err
 	})
-	invites := result.([]*domain.Connection)
 	if err != nil {
 		return nil, err
 	}
+	invites := result.([]*domain.Connection)
 	return invites, nil
 }
 
@@ -333,10 +333,10 @@ func (store *ConnectNeo4jDBStore) GetAllSentInvitations(userId primitive.ObjectI
 		result, err := store.GetAllSentInvitationsTx(tx, userId)
 		return result, err
 	})
-	invites := result.([]*domain.Connection)
 	if err != nil {
 		return nil, err
 	}
+	invites := result.([]*domain.Connection)
 	return invites, nil
 }
 
@@ -345,10 +345,72 @@ func (store *ConnectNeo4jDBStore) InitNeo4jDB() error {
 	defer session.Close()
 	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		err := store.DeleteAllInDBTx(tx)
+		if err != nil {
+			return nil, err
+		}
+		err = store.LoadNodesFromCSVTx(tx)
+		if err != nil {
+			return nil, err
+		}
+		err = store.LoadRelationshipsFromCSVTx(tx)
 		return nil, err
 	})
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (store *ConnectNeo4jDBStore) GetUserSuggestions(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		result, err := store.GetConnectionsOfUserConectionsTx(tx, userId)
+		return result, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	users := result.([]*domain.Profile)
+	return users, nil
+}
+
+func (store *ConnectNeo4jDBStore) GetRandomUsersWithoutConections(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		result, err := store.GetRandomUsersWithoutConectionsTx(tx, userId)
+		return result, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	users := result.([]*domain.Profile)
+	return users, nil
+}
+
+func (store *ConnectNeo4jDBStore) GetRandomUsers(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		result, err := store.GetRandomUsersTx(tx, userId)
+		return result, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	users := result.([]*domain.Profile)
+	return users, nil
 }

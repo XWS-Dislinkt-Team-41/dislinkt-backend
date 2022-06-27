@@ -18,4 +18,7 @@ type ConnectStore interface {
 	GetAllInvitations(userId primitive.ObjectID) ([]*Connection, error)
 	GetAllSentInvitations(userId primitive.ObjectID) ([]*Connection, error)
 	InitNeo4jDB() error
+	GetUserSuggestions(userId primitive.ObjectID) ([]*Profile, error)
+	GetRandomUsers(userId primitive.ObjectID) ([]*Profile, error)
+	GetRandomUsersWithoutConections(userId primitive.ObjectID) ([]*Profile, error)
 }

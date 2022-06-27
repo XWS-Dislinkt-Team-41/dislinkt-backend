@@ -74,7 +74,7 @@ func (handler *ConnectPostHandler) GetConnectedUsersIds(id string, publicPost *d
 		return err
 	}
 	for _, connection := range response.Connections {
-		publicPost.Ids = append(publicPost.Ids, connection.CUser.Id)
+		publicPost.Ids = append(publicPost.Ids, connection.CUserId)
 	}
 	return nil
 }

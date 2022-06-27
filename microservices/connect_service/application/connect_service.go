@@ -112,3 +112,36 @@ func (service *ConnectService) IsProfilePrivate(userId primitive.ObjectID) (*boo
 	}
 	return isUserPrivate, err
 }
+
+func (service *ConnectService) GetUserSuggestions(userId primitive.ObjectID) ([]*domain.Profile, error) {
+	users, err := service.store.GetUserSuggestions(userId)
+	if err != nil {
+		return nil, err
+	}
+	if len(users) == 0 {
+		users, err = service.store.GetRandomUsers(userId)
+		if err != nil {
+			return nil, err
+		}
+	} else if len(users) < 15 {
+		randomUsers, err := service.store.GetRandomUsersWithoutConections(userId)
+		if err != nil {
+			return nil, err
+		}
+		for i := 0; i < len(randomUsers) && len(users) < 15; i++ {
+			if UserNotSuggested(users, randomUsers[i]) {
+				users = append(users, randomUsers[i])
+			}
+		}
+	}
+	return users, err
+}
+
+func UserNotSuggested(suggestedUsers []*domain.Profile, user *domain.Profile) bool {
+	for i := 0; i < len(suggestedUsers); i++ {
+		if suggestedUsers[i].Id == user.Id {
+			return false
+		}
+	}
+	return true
+}
