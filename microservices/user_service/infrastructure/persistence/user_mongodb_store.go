@@ -137,14 +137,6 @@ func (store *UserMongoDBStore) Insert(user *domain.User) (*domain.User, error) {
 	if userInDatabase != nil {
 		return nil, errors.New("user with the same id already exists")
 	}
-	// userInDatabase, _ = store.GetByEmail(user.Email)
-	// if userInDatabase != nil {
-	// 	return nil, errors.New("user with this email has already been registered")
-	// }
-	// userInDatabase, _ = store.GetByUsername(user.Username)
-	// if userInDatabase != nil {
-	// 	return nil, errors.New("username is taken")
-	// }
 	_, err1 := store.users.InsertOne(context.TODO(), user)
 	if err1 != nil {
 		return nil, errors.New("register error")

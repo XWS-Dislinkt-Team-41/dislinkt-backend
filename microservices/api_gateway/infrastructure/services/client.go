@@ -7,6 +7,7 @@ import (
 	connections "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
 	post "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
+	jobOffer "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/job_offer_service"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -41,6 +42,14 @@ func NewAuthClient(address string) auth.AuthServiceClient {
 		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
 	}
 	return auth.NewAuthServiceClient(conn)
+}
+
+func NewJobOfferClient(address string) jobOffer.JobOfferServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Job offer service: %v", err)
+	}
+	return jobOffer.NewJobOfferServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {
