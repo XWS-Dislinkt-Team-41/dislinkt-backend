@@ -5,6 +5,7 @@ import (
 	"os"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/domain"
 	jwt "github.com/dgrijalva/jwt-go"
 	"google.golang.org/grpc/codes"
@@ -13,12 +14,48 @@ import (
 
 type AuthService struct {
 	store domain.AuthStore
+	permissionStore domain.PermissionStore
 }
 
-func NewAuthService(store domain.AuthStore) *AuthService {
+func NewAuthService(store domain.AuthStore, permissionStore domain.PermissionStore) *AuthService {
 	return &AuthService{
 		store: store,
+		permissionStore: permissionStore,
 	}
+}
+
+func (service *AuthService) RBAC(username string,url string,method domain.Method) (bool, error) {
+
+	user, err := service.store.GetByUsername(username)
+	if err != nil {
+		return false, err
+	}
+	if user == nil {
+		return false, status.Error(codes.NotFound, "User was not found")
+	}
+
+	permissions, err := service.permissionStore.GetByRole(user.role)
+	if err != nil {
+		return false, err
+	}
+	if permissions == nil {
+		return false, status.Error(codes.NotFound, "User doesn't have permissions")
+	}
+	
+	if(!contains(permissions, domain.Permission{getObjectId("0"),user.Role,method,url})){
+		return false, status.Error(codes.NotFound, "User can't access this endpoint")
+	}
+	
+	return true, nil
+}
+
+func contains(s []*domain.Permission, e *domain.Permission) bool {
+    for _, a := range s {
+        if a.Role == e.Role && a.Method == e.Method && a.Url == e.Url {
+            return true
+        }
+    }
+    return false
 }
 
 func (service *AuthService) Login(user *domain.UserCredential) (*domain.JWTToken, error) {
@@ -60,4 +97,11 @@ func (service *AuthService) GenerateJWT(username string) (*domain.JWTToken, erro
 		return nil, err
 	}
 	return &domain.JWTToken{Token: tokenString}, nil
+}
+
+func getObjectId(id string) primitive.ObjectID {
+	if objectId, err := primitive.ObjectIDFromHex(id); err == nil {
+		return objectId
+	}
+	return primitive.NewObjectID()
 }
