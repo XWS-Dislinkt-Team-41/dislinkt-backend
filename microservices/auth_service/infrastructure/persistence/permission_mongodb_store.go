@@ -8,13 +8,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 const (
-	DATABASE   = "permission_db"
-	COLLECTION = "credentials"
+	PERMISSION_COLLECTION = "permissions"
 )
 
 type PermissionMongoDBStore struct {
@@ -22,7 +19,7 @@ type PermissionMongoDBStore struct {
 }
 
 func NewPermissionMongoDBStore(client *mongo.Client) domain.PermissionStore {
-	permissions := client.Database(DATABASE).Collection(COLLECTION)
+	permissions := client.Database(DATABASE).Collection(PERMISSION_COLLECTION)
 	return &PermissionMongoDBStore{
 		permissions: permissions,
 	}
@@ -33,9 +30,9 @@ func (store *PermissionMongoDBStore) Get(id primitive.ObjectID) (*domain.Permiss
 	return store.filterOne(filter)
 }
 
-func (store *PermissionMongoDBStore) GetByRole(role domain.Role) (*domain.Permission, error) {
+func (store *PermissionMongoDBStore) GetByRole(role domain.Role) ([]*domain.Permission, error) {
 	filter := bson.M{"role": role}
-	return store.filterOne(filter)
+	return store.filter(filter)
 }
 
 func (store *PermissionMongoDBStore) GetAll() ([]*domain.Permission, error) {
@@ -64,8 +61,8 @@ func (store *PermissionMongoDBStore) Update(permission *domain.Permission) (*dom
 	if permissionInDatabase == nil {
 		return nil, err
 	}
-	permissionInDatabase.Description = permission.Role
-	permissionInDatabase.Position = permission.Url
+	permissionInDatabase.Role = permission.Role
+	permissionInDatabase.Url = permission.Url
 	filter := bson.M{"_id": permissionInDatabase.Id}
 	update := bson.M{
 		"$set": permissionInDatabase,

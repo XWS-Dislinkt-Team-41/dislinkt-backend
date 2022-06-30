@@ -1,5 +1,7 @@
 package domain
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type PermissionStore interface {
 	
 	Get(id primitive.ObjectID) (*Permission, error)

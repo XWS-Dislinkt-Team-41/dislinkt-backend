@@ -12,7 +12,7 @@ const (
 type Method int
 
 const (
-	POST Role = iota
+	POST Method = iota
 	GET
 	PUT
 	DELETE
@@ -44,14 +44,34 @@ func ConvertRoleToString(role Role) string {
 	}
 }
 
-func ConvertMethodToString(role Role) string {
-	if role == 0 {
+func ConvertStringToRole(role string) Role {
+	if role == "USER" {
+		return USER
+	} else {
+		return ADMIN
+	}
+}
+
+func ConvertMethodToString(method Method) string {
+	if method == 0 {
 		return "POST"
-	} else if role == 1{
+	} else if method == 1{
 		return "GET"
-	}else if role == 2{
+	}else if method == 2{
 		return "PUT"
 	}else {
 		return "DELETE"
+	}
+}
+
+func ConvertStringToMethod(method string) Method {
+	if method ==  "POST"{
+		return POST
+	} else if method == "GET"{
+		return GET
+	}else if method == "PUT"{
+		return PUT
+	}else {
+		return DELETE
 	}
 }

@@ -45,10 +45,25 @@ message RBACResponse {
 message UserCredential {
         string username = 1;
         string password = 2;
+        enum Role{
+                USER = 0;
+                ADMIN = 1;
+        }
+        Role role = 3;
 }
 
 message Permission {
-        string role = 1;
-        string method = 2;
+        enum Role{
+                USER = 0;
+                ADMIN = 1;
+        }
+        Role role = 1;
+        enum Method{
+        POST = 0;
+        GET = 1;
+        PUT = 2;
+        DELETE = 3;
+        }
+        Method method = 2;
         string url = 3;
 }

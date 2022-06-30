@@ -24,8 +24,7 @@ func NewAuthService(store domain.AuthStore, permissionStore domain.PermissionSto
 	}
 }
 
-func (service *AuthService) RBAC(username string,url string,method domain.Method) (bool, error) {
-
+func (service *AuthService) RBAC(username string,method domain.Method,url string) (bool, error) {
 	user, err := service.store.GetByUsername(username)
 	if err != nil {
 		return false, err
@@ -34,7 +33,7 @@ func (service *AuthService) RBAC(username string,url string,method domain.Method
 		return false, status.Error(codes.NotFound, "User was not found")
 	}
 
-	permissions, err := service.permissionStore.GetByRole(user.role)
+	permissions, err := service.permissionStore.GetByRole(user.Role)
 	if err != nil {
 		return false, err
 	}
@@ -42,7 +41,7 @@ func (service *AuthService) RBAC(username string,url string,method domain.Method
 		return false, status.Error(codes.NotFound, "User doesn't have permissions")
 	}
 	
-	if(!contains(permissions, domain.Permission{getObjectId("0"),user.Role,method,url})){
+	if(!contains(permissions, &domain.Permission{getObjectId("0"),user.Role,method,url})){
 		return false, status.Error(codes.NotFound, "User can't access this endpoint")
 	}
 	
