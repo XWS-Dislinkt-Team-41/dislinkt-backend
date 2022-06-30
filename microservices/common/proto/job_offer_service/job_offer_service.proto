@@ -82,6 +82,7 @@ message JobOffer {
         string id = 1;
         string userId = 2;
         string position = 3;
-        string description = 4;
-        repeated string prerequisites = 5;
+        string seniority = 4;
+        string description = 5;
+        repeated string prerequisites = 6;
 }
