@@ -30,6 +30,17 @@ func (handler *AuthHandler) RBAC(ctx context.Context, request *pb.RBACRequest) (
 	}, nil
 }
 
+func (handler *AuthHandler) ConnectAgent(ctx context.Context, request *pb.ConnectAgentRequest) (*pb.APITokenResponse, error) {
+	userCredential := mapPbUserCredential(request.User)
+	token, err := handler.service.ConnectAgent(userCredential)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.APITokenResponse{
+		Token: token.Token,
+	}, nil
+}
+
 func (handler *AuthHandler) Login(ctx context.Context, request *pb.LoginRequest) (*pb.JWTResponse, error) {
 	userCredential := mapPbUserCredential(request.User)
 	jwt, err := handler.service.Login(userCredential)

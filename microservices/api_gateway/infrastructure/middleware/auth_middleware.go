@@ -31,32 +31,6 @@ func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 			if r.Header["Authorization"] != nil {
 				authEndpoint := fmt.Sprintf("%s:%s", "auth_service", "8000")
 				authClient := services.NewAuthClient(authEndpoint)
-				//auth client
-				fmt.Println(r.URL.Path)
-				response, err := authClient.RBAC(context.TODO(),&auth.RBACRequest{User: &auth.UserCredential{Username:"dare"},Permission: &auth.Permission{Method:ConvertStringToMethod(r.Method),Url:r.URL.Path}})
-				if err != nil {
-					fmt.Fprintf(w, err.Error())
-					return 
-				}
-				if !response.Response{
-					fmt.Fprintf(w, "Endpoint access denied")
-					return
-				}
-				//valid_route, err := auth.RBAC(claims.username,r.URL.Path,r.method)
-				// if  err return nil,err
-				// //joboffer gadja iz agentske
-				// if r.urlPath {  token.Claims["apiToken"] }
-				// /connections POST leka
-				// mongodb role_permissiondb
-				// Collection roles
-				// username role
-				// leka     user
-				// pape     owner
-				// dare     admin
-				//Collection permission
-				// role endpoint method
-				// admin /users  GET
-				// admin /users  POST
 
 				token, err := jwt.Parse(r.Header["Authorization"][0], func(token *jwt.Token) (interface{}, error) {
 					if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -72,6 +46,27 @@ func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 					checkIss := token.Claims.(jwt.MapClaims).VerifyIssuer(iss, false)
 					if !checkIss {
 						return nil, fmt.Errorf(("invalid iss"))
+					}
+					username := token.Claims.(jwt.MapClaims)["username"]
+					usernameStr := fmt.Sprintf("%v", username)
+					tokenType := token.Claims.(jwt.MapClaims)["type"]
+					
+					if(tokenType=="API"){
+						response, err := authClient.RBAC(context.TODO(),&auth.RBACRequest{User: &auth.UserCredential{Username:usernameStr},Permission: &auth.Permission{Method:ConvertStringToMethod(r.Method),Url:r.URL.Path}})
+						if err != nil {
+							return nil, err
+						}
+						if !response.Response{
+							return nil, fmt.Errorf(("Endpoint access denied"))
+						}
+					}else{
+						response, err := authClient.RBAC(context.TODO(),&auth.RBACRequest{User: &auth.UserCredential{Username:usernameStr},Permission: &auth.Permission{Method:ConvertStringToMethod(r.Method),Url:r.URL.Path}})
+						if err != nil {
+							return nil, err
+						}
+						if !response.Response{
+							return nil, fmt.Errorf(("Endpoint access denied"))
+						}
 					}
 
 					return []byte(os.Getenv("JWT_SECRET_KEY")), nil
@@ -99,14 +94,16 @@ func isProtectedRoute(method, path string) bool {
 	publicProfilePostsPath, _ := regexp.MatchString(`\/user\/[0-9a-f]{24}\/public`, path)
 	if method == "GET" {
 		if path == "/post/public" ||
-			publicProfilePostsPath {
+			publicProfilePostsPath  {
 			return false
 		}
 	}
 
 	if method == "POST" {
 		if path == "/user/register" ||
-			path == "/auth/login" {
+			path == "/auth/login" ||
+			path == "/jobOffer/search"||
+			path == "/user/search"{
 			return false
 		}
 	}

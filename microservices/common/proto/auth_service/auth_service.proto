@@ -13,6 +13,12 @@ service AuthService{
                         body: "user"
                     };
         }
+        rpc ConnectAgent(ConnectAgentRequest) returns (APITokenResponse) {
+                option (google.api.http) = {
+                        post: "/auth/conncetAgent",
+                        body: "user"
+                    };
+        }
         rpc Register(RegisterRequest) returns (RegisterResponse) {}
         rpc RBAC(RBACRequest) returns (RBACResponse) {}
 }
@@ -20,7 +26,11 @@ service AuthService{
 message LoginRequest {
         UserCredential user = 1; 
 }
-            
+
+message ConnectAgentRequest {
+        UserCredential user = 1; 
+}
+          
 message RegisterRequest { 
         UserCredential user = 1; 
 }
@@ -35,6 +45,10 @@ message RegisterResponse {
 }
               
 message JWTResponse {
+        string token = 1;
+}
+
+message APITokenResponse {
         string token = 1;
 }
 
