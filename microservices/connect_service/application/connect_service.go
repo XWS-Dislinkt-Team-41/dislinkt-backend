@@ -128,8 +128,12 @@ func (service *ConnectService) GetUserSuggestions(userId primitive.ObjectID) ([]
 		if err != nil {
 			return nil, err
 		}
+		blockedUsers, err := service.store.GetBlockedUsers(userId)
+		if err != nil {
+			return nil, err
+		}
 		for i := 0; i < len(randomUsers) && len(users) < 15; i++ {
-			if UserNotSuggested(users, randomUsers[i]) {
+			if UserNotSuggested(users, randomUsers[i]) && UserNotBlocked(blockedUsers, randomUsers[i]) {
 				users = append(users, randomUsers[i])
 			}
 		}
@@ -140,6 +144,15 @@ func (service *ConnectService) GetUserSuggestions(userId primitive.ObjectID) ([]
 func UserNotSuggested(suggestedUsers []*domain.Profile, user *domain.Profile) bool {
 	for i := 0; i < len(suggestedUsers); i++ {
 		if suggestedUsers[i].Id == user.Id {
+			return false
+		}
+	}
+	return true
+}
+
+func UserNotBlocked(blocks []*domain.Block, user *domain.Profile) bool {
+	for i := 0; i < len(blocks); i++ {
+		if blocks[i].BUserId == user.Id {
 			return false
 		}
 	}

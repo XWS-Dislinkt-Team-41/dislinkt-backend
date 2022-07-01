@@ -78,6 +78,18 @@ func (store *ConnectNeo4jDBStore) CheckIfInviteExist(tx neo4j.Transaction, userI
 	return inviteExists, nil
 }
 
+func (store *ConnectNeo4jDBStore) CheckIfNotBlocked(tx neo4j.Transaction, userId, bUserId primitive.ObjectID) (*bool, error) {
+	blockExists, err := store.IsBlockExistsTx(tx, userId, bUserId)
+	if err != nil {
+		return nil, err
+	}
+	if *blockExists {
+		err = status.Error(codes.InvalidArgument, "user is blocked or you are blocked by user")
+		return nil, err
+	}
+	return blockExists, nil
+}
+
 func (store *ConnectNeo4jDBStore) Register(user domain.Profile) (*domain.Profile, error) {
 	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
 	defer session.Close()
@@ -150,6 +162,10 @@ func (store *ConnectNeo4jDBStore) Connect(userId, cUserId primitive.ObjectID) (*
 		if err != nil {
 			return nil, err
 		}
+		_, err = store.CheckIfNotBlocked(tx, userId, cUserId)
+		if err != nil {
+			return nil, err
+		}
 		_, err = store.CreateConnectionTx(tx, userId, cUserId)
 		return nil, err
 	})
@@ -211,6 +227,10 @@ func (store *ConnectNeo4jDBStore) Invite(userId, cUserId primitive.ObjectID) (*d
 			return nil, err
 		}
 		_, err = store.CheckIfUserExists(tx, cUserId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.CheckIfNotBlocked(tx, userId, cUserId)
 		if err != nil {
 			return nil, err
 		}
