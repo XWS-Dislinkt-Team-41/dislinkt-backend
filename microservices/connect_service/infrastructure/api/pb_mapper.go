@@ -39,3 +39,14 @@ func mapProfile(profile *domain.Profile) *pb.Profile {
 	}
 	return profilePb
 }
+
+func mapBlock(block *domain.Block) *pb.Block {
+	if block == nil {
+		return nil
+	}
+	blockPb := &pb.Block{
+		UserId:  block.UserId.Hex(),
+		BUserId: block.BUserId.Hex(),
+	}
+	return blockPb
+}

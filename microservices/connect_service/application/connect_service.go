@@ -145,3 +145,27 @@ func UserNotSuggested(suggestedUsers []*domain.Profile, user *domain.Profile) bo
 	}
 	return true
 }
+
+func (service *ConnectService) Block(userId, bUserId primitive.ObjectID) (*domain.Block, error) {
+	block, err := service.store.Block(userId, bUserId)
+	if err != nil {
+		return nil, err
+	}
+	return block, nil
+}
+
+func (service *ConnectService) UnBlock(userId, bUserId primitive.ObjectID) error {
+	err := service.store.UnBlock(userId, bUserId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (service *ConnectService) GetBlockedUsers(userId primitive.ObjectID) ([]*domain.Block, error) {
+	blocks, err := service.store.GetBlockedUsers(userId)
+	if err != nil {
+		return nil, err
+	}
+	return blocks, err
+}

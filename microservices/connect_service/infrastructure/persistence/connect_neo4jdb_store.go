@@ -414,3 +414,79 @@ func (store *ConnectNeo4jDBStore) GetRandomUsers(userId primitive.ObjectID) ([]*
 	users := result.([]*domain.Profile)
 	return users, nil
 }
+
+func (store *ConnectNeo4jDBStore) Block(userId primitive.ObjectID, bUserId primitive.ObjectID) (*domain.Block, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close()
+	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.CheckIfUserExists(tx, bUserId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.CreateBlockTx(tx, userId, bUserId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.DeleteConnectionTx(tx, userId, bUserId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.DeleteReceivedInviteTx(tx, userId, bUserId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.DeleteInviteTx(tx, userId, bUserId)
+		return nil, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	block := domain.Block{
+		UserId:  userId,
+		BUserId: bUserId,
+	}
+	return &block, nil
+}
+
+func (store *ConnectNeo4jDBStore) GetBlockedUsers(userId primitive.ObjectID) ([]*domain.Block, error) {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeRead})
+	defer session.Close()
+	result, err := session.ReadTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		result, err := store.GetBlockedUsersTx(tx, userId)
+		return result, err
+	})
+	if err != nil {
+		return nil, err
+	}
+	blocks := result.([]*domain.Block)
+	return blocks, nil
+}
+
+func (store *ConnectNeo4jDBStore) UnBlock(userId primitive.ObjectID, bUserId primitive.ObjectID) error {
+	session := (*store.driver).NewSession(neo4j.SessionConfig{AccessMode: neo4j.AccessModeWrite})
+	defer session.Close()
+	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
+		_, err := store.CheckIfUserExists(tx, userId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.CheckIfUserExists(tx, bUserId)
+		if err != nil {
+			return nil, err
+		}
+		_, err = store.DeleteBlockTx(tx, userId, bUserId)
+		return nil, err
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -364,3 +364,48 @@ func (store *ConnectNeo4jDBStore) GetRandomUsersTx(tx neo4j.Transaction, userId 
 	}
 	return users, err
 }
+
+func (store *ConnectNeo4jDBStore) CreateBlockTx(tx neo4j.Transaction, userId, bUserId primitive.ObjectID) (*domain.Block, error) {
+	query := "MATCH (u1:User{id:$userId}) MATCH (u2:User{id:$bUserId}) MERGE (u1)-[b:Block]->(u2)"
+	params := map[string]interface{}{
+		"userId":  userId.Hex(),
+		"bUserId": bUserId.Hex(),
+	}
+	_, err := tx.Run(query, params)
+	return nil, err
+}
+
+func (store *ConnectNeo4jDBStore) GetBlockedUsersTx(tx neo4j.Transaction, userId primitive.ObjectID) ([]*domain.Block, error) {
+	query := "MATCH (u:User{id:$userId}) MATCH (u)-[b:Block]->(x) RETURN x.id AS UserId"
+	params := map[string]interface{}{
+		"userId": userId.Hex(),
+	}
+	result, err := tx.Run(query, params)
+	if err != nil {
+		return nil, err
+	}
+	var blocks []*domain.Block
+	for result.Next() {
+		id, _ := result.Record().Get("UserId")
+		bUserId, err := primitive.ObjectIDFromHex(id.(string))
+		if err != nil {
+			return nil, err
+		}
+		block := domain.Block{
+			UserId:  userId,
+			BUserId: bUserId,
+		}
+		blocks = append(blocks, &block)
+	}
+	return blocks, err
+}
+
+func (store *ConnectNeo4jDBStore) DeleteBlockTx(tx neo4j.Transaction, userId, bUserId primitive.ObjectID) (*domain.Block, error) {
+	query := "MATCH (u1:User{id:$userId})-[b:Block]->(u2:User{id:$bUserId}) DELETE b"
+	params := map[string]interface{}{
+		"userId":  userId.Hex(),
+		"bUserId": bUserId.Hex(),
+	}
+	_, err := tx.Run(query, params)
+	return nil, err
+}

@@ -55,6 +55,22 @@ service ConnectService{
 			get: "/user/{userId}/connect/suggestions"
 		};
         }
+        rpc Block(BlockRequest) returns(BlockResponse) {
+        	option (google.api.http) = {
+			post: "/user/{userId}/block"
+                        body: "bUser"
+		};
+        }
+        rpc UnBolck(UnBlockRequest) returns(EmptyRespones) {
+        	option (google.api.http) = {
+			delete: "/user/{userId}/connect/{bUserId}"
+		};
+        }
+        rpc GetBlockedUsers(GetBlockedUsersRequest) returns(GetBlockedUsersResponse) {
+        	option (google.api.http) = {
+			get: "/user/{userId}/block"
+		};
+        }
 }
 
 message RegisterRequest {
@@ -130,6 +146,28 @@ message GetUserSuggestionsResponse {
         repeated Profile userSuggestions = 1;
 }
 
+message BlockRequest {
+        string userId = 1;
+        Profile bUser = 2;
+}
+
+message UnBlockRequest {
+        string userId = 1;
+        string bUserId = 2;
+}
+
+message GetBlockedUsersRequest {
+        string userId = 1;
+}
+
+message GetBlockedUsersResponse {
+        repeated Block blocks = 1;
+}
+
+message BlockResponse {
+        Block block = 1;
+}
+
 message Profile {
         string id = 1;
         bool private = 2;
@@ -138,4 +176,9 @@ message Profile {
 message Connection {
         string userId = 1;
         string cUserId = 2;
+}
+
+message Block {
+        string userId = 1;
+        string bUserId = 2;
 }

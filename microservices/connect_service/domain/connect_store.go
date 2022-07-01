@@ -21,4 +21,7 @@ type ConnectStore interface {
 	GetUserSuggestions(userId primitive.ObjectID) ([]*Profile, error)
 	GetRandomUsers(userId primitive.ObjectID) ([]*Profile, error)
 	GetRandomUsersWithoutConections(userId primitive.ObjectID) ([]*Profile, error)
+	Block(userId, bUserId primitive.ObjectID) (*Block, error)
+	UnBlock(userId, bUserId primitive.ObjectID) error
+	GetBlockedUsers(userId primitive.ObjectID) ([]*Block, error)
 }

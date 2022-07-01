@@ -9,6 +9,11 @@ type Connection struct {
 	CUserId primitive.ObjectID `bson:"cUserId"`
 }
 
+type Block struct {
+	UserId  primitive.ObjectID `bson:"userId"`
+	BUserId primitive.ObjectID `bson:"bUserId"`
+}
+
 type Profile struct {
 	Id      primitive.ObjectID `bson:"id"`
 	Private bool               `bson:"private"`
