@@ -7,6 +7,7 @@ type Role int
 const (
 	USER Role = iota
 	ADMIN
+	AGENT
 )
 
 type Method int
@@ -39,16 +40,20 @@ type JWTToken struct {
 func ConvertRoleToString(role Role) string {
 	if role == 0 {
 		return "USER"
-	} else {
+	} else if role == 1{
 		return "ADMIN"
+	} else{
+		return "AGENT"
 	}
 }
 
 func ConvertStringToRole(role string) Role {
 	if role == "USER" {
 		return USER
-	} else {
+	} else if role == "ADMIN"{
 		return ADMIN
+	} else {
+		return AGENT
 	}
 }
 

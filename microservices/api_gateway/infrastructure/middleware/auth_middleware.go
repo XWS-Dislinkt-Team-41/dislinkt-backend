@@ -103,7 +103,8 @@ func isProtectedRoute(method, path string) bool {
 		if path == "/user/register" ||
 			path == "/auth/login" ||
 			path == "/jobOffer/search"||
-			path == "/user/search"{
+			path == "/user/search" || 
+			path == "/auth/connectAgent" {
 			return false
 		}
 	}

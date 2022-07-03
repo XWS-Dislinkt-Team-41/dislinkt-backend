@@ -137,7 +137,19 @@ var permissions = []*domain.Permission{
 	},
 	{
 		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.AGENT,
+		Method: 	  domain.GET,
+		Url:		  `\/jobOffer`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
 		Role:		  domain.USER,
+		Method: 	  domain.POST,
+		Url:		  `\/jobOffer`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.AGENT,
 		Method: 	  domain.POST,
 		Url:		  `\/jobOffer`,
 	},
@@ -146,6 +158,24 @@ var permissions = []*domain.Permission{
 		Role:		  domain.USER,
 		Method: 	  domain.PUT,
 		Url:		  `\/jobOffer`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.AGENT,
+		Method: 	  domain.PUT,
+		Url:		  `\/jobOffer`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.USER,
+		Method: 	  domain.POST,
+		Url:		  `\/auth\/connectAgent`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.AGENT,
+		Method: 	  domain.POST,
+		Url:		  `\/auth\/connectAgent`,
 	},
 }
 

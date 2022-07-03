@@ -15,7 +15,7 @@ service AuthService{
         }
         rpc ConnectAgent(ConnectAgentRequest) returns (APITokenResponse) {
                 option (google.api.http) = {
-                        post: "/auth/conncetAgent",
+                        post: "/auth/connectAgent",
                         body: "user"
                     };
         }
@@ -62,6 +62,7 @@ message UserCredential {
         enum Role{
                 USER = 0;
                 ADMIN = 1;
+                AGENT = 2;
         }
         Role role = 3;
 }
@@ -70,6 +71,7 @@ message Permission {
         enum Role{
                 USER = 0;
                 ADMIN = 1;
+                AGENT = 2;
         }
         Role role = 1;
         enum Method{
