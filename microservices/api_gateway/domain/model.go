@@ -43,3 +43,4 @@ type RegisterRequest struct {
 	User           user.User
 	Profile        conn.Profile
 }
+

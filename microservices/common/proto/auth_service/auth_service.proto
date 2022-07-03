@@ -13,15 +13,31 @@ service AuthService{
                         body: "user"
                     };
         }
+        rpc ConnectAgent(ConnectAgentRequest) returns (APITokenResponse) {
+                option (google.api.http) = {
+                        post: "/auth/connectAgent",
+                        body: "user"
+                    };
+        }
         rpc Register(RegisterRequest) returns (RegisterResponse) {}
+        rpc RBAC(RBACRequest) returns (RBACResponse) {}
 }
 
 message LoginRequest {
         UserCredential user = 1; 
 }
-            
+
+message ConnectAgentRequest {
+        UserCredential user = 1; 
+}
+          
 message RegisterRequest { 
         UserCredential user = 1; 
+}
+
+message RBACRequest { 
+        UserCredential user = 1; 
+        Permission permission = 2;
 }
 
 message RegisterResponse {
@@ -31,8 +47,39 @@ message RegisterResponse {
 message JWTResponse {
         string token = 1;
 }
+
+message APITokenResponse {
+        string token = 1;
+}
+
+message RBACResponse {
+        bool response = 1;
+}
             
 message UserCredential {
         string username = 1;
         string password = 2;
+        enum Role{
+                USER = 0;
+                ADMIN = 1;
+                AGENT = 2;
+        }
+        Role role = 3;
+}
+
+message Permission {
+        enum Role{
+                USER = 0;
+                ADMIN = 1;
+                AGENT = 2;
+        }
+        Role role = 1;
+        enum Method{
+        POST = 0;
+        GET = 1;
+        PUT = 2;
+        DELETE = 3;
+        }
+        Method method = 2;
+        string url = 3;
 }

@@ -11,6 +11,7 @@ func mapJobOffer(jobOffer *domain.JobOffer) *pb.JobOffer {
 		Id:            jobOffer.Id.Hex(),
 		UserId:        jobOffer.UserId.Hex(),
 		Position:      jobOffer.Position,
+		Seniority:	   jobOffer.Seniority,
 		Description:   jobOffer.Description,
 		Prerequisites: jobOffer.Prerequisites,
 	}
@@ -25,6 +26,7 @@ func mapNewJobOffer(jobOfferPb *pb.JobOffer) *domain.JobOffer {
 		Id:            id,
 		UserId:        userId,
 		Position:      jobOfferPb.Position,
+		Seniority:	   jobOfferPb.Seniority,
 		Description:   jobOfferPb.Description,
 		Prerequisites: jobOfferPb.Prerequisites,
 	}

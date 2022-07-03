@@ -29,7 +29,8 @@ func (server *Server) Start() {
 
 	mongoClient := server.initMongoClient()
 	authStore := server.initAuthStore(mongoClient)
-	authService := server.initAuthService(authStore)
+	permissionStore := server.initPermissionStore(mongoClient)
+	authService := server.initAuthService(authStore,permissionStore)
 	authHandler := server.initAuthHandler(authService)
 	server.startGrpcServer(authHandler)
 }
@@ -45,15 +46,33 @@ func (server *Server) initMongoClient() *mongo.Client {
 func (server *Server) initAuthStore(client *mongo.Client) domain.AuthStore {
 	store := persistence.NewAuthMongoDBStore(client)
 	store.DeleteAll()
+	for _, credential := range credentials {
+		_, err := store.Insert(credential)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 	return store
 }
 
-func (server *Server) initAuthService(store domain.AuthStore) *application.AuthService {
-	return application.NewAuthService(store)
+func (server *Server) initAuthService(authStore domain.AuthStore, permissionStore domain.PermissionStore) *application.AuthService {
+	return application.NewAuthService(authStore, permissionStore)
 }
 
 func (server *Server) initAuthHandler(service *application.AuthService) *api.AuthHandler {
 	return api.NewAuthHandler(service)
+}
+
+func (server *Server) initPermissionStore(client *mongo.Client) domain.PermissionStore {
+	store := persistence.NewPermissionMongoDBStore(client)
+	store.DeleteAll()
+	for _, permission := range permissions {
+		_, err := store.Insert(permission)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return store
 }
 
 func (server *Server) startGrpcServer(authHandler *api.AuthHandler) {
