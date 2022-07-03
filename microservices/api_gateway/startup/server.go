@@ -11,9 +11,9 @@ import (
 	cfg "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/startup/config"
 	authGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/auth_service"
 	connectGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
+	jobOfferGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/job_offer_service"
 	postGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	userGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
-	jobOfferGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/job_offer_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -67,12 +67,9 @@ func (server *Server) initHandlers() {
 func (server *Server) initCustomHandlers() {
 	userEndpoint := fmt.Sprintf("%s:%s", server.config.UserHost, server.config.UserPort)
 	postEndpoint := fmt.Sprintf("%s:%s", server.config.PostHost, server.config.PostPort)
-	authEndpoint := fmt.Sprintf("%s:%s", server.config.AuthHost, server.config.AuthPort)
 	connEndpoint := fmt.Sprintf("%s:%s", server.config.ConnectHost, server.config.ConnectPort)
 	publicPostHandler := api.NewPublicPostHandler(userEndpoint, postEndpoint)
 	publicPostHandler.Init(server.mux)
-	registerHandler := api.NewRegisterHandler(userEndpoint, authEndpoint, connEndpoint)
-	registerHandler.Init(server.mux)
 	connectPostHandler := api.NewConnectPostHandler(postEndpoint, connEndpoint)
 	connectPostHandler.Init(server.mux)
 

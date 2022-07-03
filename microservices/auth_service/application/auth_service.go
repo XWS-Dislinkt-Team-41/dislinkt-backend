@@ -3,29 +3,32 @@ package application
 import (
 	"fmt"
 	"os"
-	"time"
 	"regexp"
+	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/domain"
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/register_user"
 	jwt "github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type AuthService struct {
-	store domain.AuthStore
+	store           domain.AuthStore
 	permissionStore domain.PermissionStore
+	orchestrator    *RegisterUserOrchestrator
 }
 
-func NewAuthService(store domain.AuthStore, permissionStore domain.PermissionStore) *AuthService {
+func NewAuthService(store domain.AuthStore, orchestrator *RegisterUserOrchestrator, permissionStore domain.PermissionStore) *AuthService {
 	return &AuthService{
-		store: store,
+		store:           store,
+		orchestrator:    orchestrator,
 		permissionStore: permissionStore,
 	}
 }
 
-func (service *AuthService) RBAC(username string,method domain.Method,url string) (bool, error) {
+func (service *AuthService) RBAC(username string, method domain.Method, url string) (bool, error) {
 	user, err := service.store.GetByUsername(username)
 	if err != nil {
 		return false, err
@@ -41,24 +44,24 @@ func (service *AuthService) RBAC(username string,method domain.Method,url string
 	if permissions == nil {
 		return false, status.Error(codes.NotFound, "User doesn't have permissions")
 	}
-	
-	if(!contains(permissions, &domain.Permission{getObjectId("0"),user.Role,method,url})){
+
+	if (!contains(permissions, &domain.Permission{getObjectId("0"), user.Role, method, url})) {
 		return false, status.Error(codes.NotFound, "User can't access this endpoint")
 	}
-	
+
 	return true, nil
 }
 
 func contains(permissions []*domain.Permission, permission *domain.Permission) bool {
-    for _, permissionInDatabase := range permissions {
+	for _, permissionInDatabase := range permissions {
 		urlsMatch, _ := regexp.MatchString(permissionInDatabase.Url, permission.Url)
-        if permissionInDatabase.Role == permission.Role && 
-		permissionInDatabase.Method == permission.Method && 
-		urlsMatch {
-            return true
-        }
-    }
-    return false
+		if permissionInDatabase.Role == permission.Role &&
+			permissionInDatabase.Method == permission.Method &&
+			urlsMatch {
+			return true
+		}
+	}
+	return false
 }
 
 func (service *AuthService) ConnectAgent(user *domain.UserCredential) (*domain.JWTToken, error) {
@@ -91,8 +94,18 @@ func (service *AuthService) Login(user *domain.UserCredential) (*domain.JWTToken
 	return token, nil
 }
 
-func (service *AuthService) Register(user *domain.UserCredential) (*domain.UserCredential, error) {
-	user, err := service.store.Register(user)
+func (service *AuthService) Register(user *events.UserDetails) (*events.UserDetails, error) {
+	var userCredential = domain.UserCredential{
+		Username: user.Username,
+		Password: user.Password,
+		Role:     domain.Role(user.Role),
+	}
+	registedUser, err := service.store.Register(&userCredential)
+	if err != nil {
+		return nil, err
+	}
+	user.Id = registedUser.Id.Hex()
+	err = service.orchestrator.Start(*user)
 	if err != nil {
 		return nil, err
 	}
@@ -142,4 +155,12 @@ func getObjectId(id string) primitive.ObjectID {
 		return objectId
 	}
 	return primitive.NewObjectID()
+}
+
+func (service *AuthService) DeleteById(id primitive.ObjectID) error {
+	err := service.store.DeleteById(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

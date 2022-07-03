@@ -17,4 +17,5 @@ type UserStore interface {
 	UpdatePersonalInfo(user *User) (*User, error)
 	UpdateCareerInfo(user *User) (*User, error)
 	UpdateInterestsInfo(user *User) (*User, error)
+	DeleteById(id primitive.ObjectID) error
 }

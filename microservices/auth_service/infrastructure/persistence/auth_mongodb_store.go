@@ -95,3 +95,11 @@ func (store *AuthMongoDBStore) checkIfExsist(filter interface{}) (exsist bool, e
 	}
 	return true, nil
 }
+
+func (store *AuthMongoDBStore) DeleteById(id primitive.ObjectID) error {
+	_, err := store.userCredentials.DeleteOne(context.TODO(), bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+	return nil
+}

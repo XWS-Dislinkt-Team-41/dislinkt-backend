@@ -162,12 +162,12 @@ func (store *UserMongoDBStore) filter(filter interface{}) ([]*domain.User, error
 func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (*domain.User, error) {
 	userInDatabase, err := store.Get(user.Id)
 	if userInDatabase == nil {
-		return nil,errors.New("User doesn't exist.")
+		return nil, errors.New("User doesn't exist.")
 	}
 	checkUsername, err := store.GetByUsername(user.Username)
 	if checkUsername != nil {
 		if checkUsername.Id != userInDatabase.Id {
-			return nil,errors.New("Username is taken.")
+			return nil, errors.New("Username is taken.")
 		}
 	}
 	userInDatabase.Firstname = user.Firstname
@@ -212,7 +212,7 @@ func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (*domain.U
 
 	userInDatabase, err := store.Get(user.Id)
 	if userInDatabase == nil {
-		return nil,errors.New("User doesn't exist.")
+		return nil, errors.New("User doesn't exist.")
 	}
 	userInDatabase.Skills = user.Skills
 	userInDatabase.Interests = user.Interests
@@ -222,7 +222,7 @@ func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (*domain.U
 	}
 	_, err = store.users.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return nil,errors.New("Update failed.")
+		return nil, errors.New("Update failed.")
 	}
 
 	return userInDatabase, nil
@@ -254,4 +254,12 @@ func (store *UserMongoDBStore) filterOneRegister(filter interface{}) (user *doma
 		return nil, nil
 	}
 	return
+}
+
+func (store *UserMongoDBStore) DeleteById(id primitive.ObjectID) error {
+	_, err := store.users.DeleteOne(context.TODO(), bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+	return nil
 }

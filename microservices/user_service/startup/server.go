@@ -6,6 +6,8 @@ import (
 	"net"
 
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
+	saga "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/messaging"
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/messaging/nats"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/application"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/infrastructure/api"
@@ -35,6 +37,10 @@ func (server *Server) Start() {
 
 	userService := server.initUserService(userStore)
 
+	commandSubscriber := server.initSubscriber(server.config.RegisterUserCommandSubject, QueueGroup)
+	replyPublisher := server.initPublisher(server.config.RegisterUserReplySubject)
+	server.initRegisterUserHandler(userService, replyPublisher, commandSubscriber)
+
 	userHandler := server.initUserHandler(userService)
 
 	server.startGrpcServer(userHandler)
@@ -62,6 +68,33 @@ func (server *Server) initUserStore(client *mongo.Client) domain.UserStore {
 
 func (server *Server) initUserService(store domain.UserStore) *application.UserService {
 	return application.NewUserService(store)
+}
+
+func (server *Server) initPublisher(subject string) saga.Publisher {
+	publisher, err := nats.NewNATSPublisher(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return publisher
+}
+
+func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber {
+	subscriber, err := nats.NewNATSSubscriber(
+		server.config.NatsHost, server.config.NatsPort,
+		server.config.NatsUser, server.config.NatsPass, subject, queueGroup)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return subscriber
+}
+
+func (server *Server) initRegisterUserHandler(service *application.UserService, publisher saga.Publisher, subscriber saga.Subscriber) {
+	_, err := api.NewRegisterUserCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (server *Server) initUserHandler(service *application.UserService) *api.UserHandler {

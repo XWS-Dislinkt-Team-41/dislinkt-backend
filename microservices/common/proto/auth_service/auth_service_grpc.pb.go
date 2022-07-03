@@ -24,8 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*JWTResponse, error)
 	ConnectAgent(ctx context.Context, in *ConnectAgentRequest, opts ...grpc.CallOption) (*APITokenResponse, error)
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	RBAC(ctx context.Context, in *RBACRequest, opts ...grpc.CallOption) (*RBACResponse, error)
+	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 }
 
 type authServiceClient struct {
@@ -54,18 +54,18 @@ func (c *authServiceClient) ConnectAgent(ctx context.Context, in *ConnectAgentRe
 	return out, nil
 }
 
-func (c *authServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
-	out := new(RegisterResponse)
-	err := c.cc.Invoke(ctx, "/auth.AuthService/Register", in, out, opts...)
+func (c *authServiceClient) RBAC(ctx context.Context, in *RBACRequest, opts ...grpc.CallOption) (*RBACResponse, error) {
+	out := new(RBACResponse)
+	err := c.cc.Invoke(ctx, "/auth.AuthService/RBAC", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authServiceClient) RBAC(ctx context.Context, in *RBACRequest, opts ...grpc.CallOption) (*RBACResponse, error) {
-	out := new(RBACResponse)
-	err := c.cc.Invoke(ctx, "/auth.AuthService/RBAC", in, out, opts...)
+func (c *authServiceClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
+	out := new(RegisterResponse)
+	err := c.cc.Invoke(ctx, "/auth.AuthService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -78,8 +78,8 @@ func (c *authServiceClient) RBAC(ctx context.Context, in *RBACRequest, opts ...g
 type AuthServiceServer interface {
 	Login(context.Context, *LoginRequest) (*JWTResponse, error)
 	ConnectAgent(context.Context, *ConnectAgentRequest) (*APITokenResponse, error)
-	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	RBAC(context.Context, *RBACRequest) (*RBACResponse, error)
+	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	mustEmbedUnimplementedAuthServiceServer()
 }
 
@@ -93,11 +93,11 @@ func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*JW
 func (UnimplementedAuthServiceServer) ConnectAgent(context.Context, *ConnectAgentRequest) (*APITokenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConnectAgent not implemented")
 }
-func (UnimplementedAuthServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
-}
 func (UnimplementedAuthServiceServer) RBAC(context.Context, *RBACRequest) (*RBACResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RBAC not implemented")
+}
+func (UnimplementedAuthServiceServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
 func (UnimplementedAuthServiceServer) mustEmbedUnimplementedAuthServiceServer() {}
 
@@ -148,24 +148,6 @@ func _AuthService_ConnectAgent_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AuthServiceServer).Register(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/auth.AuthService/Register",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServiceServer).Register(ctx, req.(*RegisterRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _AuthService_RBAC_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RBACRequest)
 	if err := dec(in); err != nil {
@@ -180,6 +162,24 @@ func _AuthService_RBAC_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthServiceServer).RBAC(ctx, req.(*RBACRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthService_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServiceServer).Register(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.AuthService/Register",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServiceServer).Register(ctx, req.(*RegisterRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -200,12 +200,12 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthService_ConnectAgent_Handler,
 		},
 		{
-			MethodName: "Register",
-			Handler:    _AuthService_Register_Handler,
-		},
-		{
 			MethodName: "RBAC",
 			Handler:    _AuthService_RBAC_Handler,
+		},
+		{
+			MethodName: "Register",
+			Handler:    _AuthService_Register_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

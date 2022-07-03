@@ -1,26 +1,26 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 	"os"
 	"regexp"
-	"context"
-	
+
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/api_gateway/infrastructure/services"
-	jwt "github.com/dgrijalva/jwt-go"
 	auth "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/auth_service"
+	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 )
 
-func ConvertStringToMethod(method string) auth.Permission_Method{
-	if method ==  "POST"{
+func ConvertStringToMethod(method string) auth.Permission_Method {
+	if method == "POST" {
 		return auth.Permission_POST
-	} else if method == "GET"{
+	} else if method == "GET" {
 		return auth.Permission_GET
-	}else if method == "PUT"{
+	} else if method == "PUT" {
 		return auth.Permission_PUT
-	}else {
+	} else {
 		return auth.Permission_DELETE
 	}
 }
@@ -50,21 +50,21 @@ func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 					username := token.Claims.(jwt.MapClaims)["username"]
 					usernameStr := fmt.Sprintf("%v", username)
 					tokenType := token.Claims.(jwt.MapClaims)["type"]
-					
-					if(tokenType=="API"){
-						response, err := authClient.RBAC(context.TODO(),&auth.RBACRequest{User: &auth.UserCredential{Username:usernameStr},Permission: &auth.Permission{Method:ConvertStringToMethod(r.Method),Url:r.URL.Path}})
+
+					if tokenType == "API" {
+						response, err := authClient.RBAC(context.TODO(), &auth.RBACRequest{User: &auth.UserCredential{Username: usernameStr}, Permission: &auth.Permission{Method: ConvertStringToMethod(r.Method), Url: r.URL.Path}})
 						if err != nil {
 							return nil, err
 						}
-						if !response.Response{
+						if !response.Response {
 							return nil, fmt.Errorf(("Endpoint access denied"))
 						}
-					}else{
-						response, err := authClient.RBAC(context.TODO(),&auth.RBACRequest{User: &auth.UserCredential{Username:usernameStr},Permission: &auth.Permission{Method:ConvertStringToMethod(r.Method),Url:r.URL.Path}})
+					} else {
+						response, err := authClient.RBAC(context.TODO(), &auth.RBACRequest{User: &auth.UserCredential{Username: usernameStr}, Permission: &auth.Permission{Method: ConvertStringToMethod(r.Method), Url: r.URL.Path}})
 						if err != nil {
 							return nil, err
 						}
-						if !response.Response{
+						if !response.Response {
 							return nil, fmt.Errorf(("Endpoint access denied"))
 						}
 					}
@@ -94,16 +94,16 @@ func isProtectedRoute(method, path string) bool {
 	publicProfilePostsPath, _ := regexp.MatchString(`\/user\/[0-9a-f]{24}\/public`, path)
 	if method == "GET" {
 		if path == "/post/public" ||
-			publicProfilePostsPath  {
+			publicProfilePostsPath {
 			return false
 		}
 	}
 
 	if method == "POST" {
-		if path == "/user/register" ||
+		if path == "/auth/register" ||
 			path == "/auth/login" ||
-			path == "/jobOffer/search"||
-			path == "/user/search" || 
+			path == "/jobOffer/search" ||
+			path == "/user/search" ||
 			path == "/auth/connectAgent" {
 			return false
 		}

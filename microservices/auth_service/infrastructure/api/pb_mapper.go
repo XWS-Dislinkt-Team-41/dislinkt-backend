@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/domain"
 	pb "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/auth_service"
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/register_user"
 )
 
 func mapUserRole(status domain.Role) pb.UserCredential_Role {
@@ -65,16 +66,16 @@ func mapUserCredential(userCredential *domain.UserCredential) *pb.UserCredential
 	userCredentialPb := &pb.UserCredential{
 		Username: userCredential.Username,
 		Password: userCredential.Password,
-		Role: mapUserRole(userCredential.Role),
+		Role:     mapUserRole(userCredential.Role),
 	}
 	return userCredentialPb
 }
 
 func mapPermission(permission *domain.Permission) *pb.Permission {
 	permissionPb := &pb.Permission{
-		Role: mapPermissionRole(permission.Role),
+		Role:   mapPermissionRole(permission.Role),
 		Method: mapMethod(permission.Method),
-		Url: permission.Url,
+		Url:    permission.Url,
 	}
 	return permissionPb
 }
@@ -83,16 +84,43 @@ func mapPbUserCredential(userCredential *pb.UserCredential) *domain.UserCredenti
 	userCredentialPb := &domain.UserCredential{
 		Username: userCredential.Username,
 		Password: userCredential.Password,
-		Role: mapNewUserRole(userCredential.Role),
+		Role:     mapNewUserRole(userCredential.Role),
 	}
 	return userCredentialPb
 }
 
 func mapPbPermission(permissionPb *pb.Permission) *domain.Permission {
 	permission := &domain.Permission{
-		Role: mapNewPermissionRole(permissionPb.Role),
+		Role:   mapNewPermissionRole(permissionPb.Role),
 		Method: mapNewMethod(permissionPb.Method),
-		Url: permissionPb.Url,
+		Url:    permissionPb.Url,
 	}
 	return permission
+}
+
+func mapUserDetails(user *events.UserDetails) *pb.UserDetails {
+	userPb := &pb.UserDetails{
+		Id:           user.Id,
+		Username:     user.Username,
+		Password:     user.Password,
+		IsPrivate:    user.IsPrivate,
+		Firstname:    user.Firstname,
+		Lastname:     user.Lastname,
+		Email:        user.Email,
+		MobileNumber: user.MobileNumber,
+	}
+	return userPb
+}
+
+func mapPbUserDetails(userPb *pb.UserDetails) *events.UserDetails {
+	user := &events.UserDetails{
+		Username:     userPb.Username,
+		Password:     userPb.Password,
+		IsPrivate:    userPb.IsPrivate,
+		Firstname:    userPb.Firstname,
+		Lastname:     userPb.Lastname,
+		Email:        userPb.Email,
+		MobileNumber: userPb.MobileNumber,
+	}
+	return user
 }
