@@ -63,7 +63,8 @@ func isProtectedRoute(method, path string) bool {
 
 	if method == "POST" {
 		if path == "/user/register" ||
-			path == "/auth/login" {
+			path == "/auth/login" ||
+			path == "/auth/register" {
 			return false
 		}
 	}
