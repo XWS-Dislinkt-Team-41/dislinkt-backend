@@ -31,12 +31,12 @@ func (handler *AuthHandler) Login(ctx context.Context, request *pb.LoginRequest)
 
 func (handler *AuthHandler) Register(ctx context.Context, request *pb.RegisterRequest) (*pb.RegisterResponse, error) {
 
-	userCredential := mapPbUserCredential(request.User)
-	user, err := handler.service.Register(userCredential)
+	userDetails := mapPbUserDetails(request.User)
+	user, err := handler.service.Register(userDetails)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.RegisterResponse{
-		User: mapUserCredential(user),
+		User: mapUserDetails(user),
 	}, nil
 }

@@ -6,18 +6,22 @@ import (
 	"time"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/domain"
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/register_user"
 	jwt "github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type AuthService struct {
-	store domain.AuthStore
+	store        domain.AuthStore
+	orchestrator *RegisterUserOrchestrator
 }
 
-func NewAuthService(store domain.AuthStore) *AuthService {
+func NewAuthService(store domain.AuthStore, orchestrator *RegisterUserOrchestrator) *AuthService {
 	return &AuthService{
-		store: store,
+		store:        store,
+		orchestrator: orchestrator,
 	}
 }
 
@@ -36,8 +40,17 @@ func (service *AuthService) Login(user *domain.UserCredential) (*domain.JWTToken
 	return token, nil
 }
 
-func (service *AuthService) Register(user *domain.UserCredential) (*domain.UserCredential, error) {
-	user, err := service.store.Register(user)
+func (service *AuthService) Register(user *events.UserDetails) (*events.UserDetails, error) {
+	var userCredential = domain.UserCredential{
+		Username: user.Username,
+		Password: user.Password,
+	}
+	registedUser, err := service.store.Register(&userCredential)
+	if err != nil {
+		return nil, err
+	}
+	user.Id = registedUser.Id.Hex()
+	err = service.orchestrator.Start(*user)
 	if err != nil {
 		return nil, err
 	}
@@ -60,4 +73,12 @@ func (service *AuthService) GenerateJWT(username string) (*domain.JWTToken, erro
 		return nil, err
 	}
 	return &domain.JWTToken{Token: tokenString}, nil
+}
+
+func (service *AuthService) DeleteById(id primitive.ObjectID) error {
+	err := service.store.DeleteById(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }

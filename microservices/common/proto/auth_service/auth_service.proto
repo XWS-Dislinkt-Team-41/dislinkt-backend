@@ -13,7 +13,12 @@ service AuthService{
                         body: "user"
                     };
         }
-        rpc Register(RegisterRequest) returns (RegisterResponse) {}
+        rpc Register(RegisterRequest) returns (RegisterResponse) {
+                option (google.api.http) = {
+                        post: "/auth/register",
+                        body: "user"
+                    };
+        }
 }
 
 message LoginRequest {
@@ -21,11 +26,11 @@ message LoginRequest {
 }
             
 message RegisterRequest { 
-        UserCredential user = 1; 
+        UserDetails user = 1; 
 }
 
 message RegisterResponse {
-        UserCredential user = 1; 
+        UserDetails user = 1; 
 }
               
 message JWTResponse {
@@ -35,4 +40,15 @@ message JWTResponse {
 message UserCredential {
         string username = 1;
         string password = 2;
+}
+
+message UserDetails {
+        string id = 1;
+        string username = 8;
+        string password = 14;
+        bool isPrivate = 15;
+        string firstname = 2;
+        string lastname = 3;
+        string email = 4;
+        string mobileNumber = 5;
 }

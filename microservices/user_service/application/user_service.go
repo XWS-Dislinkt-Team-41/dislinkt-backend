@@ -50,3 +50,11 @@ func (service *UserService) UpdateCareerInfo(user *domain.User) (*domain.User, e
 func (service *UserService) UpdateInterestsInfo(user *domain.User) (*domain.User, error) {
 	return service.store.UpdateInterestsInfo(user)
 }
+
+func (service *UserService) DeleteById(id primitive.ObjectID) error {
+	err := service.store.DeleteById(id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
