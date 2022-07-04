@@ -36,7 +36,7 @@ func (service *AuthService) RBAC(username string, method domain.Method, url stri
 	if user == nil {
 		return false, status.Error(codes.NotFound, "User was not found")
 	}
-	fmt.Println(user.Username)
+	fmt.Println(user.Role)
 	permissions, err := service.permissionStore.GetByRole(user.Role)
 	if err != nil {
 		return false, err
@@ -100,6 +100,7 @@ func (service *AuthService) Register(user *events.UserDetails) (*events.UserDeta
 		Password: user.Password,
 		Role:     domain.Role(user.Role),
 	}
+	fmt.Println(domain.Role(user.Role))
 	registedUser, err := service.store.Register(&userCredential)
 	if err != nil {
 		return nil, err

@@ -1,11 +1,13 @@
 package api
 
 import (
+	"fmt"
+
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/change_account_privacy"
 	saga "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/messaging"
-	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/make_account_private"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/application"
-	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	//"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
+	//"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ChangePrivacyCommandHandler struct {
@@ -28,37 +30,39 @@ func NewChangePrivacyCommandHandler(userService *application.UserService, publis
 }
 
 func (handler *ChangePrivacyCommandHandler) handle(command *events.ChangePrivacyCommand) {
-	id, err := primitive.ObjectIDFromHex(command.User.Id)
-	if err != nil {
-		return
-	}
-	user := &domain.User{
-		Id:           id,
-		Firstname:    command.User.Firstname,
-		Lastname:     command.User.Lastname,
-		Email:        command.User.Email,
-		MobileNumber: command.User.MobileNumber,
-		Username:     command.User.Username,
-		Password:     command.User.Password,
-		IsPrivate:    command.User.IsPrivate,
-	}
+	// id, err := primitive.ObjectIDFromHex(command.User.Id)
+	// if err != nil {
+	// 	return
+	// }
+	// user := &domain.User{
+	// 	Id:           id,
+	// 	Firstname:    command.User.Firstname,
+	// 	Lastname:     command.User.Lastname,
+	// 	Email:        command.User.Email,
+	// 	MobileNumber: command.User.MobileNumber,
+	// 	Username:     command.User.Username,
+	// 	Password:     command.User.Password,
+	// 	IsPrivate:    command.User.IsPrivate,
+	// }
+	fmt.Println("aa "+command.User.Id)
 
 	reply := events.ChangePrivacyReply{User: command.User}
 
 	switch command.Type {
 	case events.ChangePrivacy:
-		_, err := handler.userService.MakeAccountPrivate(user.id)
+		_, err := handler.userService.ChangeAccountPrivacy(&command.User)
 		if err != nil {
-			reply.Type = events.AccountNotPrivated
+			reply.Type = events.PrivacyNotChanged
 			break
 		}
-		reply.Type = events.AccountPrivated
-	case events.RollbackChangePrivacy:
-		err := handler.userService.DeleteById(user.Id)
+		reply.Type = events.PrivacyChanged
+	case events.RollbackUserPrivacy:
+		command.User.IsPrivate = !command.User.IsPrivate
+		_, err := handler.userService.ChangeAccountPrivacy(&command.User)
 		if err != nil {
 			return
 		}
-		reply.Type = events.UserRolledBack
+		reply.Type = events.UserPrivacyRolledBack
 	default:
 		reply.Type = events.UnknownReply
 	}

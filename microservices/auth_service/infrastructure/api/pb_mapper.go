@@ -10,6 +10,8 @@ func mapUserRole(status domain.Role) pb.UserCredential_Role {
 	switch status {
 	case domain.USER:
 		return pb.UserCredential_USER
+	case domain.AGENT:
+		return pb.UserCredential_AGENT
 	}
 	return pb.UserCredential_ADMIN
 }
@@ -18,14 +20,34 @@ func mapNewUserRole(status pb.UserCredential_Role) domain.Role {
 	switch status {
 	case pb.UserCredential_USER:
 		return domain.USER
+	case pb.UserCredential_AGENT:
+		return domain.AGENT
 	}
 	return domain.ADMIN
+}
+
+func mapUserDetailsRole(status events.Role) pb.UserDetails_Role {
+	switch status {
+	case events.USER:
+		return pb.UserDetails_USER
+	}
+	return pb.UserDetails_ADMIN
+}
+
+func mapNewUserDetailsRole(status pb.UserDetails_Role) events.Role {
+	switch status {
+	case pb.UserDetails_USER:
+		return events.USER
+	}
+	return events.ADMIN
 }
 
 func mapPermissionRole(status domain.Role) pb.Permission_Role {
 	switch status {
 	case domain.USER:
 		return pb.Permission_USER
+	case domain.AGENT:
+		return pb.Permission_AGENT
 	}
 	return pb.Permission_ADMIN
 }
@@ -34,6 +56,8 @@ func mapNewPermissionRole(status pb.Permission_Role) domain.Role {
 	switch status {
 	case pb.Permission_USER:
 		return domain.USER
+	case pb.Permission_AGENT:
+		return domain.AGENT
 	}
 	return domain.ADMIN
 }
@@ -108,6 +132,7 @@ func mapUserDetails(user *events.UserDetails) *pb.UserDetails {
 		Lastname:     user.Lastname,
 		Email:        user.Email,
 		MobileNumber: user.MobileNumber,
+		Role:         mapUserDetailsRole(user.Role),
 	}
 	return userPb
 }
@@ -121,6 +146,7 @@ func mapPbUserDetails(userPb *pb.UserDetails) *events.UserDetails {
 		Lastname:     userPb.Lastname,
 		Email:        userPb.Email,
 		MobileNumber: userPb.MobileNumber,
+		Role:         mapNewUserDetailsRole(userPb.Role),
 	}
 	return user
 }

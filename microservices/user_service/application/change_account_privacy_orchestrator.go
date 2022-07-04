@@ -2,7 +2,7 @@ package application
 
 import (
 	saga "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/messaging"
-	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/make_account_private"
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/change_account_privacy"
 )
 
 type ChangePrivacyOrchestrator struct {
@@ -42,12 +42,12 @@ func (o *ChangePrivacyOrchestrator) nextCommandType(reply events.ChangePrivacyRe
 	switch reply {
 	case events.PrivacyChanged:
 		return events.ChangePrivacyNode
-	case events.PrivacyNotPrivated:
-		return events.RollbackUserPrivate
-	case events.AccountPrivateRolledBack:
-		return events.RollbackChangePrivacy
-	case events.AccountNodeNotPrivated:
-		return events.RollbackChangePrivacy
+	case events.PrivacyNotChanged:
+		return events.RollbackUserPrivacy
+	case events.UserPrivacyRolledBack:
+		return events.RollbackUserPrivacy
+	case events.PrivacyNodeNotChanged:
+		return events.RollbackConnectPrivacy
 	default:
 		return events.UnknownCommand
 	}

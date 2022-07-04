@@ -1,4 +1,4 @@
-package create_order
+package register_user
 
 type UserDetails struct {
 	Id           string

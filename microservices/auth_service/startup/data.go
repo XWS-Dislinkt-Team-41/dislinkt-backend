@@ -177,6 +177,12 @@ var permissions = []*domain.Permission{
 		Method: 	  domain.POST,
 		Url:		  `\/auth\/connectAgent`,
 	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.USER,
+		Method: 	  domain.PUT,
+		Url:		  `\/user\/privacy`,
+	},
 }
 
 func getObjectId(id string) primitive.ObjectID {

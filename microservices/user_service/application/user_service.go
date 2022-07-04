@@ -1,14 +1,16 @@
 package application
 
 import (
+	"fmt"
+
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/change_account_privacy"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/make_account_private"
 )
 
 type UserService struct {
 	store domain.UserStore
-	orchestrator    *PrivateAccountOrchestrator
+	orchestrator    *ChangePrivacyOrchestrator
 }
 
 func NewUserService(store domain.UserStore) *UserService {
@@ -62,16 +64,21 @@ func (service *UserService) DeleteById(id primitive.ObjectID) error {
 }
 
 func (service *UserService) ChangeAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
+	fmt.Println(user.Id)
+	id,err := primitive.ObjectIDFromHex(user.Id)
+	if err != nil {
+		return nil,err
+	}
+	fmt.Println("LOL")
 	var userPrivacy = &domain.User{
-		Id: user.Id,
+		Id: id,
 		IsPrivate: user.IsPrivate,
 	}
 	userInDatabase, err := service.store.UpdateAccountPrivacy(userPrivacy)
 	if err != nil {
 		return nil,err
 	}
-	id := userInDatabase.Id.Hex();
-	user.id = id;
+	user.Id = userInDatabase.Id.Hex();
 	err = service.orchestrator.Start(*user)
 	if err != nil {
 		return nil,err

@@ -3,6 +3,7 @@ package application
 import (
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/change_account_privacy"
 )
 
 type ConnectService struct {
@@ -181,4 +182,24 @@ func (service *ConnectService) GetBlockedUsers(userId primitive.ObjectID) ([]*do
 		return nil, err
 	}
 	return blocks, err
+}
+
+func (service *ConnectService) ChangeAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
+	id,err := primitive.ObjectIDFromHex(user.Id)
+	if err != nil {
+		return nil,err
+	}
+	var userPrivacy = domain.Profile{
+		Id: id,
+		Private: user.IsPrivate,
+	}
+	userInDatabase, err := service.store.UpdateUser(userPrivacy)
+	if err != nil {
+		return nil,err
+	}
+	user.Id = userInDatabase.Id.Hex();
+	if err != nil {
+		return nil,err
+	}
+	return user,nil
 }
