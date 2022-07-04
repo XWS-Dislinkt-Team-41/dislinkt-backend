@@ -132,8 +132,9 @@ func AppendIfMissing(slice []*domain.User, i *domain.User) []*domain.User {
 func (store *UserMongoDBStore) Insert(user *domain.User) (*domain.User, error) {
 	filter := bson.M{"username": user.Username}
 	userInDatabase, _ := store.filterOneRegister(filter)
-
+	if user.Id == primitive.NilObjectID{
 	user.Id = primitive.NewObjectID()
+	}
 	if userInDatabase != nil {
 		return nil, errors.New("user with the same id already exists")
 	}

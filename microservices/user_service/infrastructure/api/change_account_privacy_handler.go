@@ -1,8 +1,6 @@
 package api
 
 import (
-	"fmt"
-
 	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/change_account_privacy"
 	saga "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/messaging"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/application"
@@ -44,21 +42,11 @@ func (handler *ChangePrivacyCommandHandler) handle(command *events.ChangePrivacy
 	// 	Password:     command.User.Password,
 	// 	IsPrivate:    command.User.IsPrivate,
 	// }
-	fmt.Println("aa "+command.User.Id)
 
 	reply := events.ChangePrivacyReply{User: command.User}
-
 	switch command.Type {
-	case events.ChangePrivacy:
-		_, err := handler.userService.ChangeAccountPrivacy(&command.User)
-		if err != nil {
-			reply.Type = events.PrivacyNotChanged
-			break
-		}
-		reply.Type = events.PrivacyChanged
 	case events.RollbackUserPrivacy:
-		command.User.IsPrivate = !command.User.IsPrivate
-		_, err := handler.userService.ChangeAccountPrivacy(&command.User)
+		_, err := handler.userService.RollbackAccountPrivacy(&command.User)
 		if err != nil {
 			return
 		}

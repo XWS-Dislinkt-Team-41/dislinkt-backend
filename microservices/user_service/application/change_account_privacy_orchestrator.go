@@ -1,8 +1,10 @@
 package application
 
 import (
-	saga "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/messaging"
+	"fmt"
+
 	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/change_account_privacy"
+	saga "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/messaging"
 )
 
 type ChangePrivacyOrchestrator struct {
@@ -24,7 +26,7 @@ func NewChangePrivacyOrchestrator(publisher saga.Publisher, subscriber saga.Subs
 
 func (o *ChangePrivacyOrchestrator) Start(userDetails events.UserDetails) error {
 	event := &events.ChangePrivacyCommand{
-		Type: events.ChangePrivacy,
+		Type: events.ChangePrivacyNode,
 		User: userDetails,
 	}
 	return o.commandPublisher.Publish(event)
@@ -39,15 +41,10 @@ func (o *ChangePrivacyOrchestrator) handle(reply *events.ChangePrivacyReply) {
 }
 
 func (o *ChangePrivacyOrchestrator) nextCommandType(reply events.ChangePrivacyReplyType) events.ChangePrivacyCommandType {
+	fmt.Println(reply)
 	switch reply {
-	case events.PrivacyChanged:
-		return events.ChangePrivacyNode
-	case events.PrivacyNotChanged:
-		return events.RollbackUserPrivacy
-	case events.UserPrivacyRolledBack:
-		return events.RollbackUserPrivacy
 	case events.PrivacyNodeNotChanged:
-		return events.RollbackConnectPrivacy
+		return events.RollbackUserPrivacy
 	default:
 		return events.UnknownCommand
 	}

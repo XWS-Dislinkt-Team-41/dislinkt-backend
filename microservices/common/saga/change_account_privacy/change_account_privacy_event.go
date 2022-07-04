@@ -1,4 +1,4 @@
-package create_order
+package change_privacy
 
 type UserDetails struct {
 	Id           string
@@ -22,10 +22,8 @@ const (
 type ChangePrivacyCommandType int8
 
 const (
-	ChangePrivacy ChangePrivacyCommandType = iota
-	RollbackUserPrivacy
+	RollbackUserPrivacy	ChangePrivacyCommandType = iota
 	ChangePrivacyNode
-	RollbackConnectPrivacy
 	UnknownCommand
 )
 
@@ -38,9 +36,6 @@ type ChangePrivacyReplyType int8
 
 const (
 	UserPrivacyRolledBack ChangePrivacyReplyType = iota
-	PrivacyChanged
-	PrivacyNotChanged
-	ConnectPrivacyRolledBack
 	PrivacyNodeChanged
 	PrivacyNodeNotChanged
 	UnknownReply

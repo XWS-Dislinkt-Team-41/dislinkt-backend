@@ -95,12 +95,12 @@ func (service *AuthService) Login(user *domain.UserCredential) (*domain.JWTToken
 }
 
 func (service *AuthService) Register(user *events.UserDetails) (*events.UserDetails, error) {
+	fmt.Println(user.Role)
 	var userCredential = domain.UserCredential{
 		Username: user.Username,
 		Password: user.Password,
 		Role:     domain.Role(user.Role),
 	}
-	fmt.Println(domain.Role(user.Role))
 	registedUser, err := service.store.Register(&userCredential)
 	if err != nil {
 		return nil, err

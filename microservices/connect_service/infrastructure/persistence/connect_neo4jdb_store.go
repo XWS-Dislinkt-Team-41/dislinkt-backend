@@ -117,6 +117,7 @@ func (store *ConnectNeo4jDBStore) UpdateUser(user domain.Profile) (*domain.Profi
 	_, err := session.WriteTransaction(func(tx neo4j.Transaction) (interface{}, error) {
 		_, err := store.CheckIfUserExists(tx, user.Id)
 		if err != nil {
+			fmt.Println(err)
 			return nil, err
 		}
 		_, err = store.UpdateUserTx(tx, user)

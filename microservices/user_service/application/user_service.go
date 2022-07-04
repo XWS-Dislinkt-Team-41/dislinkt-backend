@@ -13,9 +13,10 @@ type UserService struct {
 	orchestrator    *ChangePrivacyOrchestrator
 }
 
-func NewUserService(store domain.UserStore) *UserService {
+func NewUserService(store domain.UserStore, orchestrator *ChangePrivacyOrchestrator) *UserService {
 	return &UserService{
 		store: store,
+		orchestrator: orchestrator,
 	}
 }
 
@@ -64,22 +65,36 @@ func (service *UserService) DeleteById(id primitive.ObjectID) error {
 }
 
 func (service *UserService) ChangeAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
-	fmt.Println(user.Id)
 	id,err := primitive.ObjectIDFromHex(user.Id)
 	if err != nil {
 		return nil,err
 	}
-	fmt.Println("LOL")
 	var userPrivacy = &domain.User{
 		Id: id,
 		IsPrivate: user.IsPrivate,
 	}
-	userInDatabase, err := service.store.UpdateAccountPrivacy(userPrivacy)
+	_, err = service.store.UpdateAccountPrivacy(userPrivacy)
 	if err != nil {
 		return nil,err
 	}
-	user.Id = userInDatabase.Id.Hex();
 	err = service.orchestrator.Start(*user)
+	if err != nil {
+		return nil,err
+	}
+	return user,nil
+}
+
+func (service *UserService) RollbackAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
+	id,err := primitive.ObjectIDFromHex(user.Id)
+	if err != nil {
+		return nil,err
+	}
+	var userPrivacy = &domain.User{
+		Id: id,
+		IsPrivate: !user.IsPrivate,
+	}
+	fmt.Println(userPrivacy.IsPrivate)
+	_, err = service.store.UpdateAccountPrivacy(userPrivacy)
 	if err != nil {
 		return nil,err
 	}
