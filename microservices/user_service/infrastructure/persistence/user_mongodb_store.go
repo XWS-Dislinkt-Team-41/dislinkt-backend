@@ -151,6 +151,9 @@ func (store *UserMongoDBStore) DeleteAll() {
 
 func (store *UserMongoDBStore) filter(filter interface{}) ([]*domain.User, error) {
 	cursor, err := store.users.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
 	defer cursor.Close(context.TODO())
 
 	if err != nil {
@@ -161,13 +164,19 @@ func (store *UserMongoDBStore) filter(filter interface{}) ([]*domain.User, error
 
 func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (*domain.User, error) {
 	userInDatabase, err := store.Get(user.Id)
+	if err != nil {
+		return nil, err
+	}
 	if userInDatabase == nil {
-		return nil, errors.New("User doesn't exist.")
+		return nil, errors.New("user doesn't exist")
 	}
 	checkUsername, err := store.GetByUsername(user.Username)
+	if err != nil {
+		return nil, err
+	}
 	if checkUsername != nil {
 		if checkUsername.Id != userInDatabase.Id {
-			return nil, errors.New("Username is taken.")
+			return nil, errors.New("username is taken")
 		}
 	}
 	userInDatabase.Firstname = user.Firstname
@@ -211,8 +220,11 @@ func (store *UserMongoDBStore) UpdateCareerInfo(user *domain.User) (*domain.User
 func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (*domain.User, error) {
 
 	userInDatabase, err := store.Get(user.Id)
+	if err != nil {
+		return nil, err
+	}
 	if userInDatabase == nil {
-		return nil, errors.New("User doesn't exist.")
+		return nil, errors.New("user doesn't exist")
 	}
 	userInDatabase.Skills = user.Skills
 	userInDatabase.Interests = user.Interests
@@ -222,7 +234,29 @@ func (store *UserMongoDBStore) UpdateInterestsInfo(user *domain.User) (*domain.U
 	}
 	_, err = store.users.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
-		return nil, errors.New("Update failed.")
+		return nil, errors.New("update failed")
+	}
+
+	return userInDatabase, nil
+}
+
+func (store *UserMongoDBStore) UpdateAccountPrivacy(user *domain.User) (*domain.User, error) {
+
+	userInDatabase, err := store.Get(user.Id)
+	if err != nil {
+		return nil, err
+	}
+	if userInDatabase == nil {
+		return nil, errors.New("user doesn't exist")
+	}
+	userInDatabase.IsPrivate = user.IsPrivate
+	filter := bson.M{"_id": userInDatabase.Id}
+	update := bson.M{
+		"$set": userInDatabase,
+	}
+	_, err = store.users.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return nil, errors.New("update failed")
 	}
 
 	return userInDatabase, nil

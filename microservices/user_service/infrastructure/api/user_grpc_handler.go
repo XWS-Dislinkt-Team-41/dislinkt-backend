@@ -153,3 +153,4 @@ func (handler *UserHandler) UpdateInterestsInfo(ctx context.Context, request *pb
 	}
 	return response, err
 }
+
