@@ -1,6 +1,8 @@
 package application
 
 import (
+	"time"
+
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/notification_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -50,6 +52,8 @@ func (service *NotificationService) InsertNotification(notification *domain.Noti
 		return nil, err
 	}
 	if *accepts {
+		notification.Date = time.Now()
+		notification.Seen = false
 		notification, err = service.store.Insert(notification)
 		if err != nil {
 			return nil, err
