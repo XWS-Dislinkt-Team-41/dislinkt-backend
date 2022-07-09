@@ -42,7 +42,7 @@ func (store *NotificationMongoDBStore) GetAll() ([]*domain.Notification, error) 
 	return store.filter(filter)
 }
 
-func (store *NotificationMongoDBStore) GetOrInitUserSetting(userId primitive.ObjectID) *domain.UserSettings {
+func (store *NotificationMongoDBStore) GetOrInitUserSetting(userId primitive.ObjectID) (*domain.UserSettings, error) {
 	settingsFilter := bson.M{"ownerId": userId}
 	settings, _ := store.filterOneSettings(settingsFilter)
 	if settings == nil {
@@ -55,11 +55,11 @@ func (store *NotificationMongoDBStore) GetOrInitUserSetting(userId primitive.Obj
 
 		settings, err := store.InsertSetting(&newSettings)
 		if err != nil {
-			return nil
+			return nil, err
 		}
-		return settings
+		return settings, nil
 	} else {
-		return settings
+		return settings, nil
 	}
 }
 
@@ -81,23 +81,34 @@ func (store *NotificationMongoDBStore) InsertSetting(setting *domain.UserSetting
 	return setting, nil
 }
 
-func (store *NotificationMongoDBStore) MarkAsSeen(notificationId primitive.ObjectID) {
+func (store *NotificationMongoDBStore) MarkAsSeen(notificationId primitive.ObjectID) error {
 	filter := bson.M{"_id": notificationId}
 	updatedNotification := bson.M{"$set": bson.M{
 		"seen": true,
 	}}
-	store.notifications.UpdateOne(context.TODO(), filter, updatedNotification)
+	_, err := store.notifications.UpdateOne(context.TODO(), filter, updatedNotification)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (store *NotificationMongoDBStore) UpdateOrInsertSetting(setting *domain.UserSettings) {
-	settingOld := store.GetOrInitUserSetting(setting.OwnerId)
+func (store *NotificationMongoDBStore) UpdateOrInsertSetting(setting *domain.UserSettings) (*domain.UserSettings, error) {
+	settingOld, err := store.GetOrInitUserSetting(setting.OwnerId)
+	if err != nil {
+		return nil, err
+	}
 	filter := bson.M{"_id": settingOld.Id}
 	updatedSetting := bson.M{"$set": bson.M{
 		"postNotifications":       setting.PostNotifications,
 		"connectionNotifications": setting.ConnectionNotifications,
 		"messageNotifications":    setting.MessageNotifications,
 	}}
-	store.userSettings.UpdateOne(context.TODO(), filter, updatedSetting)
+	_, err = store.userSettings.UpdateOne(context.TODO(), filter, updatedSetting)
+	if err != nil {
+		return nil, err
+	}
+	return setting, nil
 }
 
 func (store *NotificationMongoDBStore) filter(filter interface{}) ([]*domain.Notification, error) {
@@ -111,12 +122,6 @@ func (store *NotificationMongoDBStore) filter(filter interface{}) ([]*domain.Not
 		return nil, err
 	}
 	return decode(cursor)
-}
-
-func (store *NotificationMongoDBStore) filterOne(filter interface{}) (notification *domain.Notification, err error) {
-	result := store.notifications.FindOne(context.TODO(), filter)
-	err = result.Decode(&notification)
-	return
 }
 
 func (store *NotificationMongoDBStore) filterOneSettings(filter interface{}) (settings *domain.UserSettings, err error) {

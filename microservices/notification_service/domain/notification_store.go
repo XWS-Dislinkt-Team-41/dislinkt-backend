@@ -4,12 +4,12 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type NotificationStore interface {
 	DeleteAllSettings()
-	UpdateOrInsertSetting(setting *UserSettings)
+	UpdateOrInsertSetting(setting *UserSettings) (*UserSettings, error)
 	InsertSetting(setting *UserSettings) (*UserSettings, error)
-	GetOrInitUserSetting(userId primitive.ObjectID) *UserSettings
+	GetOrInitUserSetting(userId primitive.ObjectID) (*UserSettings, error)
 
 	GetAll() ([]*Notification, error)
 	Insert(notification *Notification) (*Notification, error)
 	DeleteAllNotifications()
-	MarkAsSeen(notificationId primitive.ObjectID)
+	MarkAsSeen(notificationId primitive.ObjectID) error
 }
