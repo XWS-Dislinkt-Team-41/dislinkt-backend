@@ -6,7 +6,6 @@ replace github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common =>
 
 require (
 	github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common v1.0.0
-	github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service v0.0.0-20220508211809-c225be35129b
 	go.mongodb.org/mongo-driver v1.9.1
 	google.golang.org/grpc v1.47.0
 )

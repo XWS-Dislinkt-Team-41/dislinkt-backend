@@ -51,7 +51,8 @@ func (server *Server) initMongoClient() *mongo.Client {
 
 func (server *Server) initNotificationStore(client *mongo.Client) domain.NotificationStore {
 	store := persistence.NewNotificationMongoDBStore(client)
-	store.DeleteAll()
+	store.DeleteAllNotifications()
+	store.DeleteAllSettings()
 	return store
 }
 
