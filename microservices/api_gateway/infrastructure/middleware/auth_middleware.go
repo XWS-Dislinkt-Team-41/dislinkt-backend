@@ -99,6 +99,9 @@ func isProtectedRoute(method, path string) bool {
 	likePost ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}\/post\/[0-9a-f]{24}\/reaction\/like`, path)
 	likeRemove ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}\/post\/[0-9a-f]{24}\/reaction\/unlike`, path)
 	comment ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}\/post\/[0-9a-f]{24}\/comment`, path)
+	connect ,_:=regexp.MatchString(`\/user\/[0-9a-f]{24}\/connect`, path)
+	connectSugg ,_:=regexp.MatchString(`\/user\/[0-9a-f]{24}\/connect\/suggestions`, path)
+	connectReq ,_:=regexp.MatchString(`\/user\/[0-9a-f]{24}\/connect\/invitation`, path)
 	if method == "GET" {
 		if path == "/post/public" ||
 			publicProfilePostsPath ||
@@ -106,14 +109,18 @@ func isProtectedRoute(method, path string) bool {
 			userPosts||
 			path == "/jobOffer"||
 			path == "/user"||
-			connectedPosts{
+			connectedPosts||
+			connect||
+			connectSugg||
+			connectReq{
 			return false
 		}
 	}
 	if method == "PUT" {
 			if userUpdate||
 			likePost||
-			likeRemove{
+			likeRemove||
+			path=="/user/privacy"{
 			return false
 		}
 	}
@@ -122,10 +129,13 @@ func isProtectedRoute(method, path string) bool {
 			path == "/auth/login" ||
 			path == "/jobOffer/search" ||
 			path == "/user/search" ||
+			path == "/user/search/public" ||
 			path == "/auth/connectAgent"||
 			path == "/jobOffer"||
 			path == "/jobOffer/search"||
-			comment{
+			comment||
+			connect||
+			userPosts{
 			return false
 		}
 	}

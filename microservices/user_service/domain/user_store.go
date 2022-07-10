@@ -14,6 +14,7 @@ type UserStore interface {
 	Insert(user *User) (*User, error)
 	DeleteAll()
 	SearchPublic(filter string) ([]*User, error)
+	Search(filter string) ([]*User, error)
 	UpdatePersonalInfo(user *User) (*User, error)
 	UpdateCareerInfo(user *User) (*User, error)
 	UpdateInterestsInfo(user *User) (*User, error)

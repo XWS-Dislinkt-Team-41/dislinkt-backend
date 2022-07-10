@@ -44,3 +44,7 @@ type RegisterRequest struct {
 	Profile        conn.Profile
 }
 
+type PrincipalRequest struct {
+	Username string
+	User     user.User
+}

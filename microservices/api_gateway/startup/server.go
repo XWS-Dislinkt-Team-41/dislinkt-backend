@@ -17,9 +17,9 @@ import (
 	postGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	userGw "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	"github.com/rs/cors"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"github.com/rs/cors"
 )
 
 type Server struct {
@@ -82,6 +82,8 @@ func (server *Server) initCustomHandlers() {
 	publicPostHandler.Init(server.mux)
 	connectPostHandler := api.NewConnectPostHandler(postEndpoint, connEndpoint)
 	connectPostHandler.Init(server.mux)
+	currnetUserHandler := api.NewGetCurrentUserHandler(userEndpoint)
+	currnetUserHandler.Init(server.mux)
 }
 
 func (server *Server) Start() {

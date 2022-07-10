@@ -9,19 +9,23 @@ import (
 )
 
 type UserService struct {
-	store domain.UserStore
-	orchestrator    *ChangePrivacyOrchestrator
+	store        domain.UserStore
+	orchestrator *ChangePrivacyOrchestrator
 }
 
 func NewUserService(store domain.UserStore, orchestrator *ChangePrivacyOrchestrator) *UserService {
 	return &UserService{
-		store: store,
+		store:        store,
 		orchestrator: orchestrator,
 	}
 }
 
 func (service *UserService) Get(id primitive.ObjectID) (*domain.User, error) {
 	return service.store.Get(id)
+}
+
+func (service *UserService) GetPrincipal(principalUsername string) (*domain.User, error) {
+	return service.store.GetByUsername(principalUsername)
 }
 
 func (service *UserService) GetAll() ([]*domain.User, error) {
@@ -42,6 +46,10 @@ func (service *UserService) Register(user *domain.User) (*domain.User, error) {
 
 func (service *UserService) SearchPublic(filter string) ([]*domain.User, error) {
 	return service.store.SearchPublic(filter)
+}
+
+func (service *UserService) Search(filter string) ([]*domain.User, error) {
+	return service.store.Search(filter)
 }
 
 func (service *UserService) UpdatePersonalInfo(user *domain.User) (*domain.User, error) {
@@ -65,38 +73,38 @@ func (service *UserService) DeleteById(id primitive.ObjectID) error {
 }
 
 func (service *UserService) ChangeAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
-	id,err := primitive.ObjectIDFromHex(user.Id)
+	id, err := primitive.ObjectIDFromHex(user.Id)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	var userPrivacy = &domain.User{
-		Id: id,
+		Id:        id,
 		IsPrivate: user.IsPrivate,
 	}
 	_, err = service.store.UpdateAccountPrivacy(userPrivacy)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	err = service.orchestrator.Start(*user)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return user,nil
+	return user, nil
 }
 
 func (service *UserService) RollbackAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
-	id,err := primitive.ObjectIDFromHex(user.Id)
+	id, err := primitive.ObjectIDFromHex(user.Id)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
 	var userPrivacy = &domain.User{
-		Id: id,
+		Id:        id,
 		IsPrivate: !user.IsPrivate,
 	}
 	fmt.Println(userPrivacy.IsPrivate)
 	_, err = service.store.UpdateAccountPrivacy(userPrivacy)
 	if err != nil {
-		return nil,err
+		return nil, err
 	}
-	return user,nil
+	return user, nil
 }

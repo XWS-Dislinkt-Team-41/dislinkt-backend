@@ -120,6 +120,56 @@ func (store *UserMongoDBStore) SearchPublic(filter string) ([]*domain.User, erro
 	return foundUsers, nil
 }
 
+func (store *UserMongoDBStore) Search(filter string) ([]*domain.User, error) {
+	var foundUsers []*domain.User
+
+	filter = strings.TrimSpace(filter)
+	splitSearch := strings.Split(filter, " ")
+
+	for _, splitSearchpart := range splitSearch {
+
+		//username
+		filtereds, err := store.users.Find(context.TODO(), bson.M{"username": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
+		if err != nil {
+			return nil, err
+		}
+		var usersUsername []*domain.User
+		if err = filtereds.All(context.TODO(), &usersUsername); err != nil {
+			return nil, err
+		}
+		for _, userOneSlice := range usersUsername {
+			foundUsers = AppendIfMissing(foundUsers, userOneSlice)
+		}
+
+		//name
+		filtereds, err = store.users.Find(context.TODO(), bson.M{"firstname": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
+		if err != nil {
+			return nil, err
+		}
+		var usersName []*domain.User
+		if err = filtereds.All(context.TODO(), &usersName); err != nil {
+			return nil, err
+		}
+		for _, userOneSlice := range usersName {
+			foundUsers = AppendIfMissing(foundUsers, userOneSlice)
+		}
+
+		//surname
+		filtereds, err = store.users.Find(context.TODO(), bson.M{"lastname": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
+		if err != nil {
+			return nil, err
+		}
+		var usersSurname []*domain.User
+		if err = filtereds.All(context.TODO(), &usersSurname); err != nil {
+			return nil, err
+		}
+		for _, userOneSlice := range usersSurname {
+			foundUsers = AppendIfMissing(foundUsers, userOneSlice)
+		}
+	}
+	return foundUsers, nil
+}
+
 func AppendIfMissing(slice []*domain.User, i *domain.User) []*domain.User {
 	for _, ele := range slice {
 		if ele.Id == i.Id {
@@ -252,6 +302,9 @@ func (store *UserMongoDBStore) UpdateAccountPrivacy(user *domain.User) (*domain.
 	}
 	if userInDatabase == nil {
 		return nil, errors.New("user doesn't exist")
+	}
+	if(userInDatabase.IsPrivate == user.IsPrivate){
+		return nil, errors.New("same value")
 	}
 	userInDatabase.IsPrivate = user.IsPrivate
 	filter := bson.M{"_id": userInDatabase.Id}

@@ -219,6 +219,32 @@ var permissions = []*domain.Permission{
 		Method: 	  domain.PUT,
 		Url:		  `\/user\/privacy`,
 	},
+	
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.USER,
+		Method: 	  domain.PUT,
+		Url:		  `\/user\/principal`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.ADMIN,
+		Method: 	  domain.PUT,
+		Url:		  `\/user\/principal`,
+	},
+	
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.USER,
+		Method: 	  domain.PUT,
+		Url:		  `\/chatRomm\/[0-9a-f]{24}`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.USER,
+		Method: 	  domain.PUT,
+		Url:		  `\/chatRomm\/[0-9a-f]{24}\/send`,
+	},
 }
 
 func getObjectId(id string) primitive.ObjectID {

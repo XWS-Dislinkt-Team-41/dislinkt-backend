@@ -24,6 +24,12 @@ service UserService{
         }
         rpc SearchPublic(SearchPublicRequest) returns(SearchPublicResponse) {
                 option (google.api.http) = {
+                        post: "/user/search/public"
+                        body: "filter"
+                };
+        }
+        rpc Search(SearchPublicRequest) returns(SearchPublicResponse) {
+                option (google.api.http) = {
                         post: "/user/search"
                         body: "filter"
                 };
@@ -52,6 +58,7 @@ service UserService{
                         body: "user"
                 };
         }
+        rpc GetPrincipal(SearchPublicRequest) returns(GetResponse) {}
 }
 
 message GetRequest {
