@@ -153,3 +153,17 @@ func (handler *UserHandler) UpdateInterestsInfo(ctx context.Context, request *pb
 	}
 	return response, err
 }
+
+func (handler *UserHandler) ChangeAccountPrivacy(ctx context.Context, request *pb.ChangeAccountPrivacyRequest) (*pb.ChangeAccountPrivacyResponse, error) {
+	user := mapPbUserDetails(request.User)
+	user, err := handler.service.ChangeAccountPrivacy(user)
+	if err != nil {
+		return nil, err
+	}
+	userPb := mapUserDetails(user)
+	response := &pb.ChangeAccountPrivacyResponse{
+		User: userPb,
+	}
+	return response, err
+}
+

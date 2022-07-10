@@ -19,6 +19,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"github.com/rs/cors"
 )
 
 type Server struct {
@@ -81,9 +82,22 @@ func (server *Server) initCustomHandlers() {
 	publicPostHandler.Init(server.mux)
 	connectPostHandler := api.NewConnectPostHandler(postEndpoint, connEndpoint)
 	connectPostHandler.Init(server.mux)
-
 }
 
 func (server *Server) Start() {
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), middleware.IsAuthenticated(server.mux)))
+	c := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{http.MethodGet,
+			http.MethodPost,
+			http.MethodPut,
+			http.MethodPatch,
+			http.MethodDelete,
+			http.MethodOptions,
+			http.MethodHead},
+		AllowedHeaders:   []string{"*"},
+		AllowCredentials: true,
+	})
+	handler := c.Handler(middleware.IsAuthenticated(server.mux))
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", server.config.Port), handler))
 }

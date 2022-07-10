@@ -36,7 +36,7 @@ func (service *AuthService) RBAC(username string, method domain.Method, url stri
 	if user == nil {
 		return false, status.Error(codes.NotFound, "User was not found")
 	}
-	fmt.Println(user.Username)
+	fmt.Println(user.Role)
 	permissions, err := service.permissionStore.GetByRole(user.Role)
 	if err != nil {
 		return false, err
@@ -95,6 +95,7 @@ func (service *AuthService) Login(user *domain.UserCredential) (*domain.JWTToken
 }
 
 func (service *AuthService) Register(user *events.UserDetails) (*events.UserDetails, error) {
+	fmt.Println(user.Role)
 	var userCredential = domain.UserCredential{
 		Username: user.Username,
 		Password: user.Password,

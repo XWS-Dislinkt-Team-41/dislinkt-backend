@@ -84,5 +84,6 @@ message JobOffer {
         string position = 3;
         string seniority = 4;
         string description = 5;
-        repeated string prerequisites = 6;
+        string company = 6;
+        repeated string prerequisites = 7;
 }

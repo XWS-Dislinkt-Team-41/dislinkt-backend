@@ -45,6 +45,12 @@ service UserService{
                         put: "/user/interests"
                         body: "user"
                 };
+        } 
+        rpc ChangeAccountPrivacy(ChangeAccountPrivacyRequest) returns(ChangeAccountPrivacyResponse) {
+                option (google.api.http) = {
+                        put: "/user/privacy"
+                        body: "user"
+                };
         }
 }
 
@@ -115,6 +121,14 @@ message UpdateInterestsInfoRequest {
 }
 
 message UpdateInterestsInfoResponse {
+        User user = 1;
+}
+
+message ChangeAccountPrivacyRequest {
+        User user = 1;
+}
+
+message ChangeAccountPrivacyResponse {
         User user = 1;
 }
 

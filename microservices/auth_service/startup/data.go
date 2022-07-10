@@ -207,6 +207,18 @@ var permissions = []*domain.Permission{
 		Method: domain.PUT,
 		Url:    `\/user\/[0-9a-f]{24}\/notification\/settings`,
 	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.USER,
+		Method: 	  domain.PUT,
+		Url:		  `\/user\/privacy`,
+	},
+	{
+		Id:           getObjectId("626ed920b5d7948d48ffc170"),
+		Role:		  domain.ADMIN,
+		Method: 	  domain.PUT,
+		Url:		  `\/user\/privacy`,
+	},
 }
 
 func getObjectId(id string) primitive.ObjectID {

@@ -3,7 +3,6 @@ package persistence
 import (
 	"context"
 	"errors"
-
 	"strings"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/job_offer_service/domain"
@@ -43,7 +42,6 @@ func (store *JobOfferMongoDBStore) Search(filter string) ([]*domain.JobOffer, er
 
 	filter = strings.TrimSpace(filter)
 	splitSearch := strings.Split(filter, " ")
-
 	for _, splitSearchpart := range splitSearch {
 
 		//position
@@ -69,6 +67,19 @@ func (store *JobOfferMongoDBStore) Search(filter string) ([]*domain.JobOffer, er
 			return nil, err
 		}
 		for _, jobOfferOneSlice := range jobOffersDescription {
+			foundJobOffers = AppendIfMissing(foundJobOffers, jobOfferOneSlice)
+		}
+
+		//company
+		filtereds, err = store.jobOffers.Find(context.TODO(), bson.M{"company": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
+		if err != nil {
+			return nil, err
+		}
+		var jobOffersCompany []*domain.JobOffer
+		if err = filtereds.All(context.TODO(), &jobOffersCompany); err != nil {
+			return nil, err
+		}
+		for _, jobOfferOneSlice := range jobOffersCompany {
 			foundJobOffers = AppendIfMissing(foundJobOffers, jobOfferOneSlice)
 		}
 

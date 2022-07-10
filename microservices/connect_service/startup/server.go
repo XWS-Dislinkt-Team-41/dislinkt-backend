@@ -42,6 +42,10 @@ func (server *Server) Start() {
 	replyPublisher := server.initPublisher(server.config.RegisterUserReplySubject)
 	server.initRegisterUserHandler(connectService, replyPublisher, commandSubscriber)
 
+	commandSubscriber = server.initSubscriber(server.config.ChangeAccountPrivacyCommandSubject, QueueGroup)
+	replyPublisher = server.initPublisher(server.config.ChangeAccountPrivacyReplySubject)
+	server.initChangePrivacyHandler(connectService, replyPublisher, commandSubscriber)
+	
 	connectHandler := server.initConnectHandler(connectService)
 
 	server.startGrpcServer(connectHandler)
@@ -96,6 +100,13 @@ func (server *Server) initSubscriber(subject, queueGroup string) saga.Subscriber
 
 func (server *Server) initRegisterUserHandler(service *application.ConnectService, publisher saga.Publisher, subscriber saga.Subscriber) {
 	_, err := api.NewRegisterUserCommandHandler(service, publisher, subscriber)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (server *Server) initChangePrivacyHandler(service *application.ConnectService, publisher saga.Publisher, subscriber saga.Subscriber) {
+	_, err := api.NewChangePrivacyCommandHandler(service, publisher, subscriber)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -14,6 +14,8 @@ type Config struct {
 	NatsPass                   string
 	RegisterUserCommandSubject string
 	RegisterUserReplySubject   string
+	ChangeAccountPrivacyCommandSubject string
+	ChangeAccountPrivacyReplySubject   string
 }
 
 func NewConfig() *Config {
@@ -29,5 +31,7 @@ func NewConfig() *Config {
 		NatsPass:                   os.Getenv("NATS_PASS"),
 		RegisterUserCommandSubject: os.Getenv("REGISTER_USER_COMMAND_SUBJECT"),
 		RegisterUserReplySubject:   os.Getenv("REGISTER_USER_REPLY_SUBJECT"),
+		ChangeAccountPrivacyCommandSubject: os.Getenv("CHANGE_ACCOUNT_PRIVACY_COMMAND_SUBJECT"),
+		ChangeAccountPrivacyReplySubject:   os.Getenv("CHANGE_ACCOUNT_PRIVACY_REPLY_SUBJECT"),
 	}
 }

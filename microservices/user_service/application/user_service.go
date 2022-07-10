@@ -1,17 +1,22 @@
 package application
 
 import (
+	"fmt"
+
+	events "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/saga/change_account_privacy"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type UserService struct {
 	store domain.UserStore
+	orchestrator    *ChangePrivacyOrchestrator
 }
 
-func NewUserService(store domain.UserStore) *UserService {
+func NewUserService(store domain.UserStore, orchestrator *ChangePrivacyOrchestrator) *UserService {
 	return &UserService{
 		store: store,
+		orchestrator: orchestrator,
 	}
 }
 
@@ -57,4 +62,41 @@ func (service *UserService) DeleteById(id primitive.ObjectID) error {
 		return err
 	}
 	return nil
+}
+
+func (service *UserService) ChangeAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
+	id,err := primitive.ObjectIDFromHex(user.Id)
+	if err != nil {
+		return nil,err
+	}
+	var userPrivacy = &domain.User{
+		Id: id,
+		IsPrivate: user.IsPrivate,
+	}
+	_, err = service.store.UpdateAccountPrivacy(userPrivacy)
+	if err != nil {
+		return nil,err
+	}
+	err = service.orchestrator.Start(*user)
+	if err != nil {
+		return nil,err
+	}
+	return user,nil
+}
+
+func (service *UserService) RollbackAccountPrivacy(user *events.UserDetails) (*events.UserDetails, error) {
+	id,err := primitive.ObjectIDFromHex(user.Id)
+	if err != nil {
+		return nil,err
+	}
+	var userPrivacy = &domain.User{
+		Id: id,
+		IsPrivate: !user.IsPrivate,
+	}
+	fmt.Println(userPrivacy.IsPrivate)
+	_, err = service.store.UpdateAccountPrivacy(userPrivacy)
+	if err != nil {
+		return nil,err
+	}
+	return user,nil
 }

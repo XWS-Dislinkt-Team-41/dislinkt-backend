@@ -49,7 +49,7 @@ func (server *Server) initMongoClient() *mongo.Client {
 func (server *Server) initPostStore(client *mongo.Client) domain.PostStore {
 	store := persistence.NewPostMongoDBStore(client)
 	store.DeleteAll()
-	id, _ := primitive.ObjectIDFromHex("000000000000000000000000")
+	id, _ := primitive.ObjectIDFromHex("626ed920b5d7948d48ffc170")
 
 	for _, postRequest := range posts {
 		_, err := store.Insert(id, &postRequest)
