@@ -73,7 +73,6 @@ func (server *Server) initCustomHandlers() {
 	publicPostHandler.Init(server.mux)
 	connectPostHandler := api.NewConnectPostHandler(postEndpoint, connEndpoint)
 	connectPostHandler.Init(server.mux)
-
 }
 
 func (server *Server) Start() {

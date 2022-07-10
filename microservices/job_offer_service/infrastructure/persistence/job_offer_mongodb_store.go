@@ -3,7 +3,6 @@ package persistence
 import (
 	"context"
 	"errors"
-
 	"strings"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/job_offer_service/domain"
@@ -43,7 +42,6 @@ func (store *JobOfferMongoDBStore) Search(filter string) ([]*domain.JobOffer, er
 
 	filter = strings.TrimSpace(filter)
 	splitSearch := strings.Split(filter, " ")
-
 	for _, splitSearchpart := range splitSearch {
 
 		//position

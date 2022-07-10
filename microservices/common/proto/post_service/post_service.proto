@@ -61,12 +61,12 @@ message Post {
         repeated string links = 3;
         string image = 4;
         string owner_id  = 5;
-        repeated string LikedBy = 6;
-        repeated string DislikedBy = 7;
+        repeated string likedBy = 6;
+        repeated string dislikedBy = 7;
         int64 likes = 8;
         int64 dislikes = 9;
         repeated Comment comments = 10;
-        string CreatedAt = 11;
+        string createdAt = 11;
 }
 
 message GetPostRequest {
