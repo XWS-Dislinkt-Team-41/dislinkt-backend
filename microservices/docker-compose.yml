@@ -3,6 +3,7 @@ version: "3.8"
 services:
   auth_service:
     image: auth_service
+    container_name: auth_service
     build:
       context: .
       dockerfile: ./auth_service/Dockerfile
@@ -66,6 +67,7 @@ services:
 
   post_service:
     image: post_service
+    container_name: post_service
     build:
       context: .
       dockerfile: ./post_service/Dockerfile
@@ -124,6 +126,10 @@ services:
       AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
       JOB_OFFER_SERVICE_HOST: ${JOB_OFFER_SERVICE_HOST}
       JOB_OFFER_SERVICE_PORT: ${JOB_OFFER_SERVICE_PORT}
+      MESSAGE_SERVICE_HOST: ${MESSAGE_SERVICE_HOST}
+      MESSAGE_SERVICE_PORT: ${MESSAGE_SERVICE_PORT}
+      NOTIFICATION_SERVICE_HOST: ${NOTIFICATION_SERVICE_HOST}
+      NOTIFICATION_SERVICE_PORT: ${NOTIFICATION_SERVICE_PORT}
     networks:
       - network
 
@@ -142,6 +148,22 @@ services:
       - job_offer_db
     networks:
       - network
+
+  notification_service:
+    image: notification_service
+    container_name: notification_service
+    build:
+      context: .
+      dockerfile: ./notification_service/Dockerfile
+    restart: on-failure
+    environment:
+      NOTIFICATION_DB_HOST: ${NOTIFICATION_DB_HOST}
+      NOTIFICATION_DB_PORT: ${NOTIFICATION_DB_PORT}
+      NOTIFICATION_SERVICE_PORT: ${NOTIFICATION_SERVICE_PORT}
+    depends_on:
+      - notification_db
+    networks:
+      - network 
 
   post_db:
     image: mongo
@@ -199,6 +221,13 @@ services:
     restart: on-failure
     networks:
       - network
+
+  notification_db:
+    image: mongo
+    container_name: notification_db
+    restart: on-failure
+    networks:
+      - network 
 
   nats:
     image: nats
