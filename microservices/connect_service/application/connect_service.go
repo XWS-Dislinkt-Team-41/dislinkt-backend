@@ -1,17 +1,24 @@
 package application
 
 import (
+	"context"
+	"fmt"
+	"os"
+
+	notificationService "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/notification_service"
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/connect_service/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ConnectService struct {
-	store domain.ConnectStore
+	store               domain.ConnectStore
+	NotificationService notificationService.NotificationServiceClient
 }
 
 func NewConnectService(store domain.ConnectStore) *ConnectService {
 	return &ConnectService{
-		store: store,
+		store:               store,
+		NotificationService: NewNotificationClient(fmt.Sprintf("%s:%s", os.Getenv("NOTIFICATION_SERVICE_HOST"), os.Getenv("NOTIFICATION_SERVICE_PORT"))),
 	}
 }
 
@@ -40,8 +47,26 @@ func (service *ConnectService) Connect(userId, cUserId primitive.ObjectID) (*dom
 	}
 	if *isPrivate {
 		connection, err = service.store.Invite(userId, cUserId)
+		if err != nil {
+			return nil, err
+		}
+		var notification notificationService.Notification
+		notification.OwnerId = cUserId.Hex()
+		notification.ForwardUrl = "requests"
+		notification.Text = "sent you a friend request"
+		notification.Type = notificationService.Notification_CONNECT
+		service.NotificationService.InsertNotification(context.TODO(), &notificationService.InsertNotificationRequest{Notification: &notification})
 	} else {
 		connection, err = service.store.Connect(userId, cUserId)
+		if err != nil {
+			return nil, err
+		}
+		var notification notificationService.Notification
+		notification.OwnerId = userId.Hex()
+		notification.ForwardUrl = "profile/" + cUserId.Hex()
+		notification.Text = "is now your connection"
+		notification.Type = notificationService.Notification_CONNECT
+		service.NotificationService.InsertNotification(context.TODO(), &notificationService.InsertNotificationRequest{Notification: &notification})
 	}
 	if err != nil {
 		return nil, err
