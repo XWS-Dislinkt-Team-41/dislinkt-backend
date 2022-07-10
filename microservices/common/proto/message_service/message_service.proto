@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/message";
+
+package message;
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+
+
+service MessageService{
+      rpc Get(GetRequest) returns(GetResponse) {
+        	option (google.api.http) = {
+			get: "/chatRoom/{id}"
+		};
+        }
+		    rpc SendMessage(NewMessageRequest) returns(NewMessageResponse) {
+        	option (google.api.http) = {
+			get: "/chatRoom/{id}/send"
+		};
+        }
+}
+
+message GetRequest {
+        string id = 1;
+		string connectedId =2;
+}
+
+message GetResponse {
+        repeated Message messages = 1;
+}
+
+message NewMessageRequest {
+        string id = 1;
+		string connectedId = 2;
+		Message message = 3;
+}
+
+message NewMessageResponse {
+		Message message =1;
+}
+
+message MessageResponse {
+        repeated Message messages = 1;
+}
+
+
+message ChatRoom {
+	string id = 1;
+	string name= 2;
+	string image = 3;
+	repeated  string participantsIds = 4;      
+	repeated Message messages = 5;
+}
+
+message Message {
+	string id = 1;
+	string text = 2;
+	google.protobuf.Timestamp sentTime = 3;
+	string owner_id= 4;
+	bool seen = 5;
+}
+
+message UserChatRooms {
+	string id = 1;        
+	string userId = 2;
+	repeated string chatRooms = 3;
+}

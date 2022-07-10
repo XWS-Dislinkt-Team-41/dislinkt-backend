@@ -1,7 +1,6 @@
 version: "3.8"
 
 services:
-
   auth_service:
     image: auth_service
     build:
@@ -22,7 +21,7 @@ services:
       - auth_db
     networks:
       - network
-    
+
   user_service:
     image: user_service
     container_name: user_service
@@ -43,7 +42,27 @@ services:
     depends_on:
       - user_db
     networks:
-      - network 
+      - network
+
+  message_service:
+    image: message_service
+    container_name: message_service
+    build:
+      context: .
+      dockerfile: ./message_service/Dockerfile
+    restart: on-failure
+    environment:
+      MESSAGE_DB_HOST: ${MESSAGE_DB_HOST}
+      MESSAGE_DB_PORT: ${MESSAGE_DB_PORT}
+      MESSAGe_SERVICE_PORT: ${MESSAGE_SERVICE_PORT}
+      NATS_HOST: ${NATS_HOST}
+      NATS_PORT: ${NATS_PORT}
+      NATS_USER: ${NATS_USER}
+      NATS_PASS: ${NATS_PASS}
+    depends_on:
+      - message_db
+    networks:
+      - network
 
   post_service:
     image: post_service
@@ -100,11 +119,11 @@ services:
       POST_SERVICE_HOST: ${POST_SERVICE_HOST}
       POST_SERVICE_PORT: ${POST_SERVICE_PORT}
       CONNECT_SERVICE_HOST: ${CONNECT_SERVICE_HOST}
-      CONNECT_SERVICE_PORT: ${CONNECT_SERVICE_PORT} 
+      CONNECT_SERVICE_PORT: ${CONNECT_SERVICE_PORT}
       AUTH_SERVICE_HOST: ${AUTH_SERVICE_HOST}
-      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT} 
+      AUTH_SERVICE_PORT: ${AUTH_SERVICE_PORT}
       JOB_OFFER_SERVICE_HOST: ${JOB_OFFER_SERVICE_HOST}
-      JOB_OFFER_SERVICE_PORT: ${JOB_OFFER_SERVICE_PORT} 
+      JOB_OFFER_SERVICE_PORT: ${JOB_OFFER_SERVICE_PORT}
     networks:
       - network
 
@@ -122,7 +141,7 @@ services:
     depends_on:
       - job_offer_db
     networks:
-      - network 
+      - network
 
   post_db:
     image: mongo
@@ -135,7 +154,7 @@ services:
     restart: unless-stopped
     networks:
       - network
-  
+
   auth_db:
     image: mongo
     container_name: auth_db
@@ -151,7 +170,14 @@ services:
     container_name: user_db
     restart: on-failure
     networks:
-      - network 
+      - network
+
+  message_db:
+    image: mongo
+    container_name: message_db
+    restart: on-failure
+    networks:
+      - network
 
   connect_db:
     image: neo4j
@@ -172,7 +198,7 @@ services:
     container_name: job_offer_db
     restart: on-failure
     networks:
-      - network 
+      - network
 
   nats:
     image: nats
