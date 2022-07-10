@@ -180,13 +180,16 @@ func (store *UserMongoDBStore) UpdatePersonalInfo(user *domain.User) (*domain.Us
 			return nil, errors.New("username is taken")
 		}
 	}
+	
 	userInDatabase.Firstname = user.Firstname
+	userInDatabase.Lastname = user.Lastname
 	userInDatabase.Email = user.Email
 	userInDatabase.MobileNumber = user.MobileNumber
 	userInDatabase.Gender = user.Gender
 	userInDatabase.BirthDay = user.BirthDay
 	userInDatabase.Username = user.Username
 	userInDatabase.Biography = user.Biography
+
 	filter := bson.M{"_id": userInDatabase.Id}
 	update := bson.M{
 		"$set": userInDatabase,

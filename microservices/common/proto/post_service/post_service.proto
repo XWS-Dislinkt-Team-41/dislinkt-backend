@@ -116,5 +116,5 @@ message ReactionOnPostRequest{
 
 
 message Reaction{
-        string by_user_id = 1;
+        string reaction_by = 1;
 }

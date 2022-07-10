@@ -51,6 +51,14 @@ func (service *PostService) UpdateLikes(reaction *domain.Reaction) (*domain.Post
 	return updatedPost, nil
 }
 
+func (service *PostService) RemoveLike(reaction *domain.Reaction) (*domain.Post, error) {
+	updatedPost, err := service.store.RemoveLike(reaction)
+	if err != nil {
+		return nil, err
+	}
+	return updatedPost, nil
+}
+
 func (service *PostService) UpdateDislikes(reaction *domain.Reaction) (*domain.Post, error) {
 	updatedPost, err := service.store.UpdateDislikes(reaction)
 	if err != nil {

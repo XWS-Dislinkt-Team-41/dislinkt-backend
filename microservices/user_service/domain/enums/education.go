@@ -3,7 +3,7 @@ package enums
 type Education int8
 
 const (
-	Primary Education = iota
+	Primary = iota
 	LowerSecondary
 	UpperSecondary
 	PostSecondary

@@ -92,19 +92,36 @@ func IsAuthenticated(handler *runtime.ServeMux) http.HandlerFunc {
 
 func isProtectedRoute(method, path string) bool {
 	publicProfilePostsPath, _ := regexp.MatchString(`\/user\/[0-9a-f]{24}\/public`, path)
+	userGet ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}`, path)
+	userUpdate ,_ :=regexp.MatchString(`\/user\/personal`, path)
+	userPosts ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}\/post`, path)
+	likePost ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}\/post\/[0-9a-f]{24}\/reaction\/like`, path)
+	likeRemove ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}\/post\/[0-9a-f]{24}\/reaction\/unlike`, path)
+	comment ,_ :=regexp.MatchString(`\/user\/[0-9a-f]{24}\/post\/[0-9a-f]{24}\/comment`, path)
 	if method == "GET" {
 		if path == "/post/public" ||
-			publicProfilePostsPath {
+			publicProfilePostsPath ||
+			userGet||
+			userPosts||
+			path == "/jobOffer"{
 			return false
 		}
 	}
-
+	if method == "PUT" {
+			if userUpdate||
+			likePost||
+			likeRemove{
+			return false
+		}
+	}
 	if method == "POST" {
 		if path == "/auth/register" ||
 			path == "/auth/login" ||
 			path == "/jobOffer/search" ||
 			path == "/user/search" ||
-			path == "/auth/connectAgent" {
+			path == "/auth/connectAgent"||
+			path == "/jobOffer"||
+			comment{
 			return false
 		}
 	}

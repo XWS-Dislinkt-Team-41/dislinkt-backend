@@ -13,6 +13,7 @@ func mapJobOffer(jobOffer *domain.JobOffer) *pb.JobOffer {
 		Position:      jobOffer.Position,
 		Seniority:	   jobOffer.Seniority,
 		Description:   jobOffer.Description,
+		Company:	   jobOffer.Company,
 		Prerequisites: jobOffer.Prerequisites,
 	}
 	return jobOfferPb
@@ -28,6 +29,7 @@ func mapNewJobOffer(jobOfferPb *pb.JobOffer) *domain.JobOffer {
 		Position:      jobOfferPb.Position,
 		Seniority:	   jobOfferPb.Seniority,
 		Description:   jobOfferPb.Description,
+		Company:	   jobOfferPb.Company,
 		Prerequisites: jobOfferPb.Prerequisites,
 	}
 	return jobOffer

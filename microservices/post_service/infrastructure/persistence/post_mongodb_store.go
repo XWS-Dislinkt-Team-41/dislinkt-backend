@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"time"
+	"sort"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/post_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -31,6 +32,12 @@ func NewPostMongoDBStore(client *mongo.Client) domain.PostStore {
 	}
 }
 
+func sortByDate(posts []*domain.Post) {
+	sort.Slice(posts, func(i, j int) bool {
+    	return posts[i].CreatedAt.Time().Before(posts[j].CreatedAt.Time())
+	})
+}
+
 func (store *PostMongoDBStore) Get(id primitive.ObjectID, post_id primitive.ObjectID) (post *domain.Post, err error) {
 
 	filter := bson.M{"_id": post_id}
@@ -50,12 +57,18 @@ func (store *PostMongoDBStore) GetAll(postIds []string) ([]*domain.Post, error) 
 			posts = append(posts, post)
 		}
 	}
+	sortByDate(posts)
 	return posts, nil
 }
 
 func (store *PostMongoDBStore) GetAllFromCollection(id primitive.ObjectID) (post []*domain.Post, err error) {
 	filter := bson.D{{}}
-	return store.filter(filter, id.Hex())
+	posts,err := store.filter(filter, id.Hex())
+	if err != nil {
+		return nil, err
+	}
+	sortByDate(posts)
+	return posts,err
 }
 
 func (store *PostMongoDBStore) Insert(id primitive.ObjectID, post *domain.Post) (*domain.Post, error) {
@@ -103,16 +116,47 @@ func (store *PostMongoDBStore) InsertComment(id primitive.ObjectID, post_id prim
 }
 
 func (store *PostMongoDBStore) UpdateLikes(reaction *domain.Reaction) (*domain.Post, error) {
+	fmt.Println(reaction.Id, reaction.PostId)
 	post, err := store.Get(reaction.Id, reaction.PostId)
 	if err != nil {
 		log.Fatal(err)
 		return nil, err
 	}
+	
 	if contains(post.LikedBy, reaction.ReactionBy.Hex()) {
 		return nil, errors.New("User already liked post")
 	}
 	post.LikedBy = append(post.LikedBy, reaction.ReactionBy.Hex())
 	post.Likes = post.Likes + 1
+
+	filter := bson.M{"_id": reaction.PostId}
+	update := bson.D{
+		{"$set", bson.D{{"liked_by", post.LikedBy}, {"likes", post.Likes}}},
+	}
+
+	insertResult, err := store.dbPost.Collection(COLLECTION+reaction.Id.Hex()).UpdateOne(context.TODO(), filter,
+		update)
+	if err != nil {
+		return nil, err
+	}
+	if insertResult.MatchedCount != 1 {
+		log.Fatal(err, "one document should've been updated")
+		return nil, err
+	}
+	return post, err
+
+}
+
+func (store *PostMongoDBStore) RemoveLike(reaction *domain.Reaction) (*domain.Post, error) {
+	fmt.Println(reaction.Id, reaction.PostId)
+	post, err := store.Get(reaction.Id, reaction.PostId)
+	if err != nil {
+		log.Fatal(err)
+		return nil, err
+	}
+
+	post.LikedBy = remove(post.LikedBy, reaction.ReactionBy.Hex())
+	post.Likes = post.Likes - 1
 
 	filter := bson.M{"_id": reaction.PostId}
 	update := bson.D{
@@ -208,4 +252,13 @@ func contains(s []string, str string) bool {
 	}
 
 	return false
+}
+
+func remove[T comparable](l []T, item T) []T {
+    for i, other := range l {
+        if other == item {
+            return append(l[:i], l[i+1:]...)
+        }
+    }
+    return l
 }

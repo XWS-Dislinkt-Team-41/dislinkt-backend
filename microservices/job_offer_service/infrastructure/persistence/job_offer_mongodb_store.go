@@ -72,6 +72,19 @@ func (store *JobOfferMongoDBStore) Search(filter string) ([]*domain.JobOffer, er
 			foundJobOffers = AppendIfMissing(foundJobOffers, jobOfferOneSlice)
 		}
 
+		//company
+		filtereds, err = store.jobOffers.Find(context.TODO(), bson.M{"company": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
+		if err != nil {
+			return nil, err
+		}
+		var jobOffersCompany []*domain.JobOffer
+		if err = filtereds.All(context.TODO(), &jobOffersCompany); err != nil {
+			return nil, err
+		}
+		for _, jobOfferOneSlice := range jobOffersCompany {
+			foundJobOffers = AppendIfMissing(foundJobOffers, jobOfferOneSlice)
+		}
+
 		//prerequisites
 		filtereds, err = store.jobOffers.Find(context.TODO(), bson.M{"prerequisites": primitive.Regex{Pattern: splitSearchpart, Options: "i"}})
 		if err != nil {

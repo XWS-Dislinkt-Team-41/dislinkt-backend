@@ -10,5 +10,6 @@ type JobOffer struct {
 	Position        string             `bson:"position"`
 	Seniority		string			   `bson:"seniority"`
 	Description     string 			   `bson:"description"`
+	Company 		string			   `bson:"company"`
 	Prerequisites   []string           `bson:"prerequisites"`
 }

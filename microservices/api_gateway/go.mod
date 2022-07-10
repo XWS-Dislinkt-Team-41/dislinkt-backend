@@ -8,6 +8,7 @@ require (
 	github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common v0.0.0-00010101000000-000000000000
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.3
+	github.com/rs/cors v1.8.2
 	google.golang.org/grpc v1.47.0
 )
 
