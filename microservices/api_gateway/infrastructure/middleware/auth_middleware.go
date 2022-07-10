@@ -105,6 +105,7 @@ func isProtectedRoute(method, path string) bool {
 			userGet||
 			userPosts||
 			path == "/jobOffer"||
+			path == "/user"||
 			connectedPosts{
 			return false
 		}
