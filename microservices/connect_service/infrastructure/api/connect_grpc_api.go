@@ -194,3 +194,77 @@ func (handler *ConnectHandler) GetAllSentInvitations(ctx context.Context, reques
 	}
 	return response, nil
 }
+
+func (handler *ConnectHandler) GetUserSuggestions(ctx context.Context, request *pb.GetUserSuggestionsRequest) (*pb.GetUserSuggestionsResponse, error) {
+	userId, err := primitive.ObjectIDFromHex(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	userSuggestions, err := handler.service.GetUserSuggestions(userId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetUserSuggestionsResponse{
+		UserSuggestions: []*pb.Profile{},
+	}
+	for _, user := range userSuggestions {
+		current := mapProfile(user)
+		response.UserSuggestions = append(response.UserSuggestions, current)
+	}
+	return response, nil
+}
+
+func (handler *ConnectHandler) Block(ctx context.Context, request *pb.BlockRequest) (*pb.BlockResponse, error) {
+	userId, err := primitive.ObjectIDFromHex(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	bUserId, err := primitive.ObjectIDFromHex(request.BUser.Id)
+	if err != nil {
+		return nil, err
+	}
+	block, err := handler.service.Block(userId, bUserId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.BlockResponse{
+		Block: mapBlock(block),
+	}
+	return response, nil
+}
+
+func (handler *ConnectHandler) UnBlock(ctx context.Context, request *pb.UnBlockRequest) (*pb.EmptyRespones, error) {
+	userId, err := primitive.ObjectIDFromHex(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	bUserId, err := primitive.ObjectIDFromHex(request.BUserId)
+	if err != nil {
+		return nil, err
+	}
+	err = handler.service.UnBlock(userId, bUserId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.EmptyRespones{}
+	return response, nil
+}
+
+func (handler *ConnectHandler) GetBlockedUsers(ctx context.Context, request *pb.GetBlockedUsersRequest) (*pb.GetBlockedUsersResponse, error) {
+	userId, err := primitive.ObjectIDFromHex(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+	blocks, err := handler.service.GetBlockedUsers(userId)
+	if err != nil {
+		return nil, err
+	}
+	response := &pb.GetBlockedUsersResponse{
+		Blocks: []*pb.Block{},
+	}
+	for _, Block := range blocks {
+		current := mapBlock(Block)
+		response.Blocks = append(response.Blocks, current)
+	}
+	return response, nil
+}

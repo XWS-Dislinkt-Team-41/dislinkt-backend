@@ -28,9 +28,12 @@ type UserServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	GetAll(ctx context.Context, in *GetAllRequest, opts ...grpc.CallOption) (*GetAllResponse, error)
 	SearchPublic(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*SearchPublicResponse, error)
+	Search(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*SearchPublicResponse, error)
 	UpdatePersonalInfo(ctx context.Context, in *UpdatePersonalInfoRequest, opts ...grpc.CallOption) (*UpdatePersonalInfoResponse, error)
 	UpdateCareerInfo(ctx context.Context, in *UpdateCareerInfoRequest, opts ...grpc.CallOption) (*UpdateCareerInfoResponse, error)
 	UpdateInterestsInfo(ctx context.Context, in *UpdateInterestsInfoRequest, opts ...grpc.CallOption) (*UpdateInterestsInfoResponse, error)
+	ChangeAccountPrivacy(ctx context.Context, in *ChangeAccountPrivacyRequest, opts ...grpc.CallOption) (*ChangeAccountPrivacyResponse, error)
+	GetPrincipal(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*GetResponse, error)
 }
 
 type userServiceClient struct {
@@ -95,6 +98,15 @@ func (c *userServiceClient) SearchPublic(ctx context.Context, in *SearchPublicRe
 	return out, nil
 }
 
+func (c *userServiceClient) Search(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*SearchPublicResponse, error) {
+	out := new(SearchPublicResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/Search", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) UpdatePersonalInfo(ctx context.Context, in *UpdatePersonalInfoRequest, opts ...grpc.CallOption) (*UpdatePersonalInfoResponse, error) {
 	out := new(UpdatePersonalInfoResponse)
 	err := c.cc.Invoke(ctx, "/user.UserService/UpdatePersonalInfo", in, out, opts...)
@@ -122,6 +134,24 @@ func (c *userServiceClient) UpdateInterestsInfo(ctx context.Context, in *UpdateI
 	return out, nil
 }
 
+func (c *userServiceClient) ChangeAccountPrivacy(ctx context.Context, in *ChangeAccountPrivacyRequest, opts ...grpc.CallOption) (*ChangeAccountPrivacyResponse, error) {
+	out := new(ChangeAccountPrivacyResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/ChangeAccountPrivacy", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userServiceClient) GetPrincipal(ctx context.Context, in *SearchPublicRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+	out := new(GetResponse)
+	err := c.cc.Invoke(ctx, "/user.UserService/GetPrincipal", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserServiceServer is the server API for UserService service.
 // All implementations must embed UnimplementedUserServiceServer
 // for forward compatibility
@@ -132,9 +162,12 @@ type UserServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	GetAll(context.Context, *GetAllRequest) (*GetAllResponse, error)
 	SearchPublic(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error)
+	Search(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error)
 	UpdatePersonalInfo(context.Context, *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error)
 	UpdateCareerInfo(context.Context, *UpdateCareerInfoRequest) (*UpdateCareerInfoResponse, error)
 	UpdateInterestsInfo(context.Context, *UpdateInterestsInfoRequest) (*UpdateInterestsInfoResponse, error)
+	ChangeAccountPrivacy(context.Context, *ChangeAccountPrivacyRequest) (*ChangeAccountPrivacyResponse, error)
+	GetPrincipal(context.Context, *SearchPublicRequest) (*GetResponse, error)
 	mustEmbedUnimplementedUserServiceServer()
 }
 
@@ -160,6 +193,9 @@ func (UnimplementedUserServiceServer) GetAll(context.Context, *GetAllRequest) (*
 func (UnimplementedUserServiceServer) SearchPublic(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SearchPublic not implemented")
 }
+func (UnimplementedUserServiceServer) Search(context.Context, *SearchPublicRequest) (*SearchPublicResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Search not implemented")
+}
 func (UnimplementedUserServiceServer) UpdatePersonalInfo(context.Context, *UpdatePersonalInfoRequest) (*UpdatePersonalInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdatePersonalInfo not implemented")
 }
@@ -168,6 +204,12 @@ func (UnimplementedUserServiceServer) UpdateCareerInfo(context.Context, *UpdateC
 }
 func (UnimplementedUserServiceServer) UpdateInterestsInfo(context.Context, *UpdateInterestsInfoRequest) (*UpdateInterestsInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateInterestsInfo not implemented")
+}
+func (UnimplementedUserServiceServer) ChangeAccountPrivacy(context.Context, *ChangeAccountPrivacyRequest) (*ChangeAccountPrivacyResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ChangeAccountPrivacy not implemented")
+}
+func (UnimplementedUserServiceServer) GetPrincipal(context.Context, *SearchPublicRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPrincipal not implemented")
 }
 func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
 
@@ -290,6 +332,24 @@ func _UserService_SearchPublic_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_Search_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchPublicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).Search(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/Search",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).Search(ctx, req.(*SearchPublicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_UpdatePersonalInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdatePersonalInfoRequest)
 	if err := dec(in); err != nil {
@@ -344,6 +404,42 @@ func _UserService_UpdateInterestsInfo_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ChangeAccountPrivacy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeAccountPrivacyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ChangeAccountPrivacy(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/ChangeAccountPrivacy",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ChangeAccountPrivacy(ctx, req.(*ChangeAccountPrivacyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserService_GetPrincipal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchPublicRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).GetPrincipal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/user.UserService/GetPrincipal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).GetPrincipal(ctx, req.(*SearchPublicRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -376,6 +472,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_SearchPublic_Handler,
 		},
 		{
+			MethodName: "Search",
+			Handler:    _UserService_Search_Handler,
+		},
+		{
 			MethodName: "UpdatePersonalInfo",
 			Handler:    _UserService_UpdatePersonalInfo_Handler,
 		},
@@ -386,6 +486,14 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateInterestsInfo",
 			Handler:    _UserService_UpdateInterestsInfo_Handler,
+		},
+		{
+			MethodName: "ChangeAccountPrivacy",
+			Handler:    _UserService_ChangeAccountPrivacy_Handler,
+		},
+		{
+			MethodName: "GetPrincipal",
+			Handler:    _UserService_GetPrincipal_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

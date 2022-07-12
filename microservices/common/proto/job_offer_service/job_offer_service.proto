@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/jobOffer";
+
+package jobOffer;
+
+import "google/api/annotations.proto";
+
+service JobOfferService{
+       
+        rpc Get(GetRequest) returns(GetResponse) {
+        	option (google.api.http) = {
+			get: "/jobOffer/{id}"
+		};
+        }
+        rpc GetAll(GetAllRequest) returns(GetAllResponse) {
+        	option (google.api.http) = {
+			get: "/jobOffer"
+		};
+        }
+        rpc Search(SearchRequest) returns(SearchResponse) {
+                option (google.api.http) = {
+                        post: "/jobOffer/search"
+                        body: "filter"
+                };
+        }
+        rpc Create(CreateRequest) returns(CreateResponse) {
+                option (google.api.http) = {
+                        post: "/jobOffer"
+                        body: "jobOffer"
+                };
+        }
+        rpc Update(UpdateRequest) returns(UpdateResponse) {
+                option (google.api.http) = {
+                        put: "/jobOffer"
+                        body: "jobOffer"
+                };
+        }
+}
+
+message GetRequest {
+        string id = 1;
+}
+
+message GetResponse {
+        JobOffer jobOffer = 1;
+}
+
+message GetAllRequest {
+}
+
+message GetAllResponse {
+        repeated JobOffer jobOffers = 1;
+}
+
+message SearchRequest {
+        string filter = 1;
+}
+
+message SearchResponse {
+        repeated JobOffer jobOffers = 1;
+}
+
+message UpdateRequest {
+        JobOffer jobOffer = 1;
+}
+
+message UpdateResponse {
+        JobOffer jobOffer = 1;
+}
+
+message CreateRequest {
+        JobOffer jobOffer = 1;
+}
+
+message CreateResponse {
+        JobOffer jobOffer = 1;
+}
+
+
+message JobOffer {
+        string id = 1;
+        string userId = 2;
+        string position = 3;
+        string seniority = 4;
+        string description = 5;
+        string company = 6;
+        repeated string prerequisites = 7;
+}

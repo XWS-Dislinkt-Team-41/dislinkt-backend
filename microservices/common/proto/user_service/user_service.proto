@@ -24,6 +24,12 @@ service UserService{
         }
         rpc SearchPublic(SearchPublicRequest) returns(SearchPublicResponse) {
                 option (google.api.http) = {
+                        post: "/user/search/public"
+                        body: "filter"
+                };
+        }
+        rpc Search(SearchPublicRequest) returns(SearchPublicResponse) {
+                option (google.api.http) = {
                         post: "/user/search"
                         body: "filter"
                 };
@@ -45,7 +51,14 @@ service UserService{
                         put: "/user/interests"
                         body: "user"
                 };
+        } 
+        rpc ChangeAccountPrivacy(ChangeAccountPrivacyRequest) returns(ChangeAccountPrivacyResponse) {
+                option (google.api.http) = {
+                        put: "/user/privacy"
+                        body: "user"
+                };
         }
+        rpc GetPrincipal(SearchPublicRequest) returns(GetResponse) {}
 }
 
 message GetRequest {
@@ -99,7 +112,7 @@ message UpdatePersonalInfoRequest {
 }
 
 message UpdatePersonalInfoResponse {
-        string message = 1;
+        User user = 1;
 }
 
 message UpdateCareerInfoRequest {
@@ -107,7 +120,7 @@ message UpdateCareerInfoRequest {
 }
 
 message UpdateCareerInfoResponse {
-        string message = 1;
+        User user = 1;
 }
 
 message UpdateInterestsInfoRequest {
@@ -115,7 +128,15 @@ message UpdateInterestsInfoRequest {
 }
 
 message UpdateInterestsInfoResponse {
-        string message = 1;
+        User user = 1;
+}
+
+message ChangeAccountPrivacyRequest {
+        User user = 1;
+}
+
+message ChangeAccountPrivacyResponse {
+        User user = 1;
 }
 
 
@@ -125,18 +146,28 @@ message User {
         string lastname = 3;
         string email = 4;
         string mobileNumber = 5;
-        enum GenderEnum {
+        enum Gender {
                 Male = 0;
                 Female = 1;
         }
-        GenderEnum gender = 6;
+        Gender gender = 6;
         google.protobuf.Timestamp birthDay = 7;
         string username = 8;
         string biography = 9;
-        string experience = 10;
-        string education = 11;
-        string skills = 12;
-        string interests = 13;
+        repeated string experience = 10;
+        enum Education {
+                Primary = 0;
+                LowerSecondary = 1;
+                UpperSecondary = 2;
+                PostSecondary = 3;
+                ShortCycleTetriary = 4;
+                Bachelor = 5;
+                Master = 6;
+                Doctorate = 7;
+        }
+        Education education = 11;
+        repeated string skills = 12;
+        repeated string interests = 13;
         string password = 14;
         bool isPrivate = 15;
 }

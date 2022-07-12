@@ -32,6 +32,10 @@ type ConnectServiceClient interface {
 	CancelInvitation(ctx context.Context, in *CancelInvitationRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
 	GetAllInvitations(ctx context.Context, in *GetAllUserInvitationsRequest, opts ...grpc.CallOption) (*GetAllInvitationsResponse, error)
 	GetAllSentInvitations(ctx context.Context, in *GetAllSentInvitationsRequest, opts ...grpc.CallOption) (*GetAllInvitationsResponse, error)
+	GetUserSuggestions(ctx context.Context, in *GetUserSuggestionsRequest, opts ...grpc.CallOption) (*GetUserSuggestionsResponse, error)
+	Block(ctx context.Context, in *BlockRequest, opts ...grpc.CallOption) (*BlockResponse, error)
+	UnBolck(ctx context.Context, in *UnBlockRequest, opts ...grpc.CallOption) (*EmptyRespones, error)
+	GetBlockedUsers(ctx context.Context, in *GetBlockedUsersRequest, opts ...grpc.CallOption) (*GetBlockedUsersResponse, error)
 }
 
 type connectServiceClient struct {
@@ -132,6 +136,42 @@ func (c *connectServiceClient) GetAllSentInvitations(ctx context.Context, in *Ge
 	return out, nil
 }
 
+func (c *connectServiceClient) GetUserSuggestions(ctx context.Context, in *GetUserSuggestionsRequest, opts ...grpc.CallOption) (*GetUserSuggestionsResponse, error) {
+	out := new(GetUserSuggestionsResponse)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/GetUserSuggestions", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectServiceClient) Block(ctx context.Context, in *BlockRequest, opts ...grpc.CallOption) (*BlockResponse, error) {
+	out := new(BlockResponse)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/Block", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectServiceClient) UnBolck(ctx context.Context, in *UnBlockRequest, opts ...grpc.CallOption) (*EmptyRespones, error) {
+	out := new(EmptyRespones)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/UnBolck", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *connectServiceClient) GetBlockedUsers(ctx context.Context, in *GetBlockedUsersRequest, opts ...grpc.CallOption) (*GetBlockedUsersResponse, error) {
+	out := new(GetBlockedUsersResponse)
+	err := c.cc.Invoke(ctx, "/connections.ConnectService/GetBlockedUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ConnectServiceServer is the server API for ConnectService service.
 // All implementations must embed UnimplementedConnectServiceServer
 // for forward compatibility
@@ -146,6 +186,10 @@ type ConnectServiceServer interface {
 	CancelInvitation(context.Context, *CancelInvitationRequest) (*EmptyRespones, error)
 	GetAllInvitations(context.Context, *GetAllUserInvitationsRequest) (*GetAllInvitationsResponse, error)
 	GetAllSentInvitations(context.Context, *GetAllSentInvitationsRequest) (*GetAllInvitationsResponse, error)
+	GetUserSuggestions(context.Context, *GetUserSuggestionsRequest) (*GetUserSuggestionsResponse, error)
+	Block(context.Context, *BlockRequest) (*BlockResponse, error)
+	UnBolck(context.Context, *UnBlockRequest) (*EmptyRespones, error)
+	GetBlockedUsers(context.Context, *GetBlockedUsersRequest) (*GetBlockedUsersResponse, error)
 	mustEmbedUnimplementedConnectServiceServer()
 }
 
@@ -182,6 +226,18 @@ func (UnimplementedConnectServiceServer) GetAllInvitations(context.Context, *Get
 }
 func (UnimplementedConnectServiceServer) GetAllSentInvitations(context.Context, *GetAllSentInvitationsRequest) (*GetAllInvitationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAllSentInvitations not implemented")
+}
+func (UnimplementedConnectServiceServer) GetUserSuggestions(context.Context, *GetUserSuggestionsRequest) (*GetUserSuggestionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserSuggestions not implemented")
+}
+func (UnimplementedConnectServiceServer) Block(context.Context, *BlockRequest) (*BlockResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Block not implemented")
+}
+func (UnimplementedConnectServiceServer) UnBolck(context.Context, *UnBlockRequest) (*EmptyRespones, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UnBolck not implemented")
+}
+func (UnimplementedConnectServiceServer) GetBlockedUsers(context.Context, *GetBlockedUsersRequest) (*GetBlockedUsersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlockedUsers not implemented")
 }
 func (UnimplementedConnectServiceServer) mustEmbedUnimplementedConnectServiceServer() {}
 
@@ -376,6 +432,78 @@ func _ConnectService_GetAllSentInvitations_Handler(srv interface{}, ctx context.
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ConnectService_GetUserSuggestions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserSuggestionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).GetUserSuggestions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/GetUserSuggestions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).GetUserSuggestions(ctx, req.(*GetUserSuggestionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectService_Block_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).Block(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/Block",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).Block(ctx, req.(*BlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectService_UnBolck_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UnBlockRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).UnBolck(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/UnBolck",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).UnBolck(ctx, req.(*UnBlockRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ConnectService_GetBlockedUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBlockedUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConnectServiceServer).GetBlockedUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/connections.ConnectService/GetBlockedUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConnectServiceServer).GetBlockedUsers(ctx, req.(*GetBlockedUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ConnectService_ServiceDesc is the grpc.ServiceDesc for ConnectService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -422,6 +550,22 @@ var ConnectService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAllSentInvitations",
 			Handler:    _ConnectService_GetAllSentInvitations_Handler,
+		},
+		{
+			MethodName: "GetUserSuggestions",
+			Handler:    _ConnectService_GetUserSuggestions_Handler,
+		},
+		{
+			MethodName: "Block",
+			Handler:    _ConnectService_Block_Handler,
+		},
+		{
+			MethodName: "UnBolck",
+			Handler:    _ConnectService_UnBolck_Handler,
+		},
+		{
+			MethodName: "GetBlockedUsers",
+			Handler:    _ConnectService_GetBlockedUsers_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

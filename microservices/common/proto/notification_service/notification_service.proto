@@ -1,0 +1,96 @@
+syntax = "proto3";
+
+option go_package = "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/notification";
+
+package notification;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+service NotificationService{
+        rpc GetAllNotifications(GetAllNotificationsRequest) returns(GetAllNotificationsResponse) {
+                option (google.api.http) = {
+                        get: "/user/{userId}/notification"
+		};  
+        }
+        rpc InsertNotification(InsertNotificationRequest) returns (InsertNotificationResponse) {
+                option (google.api.http) = {
+			post: "/notification"
+                        body: "notification"
+		};  
+        }
+        rpc MarkAllAsSeen(MarkAllAsSeenRequest) returns(EmptyRespones) {
+                option (google.api.http) = {
+			put: "/user/{userId}/notification"
+		};
+        }
+        rpc GetUserSettings(GetUserSettingsRequest) returns (GetUserSettingsResponse) {
+                option (google.api.http) = {
+			get: "/user/{userId}/notification/settings"
+		}; 
+        }
+        rpc UpdateUserSettings(UpdateUserSettingsRequest) returns (GetUserSettingsResponse) {
+                option (google.api.http) = {
+			put: "/user/{userId}/notification/settings"
+                        body: "userSettings"
+		}; 
+        }
+}
+
+message GetAllNotificationsRequest{
+        string userId = 1;
+}
+      
+message GetAllNotificationsResponse{
+        repeated Notification notifications = 1;
+}
+
+message GetUserSettingsRequest{
+        string userId = 1;
+}
+
+message UpdateUserSettingsRequest{
+        string userId = 1;
+        UserSettings userSettings = 2;
+}
+
+message GetUserSettingsResponse{
+        UserSettings userSettings = 1;
+}
+
+message InsertNotificationRequest{
+        Notification notification = 1;
+}
+
+message InsertNotificationResponse{
+        Notification notification = 1;
+}
+
+message MarkAllAsSeenRequest{
+        string userId = 1;
+}
+
+message EmptyRespones {
+}
+
+message Notification{
+        string ownerId = 1;
+        string forwardUrl = 2;
+        string text = 3;
+        google.protobuf.Timestamp date = 4;
+        bool seen = 5;
+        string userFullName = 6;
+        enum NotificationType{
+                CONNECT = 0;
+                POST = 1;
+                MESSAGE = 2;
+        }
+        NotificationType type = 7;
+}
+
+message UserSettings{
+        string userId = 1;
+        bool postNotifications = 2;
+        bool connectionNotifications = 3;
+        bool messageNotifications = 4;
+}

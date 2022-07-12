@@ -2,17 +2,17 @@ package domain
 
 import (
 	"time"
-
+	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/user_service/domain/enums"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-type GenderEnum int8
+type Gender int8
 
 const (
-	Male GenderEnum = iota
+	Male Gender = iota
 	Female
 )
 
-func (status GenderEnum) String() string {
+func (status Gender) String() string {
 	switch status {
 	case Male:
 		return "Male"
@@ -28,14 +28,14 @@ type User struct {
 	Lastname 	 string 			`bson:"lastname"`
 	Email        string             `bson:"email"`
 	MobileNumber string             `bson:"mobileNumber"`
-	Gender       GenderEnum         `bson:"gender"`
+	Gender       Gender             `bson:"gender"`
 	BirthDay     time.Time          `bson:"birthDay"`
 	Username     string             `bson:"username"`
 	Biography    string             `bson:"biography"`
-	Experience   string             `bson:"experience"`
-	Education    string      		`bson:"education"`
-	Skills       string             `bson:"skills"`
-	Interests    string             `bson:"interests"`
+	Experience   []string           `bson:"experience"`
+	Education    enums.Education    `bson:"education"`
+	Skills       []string           `bson:"skills"`
+	Interests    []string           `bson:"interests"`
 	Password     string             `bson:"password"`
 	IsPrivate      bool				`bson:"isPrivate"`
 }

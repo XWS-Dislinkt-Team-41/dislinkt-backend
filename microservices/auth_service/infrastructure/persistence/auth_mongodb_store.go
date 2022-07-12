@@ -2,6 +2,7 @@ package persistence
 
 import (
 	"context"
+	"errors"
 
 	"github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/auth_service/domain"
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +14,7 @@ import (
 
 const (
 	DATABASE   = "auth_db"
-	COLLECTION = "credentials"
+	USER_COLLECTION = "credentials"
 )
 
 type AuthMongoDBStore struct {
@@ -21,7 +22,7 @@ type AuthMongoDBStore struct {
 }
 
 func NewAuthMongoDBStore(client *mongo.Client) domain.AuthStore {
-	userCredentials := client.Database(DATABASE).Collection(COLLECTION)
+	userCredentials := client.Database(DATABASE).Collection(USER_COLLECTION)
 	return &AuthMongoDBStore{
 		userCredentials: userCredentials,
 	}
@@ -36,6 +37,22 @@ func (store *AuthMongoDBStore) Login(userCredential *domain.UserCredential) (*do
 
 	return authUser, nil
 }
+
+func (store *AuthMongoDBStore) Insert(auth *domain.UserCredential) (*domain.UserCredential, error) {
+	filter := bson.M{"id": auth.Id}
+	authInDatabase, _ := store.filterOne(filter)
+	if authInDatabase != nil {
+		return nil, errors.New("Auth with the same id already exists.")
+	}
+	auth.Id = primitive.NewObjectID()
+	_, err := store.userCredentials.InsertOne(context.TODO(), auth)
+	if err != nil {
+		return nil, errors.New("Create error.")
+	}
+
+	return auth, nil
+}
+
 
 func (store *AuthMongoDBStore) Register(userCredential *domain.UserCredential) (*domain.UserCredential, error) {
 	filter := bson.M{"username": userCredential.Username}
@@ -77,4 +94,12 @@ func (store *AuthMongoDBStore) checkIfExsist(filter interface{}) (exsist bool, e
 		return false, nil
 	}
 	return true, nil
+}
+
+func (store *AuthMongoDBStore) DeleteById(id primitive.ObjectID) error {
+	_, err := store.userCredentials.DeleteOne(context.TODO(), bson.M{"_id": id})
+	if err != nil {
+		return err
+	}
+	return nil
 }

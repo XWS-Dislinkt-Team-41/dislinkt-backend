@@ -13,26 +13,94 @@ service AuthService{
                         body: "user"
                     };
         }
-        rpc Register(RegisterRequest) returns (RegisterResponse) {}
+        rpc ConnectAgent(ConnectAgentRequest) returns (APITokenResponse) {
+                option (google.api.http) = {
+                        post: "/auth/connectAgent",
+                        body: "user"
+                    };
+        }
+        rpc RBAC(RBACRequest) returns (RBACResponse) {}
+        rpc Register(RegisterRequest) returns (RegisterResponse) {
+                option (google.api.http) = {
+                        post: "/auth/register",
+                        body: "user"
+                    };
+        }
 }
 
 message LoginRequest {
         UserCredential user = 1; 
 }
-            
-message RegisterRequest { 
+
+message ConnectAgentRequest {
         UserCredential user = 1; 
+}
+          
+message RegisterRequest { 
+        UserDetails user = 1; 
+}
+
+message RBACRequest { 
+        UserCredential user = 1; 
+        Permission permission = 2;
 }
 
 message RegisterResponse {
-        UserCredential user = 1; 
+        UserDetails user = 1; 
 }
               
 message JWTResponse {
         string token = 1;
 }
+
+message APITokenResponse {
+        string token = 1;
+}
+
+message RBACResponse {
+        bool response = 1;
+}
             
 message UserCredential {
         string username = 1;
         string password = 2;
+        enum Role{
+                USER = 0;
+                ADMIN = 1;
+                AGENT = 2;
+        }
+        Role role = 3;
+}
+
+message Permission {
+        enum Role{
+                USER = 0;
+                ADMIN = 1;
+                AGENT = 2;
+        }
+        Role role = 1;
+        enum Method{
+        POST = 0;
+        GET = 1;
+        PUT = 2;
+        DELETE = 3;
+        }
+        Method method = 2;
+        string url = 3;
+}
+
+message UserDetails {
+        string id = 1;
+        string username = 2;
+        string password = 3;
+        bool isPrivate = 4;
+        string firstname = 5;
+        string lastname = 6;
+        string email = 7;
+        string mobileNumber = 8;
+        enum Role{
+                USER = 0;
+                ADMIN = 1;
+        }
+        Role role = 9;
 }

@@ -5,6 +5,8 @@ import (
 
 	auth "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/auth_service"
 	connections "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/connect_service"
+	jobOffer "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/job_offer_service"
+	notification "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/notification_service"
 	post "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/post_service"
 	user "github.com/XWS-Dislinkt-Team-41/dislinkt-backend/microservices/common/proto/user_service"
 	"google.golang.org/grpc"
@@ -41,6 +43,22 @@ func NewAuthClient(address string) auth.AuthServiceClient {
 		log.Fatalf("Failed to start gRPC connection to Catalogue service: %v", err)
 	}
 	return auth.NewAuthServiceClient(conn)
+}
+
+func NewJobOfferClient(address string) jobOffer.JobOfferServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Job offer service: %v", err)
+	}
+	return jobOffer.NewJobOfferServiceClient(conn)
+}
+
+func NewNotificationClient(address string) notification.NotificationServiceClient {
+	conn, err := getConnection(address)
+	if err != nil {
+		log.Fatalf("Failed to start gRPC connection to Notification service: %v", err)
+	}
+	return notification.NewNotificationServiceClient(conn)
 }
 
 func getConnection(address string) (*grpc.ClientConn, error) {

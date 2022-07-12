@@ -21,6 +21,202 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type UserCredential_Role int32
+
+const (
+	UserCredential_USER  UserCredential_Role = 0
+	UserCredential_ADMIN UserCredential_Role = 1
+	UserCredential_AGENT UserCredential_Role = 2
+)
+
+// Enum value maps for UserCredential_Role.
+var (
+	UserCredential_Role_name = map[int32]string{
+		0: "USER",
+		1: "ADMIN",
+		2: "AGENT",
+	}
+	UserCredential_Role_value = map[string]int32{
+		"USER":  0,
+		"ADMIN": 1,
+		"AGENT": 2,
+	}
+)
+
+func (x UserCredential_Role) Enum() *UserCredential_Role {
+	p := new(UserCredential_Role)
+	*p = x
+	return p
+}
+
+func (x UserCredential_Role) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (UserCredential_Role) Descriptor() protoreflect.EnumDescriptor {
+	return file_auth_service_auth_service_proto_enumTypes[0].Descriptor()
+}
+
+func (UserCredential_Role) Type() protoreflect.EnumType {
+	return &file_auth_service_auth_service_proto_enumTypes[0]
+}
+
+func (x UserCredential_Role) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use UserCredential_Role.Descriptor instead.
+func (UserCredential_Role) EnumDescriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{8, 0}
+}
+
+type Permission_Role int32
+
+const (
+	Permission_USER  Permission_Role = 0
+	Permission_ADMIN Permission_Role = 1
+	Permission_AGENT Permission_Role = 2
+)
+
+// Enum value maps for Permission_Role.
+var (
+	Permission_Role_name = map[int32]string{
+		0: "USER",
+		1: "ADMIN",
+		2: "AGENT",
+	}
+	Permission_Role_value = map[string]int32{
+		"USER":  0,
+		"ADMIN": 1,
+		"AGENT": 2,
+	}
+)
+
+func (x Permission_Role) Enum() *Permission_Role {
+	p := new(Permission_Role)
+	*p = x
+	return p
+}
+
+func (x Permission_Role) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Permission_Role) Descriptor() protoreflect.EnumDescriptor {
+	return file_auth_service_auth_service_proto_enumTypes[1].Descriptor()
+}
+
+func (Permission_Role) Type() protoreflect.EnumType {
+	return &file_auth_service_auth_service_proto_enumTypes[1]
+}
+
+func (x Permission_Role) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Permission_Role.Descriptor instead.
+func (Permission_Role) EnumDescriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{9, 0}
+}
+
+type Permission_Method int32
+
+const (
+	Permission_POST   Permission_Method = 0
+	Permission_GET    Permission_Method = 1
+	Permission_PUT    Permission_Method = 2
+	Permission_DELETE Permission_Method = 3
+)
+
+// Enum value maps for Permission_Method.
+var (
+	Permission_Method_name = map[int32]string{
+		0: "POST",
+		1: "GET",
+		2: "PUT",
+		3: "DELETE",
+	}
+	Permission_Method_value = map[string]int32{
+		"POST":   0,
+		"GET":    1,
+		"PUT":    2,
+		"DELETE": 3,
+	}
+)
+
+func (x Permission_Method) Enum() *Permission_Method {
+	p := new(Permission_Method)
+	*p = x
+	return p
+}
+
+func (x Permission_Method) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Permission_Method) Descriptor() protoreflect.EnumDescriptor {
+	return file_auth_service_auth_service_proto_enumTypes[2].Descriptor()
+}
+
+func (Permission_Method) Type() protoreflect.EnumType {
+	return &file_auth_service_auth_service_proto_enumTypes[2]
+}
+
+func (x Permission_Method) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Permission_Method.Descriptor instead.
+func (Permission_Method) EnumDescriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{9, 1}
+}
+
+type UserDetails_Role int32
+
+const (
+	UserDetails_USER  UserDetails_Role = 0
+	UserDetails_ADMIN UserDetails_Role = 1
+)
+
+// Enum value maps for UserDetails_Role.
+var (
+	UserDetails_Role_name = map[int32]string{
+		0: "USER",
+		1: "ADMIN",
+	}
+	UserDetails_Role_value = map[string]int32{
+		"USER":  0,
+		"ADMIN": 1,
+	}
+)
+
+func (x UserDetails_Role) Enum() *UserDetails_Role {
+	p := new(UserDetails_Role)
+	*p = x
+	return p
+}
+
+func (x UserDetails_Role) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (UserDetails_Role) Descriptor() protoreflect.EnumDescriptor {
+	return file_auth_service_auth_service_proto_enumTypes[3].Descriptor()
+}
+
+func (UserDetails_Role) Type() protoreflect.EnumType {
+	return &file_auth_service_auth_service_proto_enumTypes[3]
+}
+
+func (x UserDetails_Role) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use UserDetails_Role.Descriptor instead.
+func (UserDetails_Role) EnumDescriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{10, 0}
+}
+
 type LoginRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -68,7 +264,7 @@ func (x *LoginRequest) GetUser() *UserCredential {
 	return nil
 }
 
-type RegisterRequest struct {
+type ConnectAgentRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -76,10 +272,57 @@ type RegisterRequest struct {
 	User *UserCredential `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 }
 
+func (x *ConnectAgentRequest) Reset() {
+	*x = ConnectAgentRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_service_auth_service_proto_msgTypes[1]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ConnectAgentRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConnectAgentRequest) ProtoMessage() {}
+
+func (x *ConnectAgentRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_service_proto_msgTypes[1]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConnectAgentRequest.ProtoReflect.Descriptor instead.
+func (*ConnectAgentRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *ConnectAgentRequest) GetUser() *UserCredential {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+type RegisterRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User *UserDetails `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+}
+
 func (x *RegisterRequest) Reset() {
 	*x = RegisterRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_auth_service_auth_service_proto_msgTypes[1]
+		mi := &file_auth_service_auth_service_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -92,7 +335,7 @@ func (x *RegisterRequest) String() string {
 func (*RegisterRequest) ProtoMessage() {}
 
 func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_auth_service_proto_msgTypes[1]
+	mi := &file_auth_service_auth_service_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -105,12 +348,67 @@ func (x *RegisterRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterRequest.ProtoReflect.Descriptor instead.
 func (*RegisterRequest) Descriptor() ([]byte, []int) {
-	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{1}
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *RegisterRequest) GetUser() *UserCredential {
+func (x *RegisterRequest) GetUser() *UserDetails {
 	if x != nil {
 		return x.User
+	}
+	return nil
+}
+
+type RBACRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User       *UserCredential `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	Permission *Permission     `protobuf:"bytes,2,opt,name=permission,proto3" json:"permission,omitempty"`
+}
+
+func (x *RBACRequest) Reset() {
+	*x = RBACRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_service_auth_service_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RBACRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RBACRequest) ProtoMessage() {}
+
+func (x *RBACRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_service_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RBACRequest.ProtoReflect.Descriptor instead.
+func (*RBACRequest) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *RBACRequest) GetUser() *UserCredential {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *RBACRequest) GetPermission() *Permission {
+	if x != nil {
+		return x.Permission
 	}
 	return nil
 }
@@ -120,13 +418,13 @@ type RegisterResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	User *UserCredential `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	User *UserDetails `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
 }
 
 func (x *RegisterResponse) Reset() {
 	*x = RegisterResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_auth_service_auth_service_proto_msgTypes[2]
+		mi := &file_auth_service_auth_service_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -139,7 +437,7 @@ func (x *RegisterResponse) String() string {
 func (*RegisterResponse) ProtoMessage() {}
 
 func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_auth_service_proto_msgTypes[2]
+	mi := &file_auth_service_auth_service_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -152,10 +450,10 @@ func (x *RegisterResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RegisterResponse.ProtoReflect.Descriptor instead.
 func (*RegisterResponse) Descriptor() ([]byte, []int) {
-	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{2}
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *RegisterResponse) GetUser() *UserCredential {
+func (x *RegisterResponse) GetUser() *UserDetails {
 	if x != nil {
 		return x.User
 	}
@@ -173,7 +471,7 @@ type JWTResponse struct {
 func (x *JWTResponse) Reset() {
 	*x = JWTResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_auth_service_auth_service_proto_msgTypes[3]
+		mi := &file_auth_service_auth_service_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -186,7 +484,7 @@ func (x *JWTResponse) String() string {
 func (*JWTResponse) ProtoMessage() {}
 
 func (x *JWTResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_auth_service_proto_msgTypes[3]
+	mi := &file_auth_service_auth_service_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,7 +497,7 @@ func (x *JWTResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use JWTResponse.ProtoReflect.Descriptor instead.
 func (*JWTResponse) Descriptor() ([]byte, []int) {
-	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{3}
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *JWTResponse) GetToken() string {
@@ -209,19 +507,114 @@ func (x *JWTResponse) GetToken() string {
 	return ""
 }
 
+type APITokenResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Token string `protobuf:"bytes,1,opt,name=token,proto3" json:"token,omitempty"`
+}
+
+func (x *APITokenResponse) Reset() {
+	*x = APITokenResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_service_auth_service_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *APITokenResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*APITokenResponse) ProtoMessage() {}
+
+func (x *APITokenResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_service_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use APITokenResponse.ProtoReflect.Descriptor instead.
+func (*APITokenResponse) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *APITokenResponse) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+type RBACResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Response bool `protobuf:"varint,1,opt,name=response,proto3" json:"response,omitempty"`
+}
+
+func (x *RBACResponse) Reset() {
+	*x = RBACResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_service_auth_service_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *RBACResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RBACResponse) ProtoMessage() {}
+
+func (x *RBACResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_service_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RBACResponse.ProtoReflect.Descriptor instead.
+func (*RBACResponse) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *RBACResponse) GetResponse() bool {
+	if x != nil {
+		return x.Response
+	}
+	return false
+}
+
 type UserCredential struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Username string `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Username string              `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	Password string              `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Role     UserCredential_Role `protobuf:"varint,3,opt,name=role,proto3,enum=auth.UserCredential_Role" json:"role,omitempty"`
 }
 
 func (x *UserCredential) Reset() {
 	*x = UserCredential{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_auth_service_auth_service_proto_msgTypes[4]
+		mi := &file_auth_service_auth_service_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -234,7 +627,7 @@ func (x *UserCredential) String() string {
 func (*UserCredential) ProtoMessage() {}
 
 func (x *UserCredential) ProtoReflect() protoreflect.Message {
-	mi := &file_auth_service_auth_service_proto_msgTypes[4]
+	mi := &file_auth_service_auth_service_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -247,7 +640,7 @@ func (x *UserCredential) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UserCredential.ProtoReflect.Descriptor instead.
 func (*UserCredential) Descriptor() ([]byte, []int) {
-	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{4}
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *UserCredential) GetUsername() string {
@@ -264,6 +657,187 @@ func (x *UserCredential) GetPassword() string {
 	return ""
 }
 
+func (x *UserCredential) GetRole() UserCredential_Role {
+	if x != nil {
+		return x.Role
+	}
+	return UserCredential_USER
+}
+
+type Permission struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Role   Permission_Role   `protobuf:"varint,1,opt,name=role,proto3,enum=auth.Permission_Role" json:"role,omitempty"`
+	Method Permission_Method `protobuf:"varint,2,opt,name=method,proto3,enum=auth.Permission_Method" json:"method,omitempty"`
+	Url    string            `protobuf:"bytes,3,opt,name=url,proto3" json:"url,omitempty"`
+}
+
+func (x *Permission) Reset() {
+	*x = Permission{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_service_auth_service_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Permission) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Permission) ProtoMessage() {}
+
+func (x *Permission) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_service_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Permission.ProtoReflect.Descriptor instead.
+func (*Permission) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *Permission) GetRole() Permission_Role {
+	if x != nil {
+		return x.Role
+	}
+	return Permission_USER
+}
+
+func (x *Permission) GetMethod() Permission_Method {
+	if x != nil {
+		return x.Method
+	}
+	return Permission_POST
+}
+
+func (x *Permission) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
+}
+
+type UserDetails struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id           string           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Username     string           `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	Password     string           `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	IsPrivate    bool             `protobuf:"varint,4,opt,name=isPrivate,proto3" json:"isPrivate,omitempty"`
+	Firstname    string           `protobuf:"bytes,5,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname     string           `protobuf:"bytes,6,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	Email        string           `protobuf:"bytes,7,opt,name=email,proto3" json:"email,omitempty"`
+	MobileNumber string           `protobuf:"bytes,8,opt,name=mobileNumber,proto3" json:"mobileNumber,omitempty"`
+	Role         UserDetails_Role `protobuf:"varint,9,opt,name=role,proto3,enum=auth.UserDetails_Role" json:"role,omitempty"`
+}
+
+func (x *UserDetails) Reset() {
+	*x = UserDetails{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_auth_service_auth_service_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserDetails) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserDetails) ProtoMessage() {}
+
+func (x *UserDetails) ProtoReflect() protoreflect.Message {
+	mi := &file_auth_service_auth_service_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserDetails.ProtoReflect.Descriptor instead.
+func (*UserDetails) Descriptor() ([]byte, []int) {
+	return file_auth_service_auth_service_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *UserDetails) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UserDetails) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *UserDetails) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *UserDetails) GetIsPrivate() bool {
+	if x != nil {
+		return x.IsPrivate
+	}
+	return false
+}
+
+func (x *UserDetails) GetFirstname() string {
+	if x != nil {
+		return x.Firstname
+	}
+	return ""
+}
+
+func (x *UserDetails) GetLastname() string {
+	if x != nil {
+		return x.Lastname
+	}
+	return ""
+}
+
+func (x *UserDetails) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserDetails) GetMobileNumber() string {
+	if x != nil {
+		return x.MobileNumber
+	}
+	return ""
+}
+
+func (x *UserDetails) GetRole() UserDetails_Role {
+	if x != nil {
+		return x.Role
+	}
+	return UserDetails_USER
+}
+
 var File_auth_service_auth_service_proto protoreflect.FileDescriptor
 
 var file_auth_service_auth_service_proto_rawDesc = []byte{
@@ -275,31 +849,96 @@ var file_auth_service_auth_service_proto_rawDesc = []byte{
 	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x28, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20,
 	0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x43,
 	0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x22,
-	0x3b, 0x0a, 0x0f, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x28, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
-	0x32, 0x14, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64,
-	0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x22, 0x3c, 0x0a, 0x10,
-	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x12, 0x28, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14,
-	0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e,
-	0x74, 0x69, 0x61, 0x6c, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x22, 0x23, 0x0a, 0x0b, 0x4a, 0x57,
-	0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b,
+	0x3f, 0x0a, 0x13, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x41, 0x67, 0x65, 0x6e, 0x74, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x28, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x73, 0x65, 0x72,
+	0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72,
+	0x22, 0x38, 0x0a, 0x0f, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x25, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x44, 0x65, 0x74,
+	0x61, 0x69, 0x6c, 0x73, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x22, 0x69, 0x0a, 0x0b, 0x52, 0x42,
+	0x41, 0x43, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x28, 0x0a, 0x04, 0x75, 0x73, 0x65,
+	0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55,
+	0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x04, 0x75,
+	0x73, 0x65, 0x72, 0x12, 0x30, 0x0a, 0x0a, 0x70, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f,
+	0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x50,
+	0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x52, 0x0a, 0x70, 0x65, 0x72, 0x6d, 0x69,
+	0x73, 0x73, 0x69, 0x6f, 0x6e, 0x22, 0x39, 0x0a, 0x10, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65,
+	0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x04, 0x75, 0x73, 0x65,
+	0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55,
+	0x73, 0x65, 0x72, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72,
+	0x22, 0x23, 0x0a, 0x0b, 0x4a, 0x57, 0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x22, 0x28, 0x0a, 0x10, 0x41, 0x50, 0x49, 0x54, 0x6f, 0x6b, 0x65,
+	0x6e, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x6f, 0x6b,
 	0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x22,
-	0x48, 0x0a, 0x0e, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61,
-	0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a,
-	0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x32, 0x95, 0x01, 0x0a, 0x0b, 0x41, 0x75,
-	0x74, 0x68, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x49, 0x0a, 0x05, 0x4c, 0x6f, 0x67,
-	0x69, 0x6e, 0x12, 0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4a, 0x57,
-	0x54, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x19, 0x82, 0xd3, 0xe4, 0x93, 0x02,
-	0x13, 0x22, 0x0b, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x3a, 0x04,
-	0x75, 0x73, 0x65, 0x72, 0x12, 0x3b, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72,
-	0x12, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52,
-	0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22,
-	0x00, 0x42, 0x4c, 0x5a, 0x4a, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
+	0x2a, 0x0a, 0x0c, 0x52, 0x42, 0x41, 0x43, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
+	0x1a, 0x0a, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x08, 0x52, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x9f, 0x01, 0x0a, 0x0e,
+	0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x12, 0x1a,
+	0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61,
+	0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61,
+	0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x2d, 0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x19, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x55, 0x73, 0x65, 0x72,
+	0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x2e, 0x52, 0x6f, 0x6c, 0x65, 0x52,
+	0x04, 0x72, 0x6f, 0x6c, 0x65, 0x22, 0x26, 0x0a, 0x04, 0x52, 0x6f, 0x6c, 0x65, 0x12, 0x08, 0x0a,
+	0x04, 0x55, 0x53, 0x45, 0x52, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x41, 0x44, 0x4d, 0x49, 0x4e,
+	0x10, 0x01, 0x12, 0x09, 0x0a, 0x05, 0x41, 0x47, 0x45, 0x4e, 0x54, 0x10, 0x02, 0x22, 0xd4, 0x01,
+	0x0a, 0x0a, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x12, 0x29, 0x0a, 0x04,
+	0x72, 0x6f, 0x6c, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x15, 0x2e, 0x61, 0x75, 0x74,
+	0x68, 0x2e, 0x50, 0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x52, 0x6f, 0x6c,
+	0x65, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x2f, 0x0a, 0x06, 0x6d, 0x65, 0x74, 0x68, 0x6f,
+	0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x17, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x50,
+	0x65, 0x72, 0x6d, 0x69, 0x73, 0x73, 0x69, 0x6f, 0x6e, 0x2e, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64,
+	0x52, 0x06, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x10, 0x0a, 0x03, 0x75, 0x72, 0x6c, 0x18,
+	0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x03, 0x75, 0x72, 0x6c, 0x22, 0x26, 0x0a, 0x04, 0x52, 0x6f,
+	0x6c, 0x65, 0x12, 0x08, 0x0a, 0x04, 0x55, 0x53, 0x45, 0x52, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05,
+	0x41, 0x44, 0x4d, 0x49, 0x4e, 0x10, 0x01, 0x12, 0x09, 0x0a, 0x05, 0x41, 0x47, 0x45, 0x4e, 0x54,
+	0x10, 0x02, 0x22, 0x30, 0x0a, 0x06, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x08, 0x0a, 0x04,
+	0x50, 0x4f, 0x53, 0x54, 0x10, 0x00, 0x12, 0x07, 0x0a, 0x03, 0x47, 0x45, 0x54, 0x10, 0x01, 0x12,
+	0x07, 0x0a, 0x03, 0x50, 0x55, 0x54, 0x10, 0x02, 0x12, 0x0a, 0x0a, 0x06, 0x44, 0x45, 0x4c, 0x45,
+	0x54, 0x45, 0x10, 0x03, 0x22, 0xb0, 0x02, 0x0a, 0x0b, 0x55, 0x73, 0x65, 0x72, 0x44, 0x65, 0x74,
+	0x61, 0x69, 0x6c, 0x73, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x02, 0x69, 0x64, 0x12, 0x1a, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x75, 0x73, 0x65, 0x72, 0x6e, 0x61, 0x6d, 0x65,
+	0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x03, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x1c, 0x0a, 0x09,
+	0x69, 0x73, 0x50, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52,
+	0x09, 0x69, 0x73, 0x50, 0x72, 0x69, 0x76, 0x61, 0x74, 0x65, 0x12, 0x1c, 0x0a, 0x09, 0x66, 0x69,
+	0x72, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52, 0x09, 0x66,
+	0x69, 0x72, 0x73, 0x74, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x6c, 0x61, 0x73, 0x74,
+	0x6e, 0x61, 0x6d, 0x65, 0x18, 0x06, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x6c, 0x61, 0x73, 0x74,
+	0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x07, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x22, 0x0a, 0x0c, 0x6d, 0x6f,
+	0x62, 0x69, 0x6c, 0x65, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x0c, 0x6d, 0x6f, 0x62, 0x69, 0x6c, 0x65, 0x4e, 0x75, 0x6d, 0x62, 0x65, 0x72, 0x12, 0x2a,
+	0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x18, 0x09, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x16, 0x2e, 0x61,
+	0x75, 0x74, 0x68, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x44, 0x65, 0x74, 0x61, 0x69, 0x6c, 0x73, 0x2e,
+	0x52, 0x6f, 0x6c, 0x65, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x22, 0x1b, 0x0a, 0x04, 0x52, 0x6f,
+	0x6c, 0x65, 0x12, 0x08, 0x0a, 0x04, 0x55, 0x53, 0x45, 0x52, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05,
+	0x41, 0x44, 0x4d, 0x49, 0x4e, 0x10, 0x01, 0x32, 0xc7, 0x02, 0x0a, 0x0b, 0x41, 0x75, 0x74, 0x68,
+	0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x49, 0x0a, 0x05, 0x4c, 0x6f, 0x67, 0x69, 0x6e,
+	0x12, 0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4c, 0x6f, 0x67, 0x69, 0x6e, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x1a, 0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x4a, 0x57, 0x54, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x19, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x13, 0x22,
+	0x0b, 0x2f, 0x61, 0x75, 0x74, 0x68, 0x2f, 0x6c, 0x6f, 0x67, 0x69, 0x6e, 0x3a, 0x04, 0x75, 0x73,
+	0x65, 0x72, 0x12, 0x63, 0x0a, 0x0c, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x41, 0x67, 0x65,
+	0x6e, 0x74, 0x12, 0x19, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63,
+	0x74, 0x41, 0x67, 0x65, 0x6e, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e,
+	0x61, 0x75, 0x74, 0x68, 0x2e, 0x41, 0x50, 0x49, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x20, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x1a, 0x22, 0x12, 0x2f,
+	0x61, 0x75, 0x74, 0x68, 0x2f, 0x63, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x41, 0x67, 0x65, 0x6e,
+	0x74, 0x3a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x12, 0x2f, 0x0a, 0x04, 0x52, 0x42, 0x41, 0x43, 0x12,
+	0x11, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x42, 0x41, 0x43, 0x52, 0x65, 0x71, 0x75, 0x65,
+	0x73, 0x74, 0x1a, 0x12, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x42, 0x41, 0x43, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x57, 0x0a, 0x08, 0x52, 0x65, 0x67, 0x69,
+	0x73, 0x74, 0x65, 0x72, 0x12, 0x15, 0x2e, 0x61, 0x75, 0x74, 0x68, 0x2e, 0x52, 0x65, 0x67, 0x69,
+	0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x16, 0x2e, 0x61, 0x75,
+	0x74, 0x68, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x1c, 0x82, 0xd3, 0xe4, 0x93, 0x02, 0x16, 0x22, 0x0e, 0x2f, 0x61, 0x75,
+	0x74, 0x68, 0x2f, 0x72, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x3a, 0x04, 0x75, 0x73, 0x65,
+	0x72, 0x42, 0x4c, 0x5a, 0x4a, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f,
 	0x58, 0x57, 0x53, 0x2d, 0x44, 0x69, 0x73, 0x6c, 0x69, 0x6e, 0x6b, 0x74, 0x2d, 0x54, 0x65, 0x61,
 	0x6d, 0x2d, 0x34, 0x31, 0x2f, 0x64, 0x69, 0x73, 0x6c, 0x69, 0x6e, 0x6b, 0x74, 0x2d, 0x62, 0x61,
 	0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2f, 0x6d, 0x69, 0x63, 0x72, 0x6f, 0x73, 0x65, 0x72, 0x76, 0x69,
@@ -319,27 +958,49 @@ func file_auth_service_auth_service_proto_rawDescGZIP() []byte {
 	return file_auth_service_auth_service_proto_rawDescData
 }
 
-var file_auth_service_auth_service_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_auth_service_auth_service_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_auth_service_auth_service_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_auth_service_auth_service_proto_goTypes = []interface{}{
-	(*LoginRequest)(nil),     // 0: auth.LoginRequest
-	(*RegisterRequest)(nil),  // 1: auth.RegisterRequest
-	(*RegisterResponse)(nil), // 2: auth.RegisterResponse
-	(*JWTResponse)(nil),      // 3: auth.JWTResponse
-	(*UserCredential)(nil),   // 4: auth.UserCredential
+	(UserCredential_Role)(0),    // 0: auth.UserCredential.Role
+	(Permission_Role)(0),        // 1: auth.Permission.Role
+	(Permission_Method)(0),      // 2: auth.Permission.Method
+	(UserDetails_Role)(0),       // 3: auth.UserDetails.Role
+	(*LoginRequest)(nil),        // 4: auth.LoginRequest
+	(*ConnectAgentRequest)(nil), // 5: auth.ConnectAgentRequest
+	(*RegisterRequest)(nil),     // 6: auth.RegisterRequest
+	(*RBACRequest)(nil),         // 7: auth.RBACRequest
+	(*RegisterResponse)(nil),    // 8: auth.RegisterResponse
+	(*JWTResponse)(nil),         // 9: auth.JWTResponse
+	(*APITokenResponse)(nil),    // 10: auth.APITokenResponse
+	(*RBACResponse)(nil),        // 11: auth.RBACResponse
+	(*UserCredential)(nil),      // 12: auth.UserCredential
+	(*Permission)(nil),          // 13: auth.Permission
+	(*UserDetails)(nil),         // 14: auth.UserDetails
 }
 var file_auth_service_auth_service_proto_depIdxs = []int32{
-	4, // 0: auth.LoginRequest.user:type_name -> auth.UserCredential
-	4, // 1: auth.RegisterRequest.user:type_name -> auth.UserCredential
-	4, // 2: auth.RegisterResponse.user:type_name -> auth.UserCredential
-	0, // 3: auth.AuthService.Login:input_type -> auth.LoginRequest
-	1, // 4: auth.AuthService.Register:input_type -> auth.RegisterRequest
-	3, // 5: auth.AuthService.Login:output_type -> auth.JWTResponse
-	2, // 6: auth.AuthService.Register:output_type -> auth.RegisterResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	12, // 0: auth.LoginRequest.user:type_name -> auth.UserCredential
+	12, // 1: auth.ConnectAgentRequest.user:type_name -> auth.UserCredential
+	14, // 2: auth.RegisterRequest.user:type_name -> auth.UserDetails
+	12, // 3: auth.RBACRequest.user:type_name -> auth.UserCredential
+	13, // 4: auth.RBACRequest.permission:type_name -> auth.Permission
+	14, // 5: auth.RegisterResponse.user:type_name -> auth.UserDetails
+	0,  // 6: auth.UserCredential.role:type_name -> auth.UserCredential.Role
+	1,  // 7: auth.Permission.role:type_name -> auth.Permission.Role
+	2,  // 8: auth.Permission.method:type_name -> auth.Permission.Method
+	3,  // 9: auth.UserDetails.role:type_name -> auth.UserDetails.Role
+	4,  // 10: auth.AuthService.Login:input_type -> auth.LoginRequest
+	5,  // 11: auth.AuthService.ConnectAgent:input_type -> auth.ConnectAgentRequest
+	7,  // 12: auth.AuthService.RBAC:input_type -> auth.RBACRequest
+	6,  // 13: auth.AuthService.Register:input_type -> auth.RegisterRequest
+	9,  // 14: auth.AuthService.Login:output_type -> auth.JWTResponse
+	10, // 15: auth.AuthService.ConnectAgent:output_type -> auth.APITokenResponse
+	11, // 16: auth.AuthService.RBAC:output_type -> auth.RBACResponse
+	8,  // 17: auth.AuthService.Register:output_type -> auth.RegisterResponse
+	14, // [14:18] is the sub-list for method output_type
+	10, // [10:14] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_auth_service_auth_service_proto_init() }
@@ -361,7 +1022,7 @@ func file_auth_service_auth_service_proto_init() {
 			}
 		}
 		file_auth_service_auth_service_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterRequest); i {
+			switch v := v.(*ConnectAgentRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -373,7 +1034,7 @@ func file_auth_service_auth_service_proto_init() {
 			}
 		}
 		file_auth_service_auth_service_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*RegisterResponse); i {
+			switch v := v.(*RegisterRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -385,7 +1046,7 @@ func file_auth_service_auth_service_proto_init() {
 			}
 		}
 		file_auth_service_auth_service_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*JWTResponse); i {
+			switch v := v.(*RBACRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -397,7 +1058,79 @@ func file_auth_service_auth_service_proto_init() {
 			}
 		}
 		file_auth_service_auth_service_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RegisterResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_service_auth_service_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*JWTResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_service_auth_service_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*APITokenResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_service_auth_service_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*RBACResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_service_auth_service_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*UserCredential); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_service_auth_service_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Permission); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_auth_service_auth_service_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UserDetails); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -414,13 +1147,14 @@ func file_auth_service_auth_service_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_auth_service_auth_service_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   5,
+			NumEnums:      4,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_auth_service_auth_service_proto_goTypes,
 		DependencyIndexes: file_auth_service_auth_service_proto_depIdxs,
+		EnumInfos:         file_auth_service_auth_service_proto_enumTypes,
 		MessageInfos:      file_auth_service_auth_service_proto_msgTypes,
 	}.Build()
 	File_auth_service_auth_service_proto = out.File

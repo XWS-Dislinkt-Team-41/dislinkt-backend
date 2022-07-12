@@ -87,6 +87,7 @@ func (handler *PostHandler) InsertComment(ctx context.Context, request *pb.Comme
 }
 
 func (handler *PostHandler) InsertReaction(ctx context.Context, request *pb.ReactionOnPostRequest) (*pb.GetResponse, error) {
+
 	objectId, err := primitive.ObjectIDFromHex(request.Id)
 	if err != nil {
 		return nil, err
@@ -96,7 +97,7 @@ func (handler *PostHandler) InsertReaction(ctx context.Context, request *pb.Reac
 		return nil, err
 	}
 
-	objectReactionBy, err := primitive.ObjectIDFromHex(request.Reaction.ByUserId)
+	objectReactionBy, err := primitive.ObjectIDFromHex(request.Reaction.ReactionBy)
 	if err != nil {
 		return nil, err
 	}
@@ -113,6 +114,9 @@ func (handler *PostHandler) InsertReaction(ctx context.Context, request *pb.Reac
 	}
 	if request.Type == "dislike" {
 		updatedPost, err1 = handler.service.UpdateDislikes(reaction)
+	}
+	if request.Type == "unlike" {
+		updatedPost, err1 = handler.service.RemoveLike(reaction)
 	}
 	if err1 != nil {
 		return nil, err1

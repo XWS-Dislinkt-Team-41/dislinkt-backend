@@ -17,4 +17,11 @@ type ConnectStore interface {
 	CancelInvitation(userId, cUserId primitive.ObjectID) error
 	GetAllInvitations(userId primitive.ObjectID) ([]*Connection, error)
 	GetAllSentInvitations(userId primitive.ObjectID) ([]*Connection, error)
+	InitNeo4jDB() error
+	GetUserSuggestions(userId primitive.ObjectID) ([]*Profile, error)
+	GetRandomUsers(userId primitive.ObjectID) ([]*Profile, error)
+	GetRandomUsersWithoutConections(userId primitive.ObjectID) ([]*Profile, error)
+	Block(userId, bUserId primitive.ObjectID) (*Block, error)
+	UnBlock(userId, bUserId primitive.ObjectID) error
+	GetBlockedUsers(userId primitive.ObjectID) ([]*Block, error)
 }

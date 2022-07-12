@@ -14,7 +14,10 @@ type UserStore interface {
 	Insert(user *User) (*User, error)
 	DeleteAll()
 	SearchPublic(filter string) ([]*User, error)
-	UpdatePersonalInfo(user *User) (string, error)
-	UpdateCareerInfo(user *User) (string, error)
-	UpdateInterestsInfo(user *User) (string, error)
+	Search(filter string) ([]*User, error)
+	UpdatePersonalInfo(user *User) (*User, error)
+	UpdateCareerInfo(user *User) (*User, error)
+	UpdateInterestsInfo(user *User) (*User, error)
+	DeleteById(id primitive.ObjectID) error
+	UpdateAccountPrivacy(user *User) (*User, error)
 }

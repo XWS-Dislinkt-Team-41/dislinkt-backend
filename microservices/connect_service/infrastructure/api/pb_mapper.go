@@ -11,8 +11,8 @@ func mapConnection(connection *domain.Connection) *pb.Connection {
 		return nil
 	}
 	connectionPb := &pb.Connection{
-		User:  &pb.Profile{Id: connection.User.Id.Hex()},
-		CUser: &pb.Profile{Id: connection.CUser.Id.Hex()},
+		UserId:  connection.UserId.Hex(),
+		CUserId: connection.CUserId.Hex(),
 	}
 	return connectionPb
 }
@@ -38,4 +38,15 @@ func mapProfile(profile *domain.Profile) *pb.Profile {
 		Private: profile.Private,
 	}
 	return profilePb
+}
+
+func mapBlock(block *domain.Block) *pb.Block {
+	if block == nil {
+		return nil
+	}
+	blockPb := &pb.Block{
+		UserId:  block.UserId.Hex(),
+		BUserId: block.BUserId.Hex(),
+	}
+	return blockPb
 }

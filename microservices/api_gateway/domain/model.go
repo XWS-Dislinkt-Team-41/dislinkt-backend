@@ -19,10 +19,10 @@ type User struct {
 	BirthDay     time.Time
 	Username     string
 	Biography    string
-	Experience   string
+	Experience   []string
 	Education    string
-	Skills       string
-	Interests    string
+	Skills       []string
+	Interests    []string
 	Password     string
 	IsPrivate    bool
 }
@@ -42,4 +42,9 @@ type RegisterRequest struct {
 	UserCredential auth.UserCredential
 	User           user.User
 	Profile        conn.Profile
+}
+
+type PrincipalRequest struct {
+	Username string
+	User     user.User
 }
